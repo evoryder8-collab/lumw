@@ -20,6 +20,29 @@ empty, decomposed, or has lost its canonical.
 npm run build
 ```
 
+## Open decision before cutover: the trailing slash
+
+Measured on the deployed build and on the live site:
+
+| | `/about` | `/about/` |
+|---|---|---|
+| Live Wix site | **200** | 301 → `/about` |
+| This build on Pages (`format: 'directory'`) | 301 → `/about/` | **200** |
+
+The redirect runs in the opposite direction. All 25 indexed URLs are the
+no-slash form, so at cutover every one of them would begin 301-redirecting to a
+form Google has never seen, and the canonical shape would flip.
+
+Section 7 asks explicitly for `/path/index.html`, which is what ships, so this
+is flagged rather than quietly changed. `build.format: 'file'` in
+`astro.config.mjs` emits `about.html`, which Pages serves at `/about` with no
+redirect at all — byte-identical to live, umlauts included. `check:urls` prints
+which behaviour is currently built on every run.
+
+Worth noting: the spec's build order mentions Cloudflare Pages, where
+`/path/index.html` *does* serve `/path` at 200. The instruction was most likely
+written for that host before the stack settled on GitHub Pages.
+
 ## Commands
 
 | Command | What it does |

@@ -130,6 +130,16 @@ if (failures.length) {
   process.exit(1);
 }
 
+// Which layout was built decides how the live URLs behave on GitHub Pages.
+const flatFile = fs.existsSync(path.join(DIST, 'about.html'));
+const trailingSlashNote = flatFile
+  ? `${GREEN}✓${OFF} flat files: Pages serves /about at 200, matching the live site exactly`
+  : `${YELLOW}!${OFF} directory layout: Pages will 301 /about to /about/.\n` +
+    `    ${DIM}The live Wix site does the opposite - it serves /about at 200 and\n` +
+    `    301s /about/ back to /about. Resolve before DNS cutover; astro.config.mjs\n` +
+    `    build.format: 'file' removes the redirect entirely.${OFF}`;
+
 console.log(`${GREEN}✓${OFF} all ${ok}/${expected.paths.length} live URLs resolve in dist/`);
 console.log(`${GREEN}✓${OFF} 4 non-ASCII slugs emitted NFC-correct (ö ö ü ß)`);
-console.log(`${GREEN}✓${OFF} every page carries its live canonical\n`);
+console.log(`${GREEN}✓${OFF} every page carries its live canonical`);
+console.log(trailingSlashNote + '\n');
