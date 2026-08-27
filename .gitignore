@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# env
+.env
+.env.production
+.env.local
+
+# macOS
+.DS_Store
+
+# logs
+*.log
+npm-debug.log*
+
+# lighthouse / audit artifacts
+.lighthouseci/
+lighthouse-report.*
+
+# private strategy docs - kept local, never published
+CLAUDE.md
+KICKOFF-PROMPT.md
