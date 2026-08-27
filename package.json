@@ -1,0 +1,27 @@
+{
+  "name": "luma-wellness",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && npm run check:urls",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check:urls": "node scripts/check-urls.mjs",
+    "check:jsonld": "node scripts/check-jsonld.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "verify": "npm run build && npm run check:jsonld && npm run check:contrast",
+    "assets": "node scripts/prepare-assets.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.14.1",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "jsonld": "^8.3.3",
+    "linkedom": "^0.18.12",
+    "tailwindcss": "^4.1.14"
+  }
+}

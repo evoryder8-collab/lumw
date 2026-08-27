@@ -24,3 +24,6 @@ lighthouse-report.*
 # private strategy docs - kept local, never published
 CLAUDE.md
 KICKOFF-PROMPT.md
+
+# preview/launch config is local
+.claude/

@@ -1,0 +1,88 @@
+---
+/**
+ * Nutzungsbedingungen and Datenschutzrichtlinie.
+ *
+ * Body text is verbatim, which means the known defects ship at cutover exactly
+ * as they are live: the "Buxtehudee" typo, the empty "Zu den derzeit genutzten
+ * Drittanbietern gehören:" heading, the Australian Privacy Act section, and the
+ * Natthiya Saurin contact name. All four are on the fix-later list in CLAUDE.md
+ * section 7 and are corrected only once rankings have settled.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
+} from '../lib/schema';
+
+export const getStaticPaths = (async () => {
+  const pages = await getCollection('legal');
+  return pages.map((page) => ({
+    params: { legal: page.data.path.replace(/^\//, '') },
+    props: { page },
+  }));
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+
+const { seoTitle: title, seoDescription: description, path, heading, title: label } = page.data;
+
+const schema = graph([
+  businessNode(),
+  // The business node links founder and employee to #june, so the Person node
+  // has to travel with it or the graph points at nothing.
+  personNode(),
+  websiteNode(),
+  webPageNode({ title, description, path, hasBreadcrumb: true }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: label, path },
+  ]),
+]);
+---
+
+<Layout {title} {description} {path} schema={schema}>
+  <section class="hero">
+    <div class="shell shell--narrow">
+      <p class="eyebrow">LUMA Wellness Buxtehude</p>
+      <h1 class="legal__h1">{heading}</h1>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell shell--narrow">
+      <div class="prose legal">
+        <Content />
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1rem, 2vw, 1.75rem); }
+
+  .legal__h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; }
+
+  .legal { max-width: 68ch; }
+
+  .legal :global(h3) {
+    font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+    margin-block: 2.5em 0.8em;
+    color: var(--ink);
+  }
+
+  .legal :global(p) {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  /* The export carries several run-on lists as plain lines. They stay as
+     paragraphs so the text matches the live page character for character. */
+  .legal :global(a) {
+    color: var(--gold-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

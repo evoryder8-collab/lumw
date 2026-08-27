@@ -1,0 +1,144 @@
+---
+/** Footer copy is verbatim from the live site, on the deepest porcelain. */
+import { NAV, BUSINESS } from '../lib/site';
+---
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <div class="footer__brand">
+      <p class="footer__wordmark">LUMA WELLNESS</p>
+      <p class="footer__by">by June Saurin</p>
+    </div>
+
+    <nav class="footer__col" aria-label="Fußzeilennavigation">
+      <h2 class="footer__title">Menu</h2>
+      <ul>
+        {NAV.map((i) => <li><a href={i.href} class="underline-gold">{i.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="footer__col">
+      <h2 class="footer__title">Folgen Sie mir</h2>
+      <ul>
+        <li><a href={BUSINESS.sameAs[0]} class="underline-gold" rel="me noopener" target="_blank">Facebook</a></li>
+        <li><a href={BUSINESS.sameAs[1]} class="underline-gold" rel="me noopener" target="_blank">Instagram</a></li>
+      </ul>
+    </div>
+
+    <div class="footer__col footer__col--wide">
+      <h2 class="footer__title">Buchungen</h2>
+      <ul class="footer__contact">
+        <li>Mail: <a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></li>
+        <li>Tel: <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></li>
+        <li>
+          <span class="footer__addr">Adresse: Hauptstraße 19,</span>
+          <span class="footer__addr">21614, Buxtehude DE</span>
+        </li>
+      </ul>
+      <p class="footer__note">Termine nur nach vorheriger Absprache.</p>
+
+      <a href="/contact" class="pill footer__cta">
+        Jetzt buchen<span class="footer__cta-sub">Klick hier</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="shell footer__base">
+    <p class="footer__copy">© 2026 LUMA WELLNESS by June Saurin.</p>
+    <ul class="footer__legal">
+      <li><a href="/datenschutzrichtlinie" class="underline-gold">Datenschutzrichtlinie</a></li>
+      <li><a href="/nutzungsbedingungen" class="underline-gold">Nutzungsbedingungen</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    margin-top: var(--section-y);
+    padding-block: clamp(3.5rem, 7vw, 6rem) 2rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    background: var(--porcelain-deep);
+  }
+
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .footer__wordmark {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+  }
+
+  .footer__by { color: var(--ink-mute); font-size: var(--step-small); margin: 0; }
+
+  .footer__title {
+    font-family: var(--font-body);
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    margin: 0 0 1.2rem;
+  }
+
+  .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+  .footer li { font-size: var(--step-small); color: var(--ink-soft); line-height: 1.5; }
+
+  .footer__contact { gap: 0.85rem; }
+  .footer__addr { display: block; }
+
+  .footer__note {
+    margin: 1.2rem 0 0;
+    font-size: 0.875rem;
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+
+  .footer__cta {
+    margin-top: 1.6rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.2;
+  }
+  .footer__cta-sub {
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.6rem;
+    /* Not a hard border: a hairline of warm light, per "no dark lines". */
+    border-top: 1px solid rgb(184 147 78 / 0.16);
+  }
+
+  .footer__copy { margin: 0; font-size: 0.8125rem; color: var(--ink-mute); }
+
+  .footer__legal { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .footer__legal li { font-size: 0.8125rem; }
+
+  @media (max-width: 900px) {
+    .footer__inner { grid-template-columns: 1fr 1fr; }
+    .footer__brand, .footer__col--wide { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 520px) {
+    .footer__inner { grid-template-columns: 1fr; }
+    .footer__base { flex-direction: column; align-items: flex-start; }
+  }
+</style>

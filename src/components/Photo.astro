@@ -1,0 +1,92 @@
+---
+/**
+ * Every photograph on the site goes through here.
+ *
+ * AVIF first with a WebP fallback, built at fixed widths with correct
+ * width/height attributes so nothing reflows: CLS budget is 0.02 and images are
+ * the usual way that gets blown.
+ *
+ * The dissolve treatment is section 9.3's photography direction: images should
+ * melt into the porcelain stage rather than sit on it as dark rectangles. It is
+ * a pseudo-element over the picture, so the source files stay untouched.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths: number[];
+  sizes: string;
+  ratio?: string;
+  priority?: boolean;
+  dissolve?: boolean;
+  quality?: number;
+  class?: string;
+}
+
+const {
+  src, alt, widths, sizes, ratio,
+  priority = false, dissolve = true, quality = 62,
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={['media', dissolve && 'media--dissolve', className]}
+  style={ratio ? `aspect-ratio:${ratio}` : undefined}
+>
+  <Picture
+    src={src}
+    alt={alt}
+    formats={['avif', 'webp']}
+    {/* Without this Astro falls back to PNG for a webp source, which emits
+        400kB files nobody ever downloads. WebP is the universal fallback. */}
+    fallbackFormat="webp"
+    {/* Without an explicit width the fallback <img src> is emitted at the
+        source's intrinsic size, which meant a 534kB file sitting behind every
+        picture for the handful of clients that ever read it. */}
+    width={Math.max(...widths)}
+    widths={widths}
+    sizes={sizes}
+    quality={quality}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    decoding={priority ? 'sync' : 'async'}
+  />
+</div>
+
+<style>
+  .media {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--porcelain-deep);
+    box-shadow: var(--shadow-float), var(--edge-daylight);
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Edges overexpose toward the porcelain so the frame dissolves into the
+     stage. Most of June's usable photography is dark - competition shots on
+     black, moody studio light - and without this each one lands as a hard
+     rectangle, which is the one thing section 9.3 rules out. */
+  .media--dissolve::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(115% 85% at 50% 45%, transparent 38%, rgb(250 247 242 / 0.30) 72%, rgb(250 247 242 / 0.72) 100%),
+      linear-gradient(to top, rgb(250 247 242 / 0.34), transparent 34%),
+      linear-gradient(to bottom, rgb(255 253 248 / 0.22), transparent 26%);
+  }
+
+  /* The shadow is what still reads as a physical edge, so it softens too. */
+  .media--dissolve { box-shadow: 0 30px 90px rgb(43 38 34 / 0.07), var(--edge-daylight); }
+</style>

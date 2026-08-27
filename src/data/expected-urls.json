@@ -1,0 +1,31 @@
+{
+  "_comment": "The 25 live URLs from CLAUDE.md section 7, verified against both Wix sitemaps. Every one must resolve byte-identically after cutover: a single missing path is a lost ranking. This file is the authority for both the sitemap and the CI check in scripts/check-urls.mjs. Paths are stored in NFC. Do not edit without re-verifying against the live site.",
+  "canonicalHost": "https://www.luma-wellness.com",
+  "paths": [
+    "/",
+    "/about",
+    "/contact",
+    "/meineangebote-preise",
+    "/massage-buxtehude-faq",
+    "/nutzungsbedingungen",
+    "/datenschutzrichtlinie",
+    "/service-page/60min-signature-luma-gold-medalie",
+    "/service-page/60min-luma-aroma-luxus-massage",
+    "/service-page/90min-luma-aroma-luxus-massage",
+    "/service-page/120min-luma-aroma-luxus-massage",
+    "/service-page/60min-balance-stone-bambus-massage",
+    "/service-page/90min-balance-stone-bambus-massage",
+    "/service-page/120min-balance-stone-bambus-massage",
+    "/service-page/60min-luma-thai-massage",
+    "/service-page/90min-luma-thai-massage",
+    "/service-page/120min-luma-thai-massage",
+    "/service-page/60min-luma-schwangerschaftsmassage",
+    "/service-page/90min-luma-schwangerschaftsmassage",
+    "/service-page/120min-luma-schwangerschaftsmassage",
+    "/service-page/90min-luma-schröpfkopf-massage",
+    "/service-page/120min-luma-schröpfkopf-massage",
+    "/service-page/60min-luma-gesichts-und-kopf-massage",
+    "/service-page/30min-luma-schulter-nacken-rücken",
+    "/service-page/30min-luma-fuß-massage"
+  ]
+}

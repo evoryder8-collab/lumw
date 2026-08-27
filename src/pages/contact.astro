@@ -1,0 +1,323 @@
+---
+/**
+ * KONTAKT. Copy verbatim, including the studio-inside-HAUTNAH note.
+ *
+ * The form posts nowhere yet: the booking backend is stage 5 and lives in
+ * Supabase Edge Functions, outside this repo. Until then the form is marked
+ * inert and the working routes (phone, WhatsApp, email) are given first, so no
+ * visitor is ever led into a dead end. The honeypot and timing fields the spec
+ * asks for are already in place for when the endpoint lands.
+ */
+import { socialImageUrl } from '../lib/images';
+import Layout from '../layouts/Layout.astro';
+import Photo from '../components/Photo.astro';
+import { BUSINESS } from '../lib/site';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
+} from '../lib/schema';
+
+import studioExterior from '../assets/studio-exterior-hautnah.webp';
+
+const title = 'KONTAKT | LUMA Wellness';
+const description =
+  'Nehmen Sie Kontakt mit LUMA Wellness by June Saurin in Buxtehude auf. Vereinbaren Sie heute Ihren Termin für professionelle Massagen und ganzheitliche Entspannung!';
+const path = '/contact';
+
+const schema = graph([
+  businessNode([await socialImageUrl(studioExterior, Astro.site)]),
+  personNode(),
+  websiteNode(),
+  webPageNode({ title, description, path, hasBreadcrumb: true }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: 'KONTAKT', path: '/contact' },
+  ]),
+]);
+
+const waNumber = BUSINESS.phoneE164.replace('+', '');
+---
+
+<Layout {title} {description} {path} schema={schema}>
+  <section class="hero">
+    <div class="shell shell--mid">
+      <p class="eyebrow">LUMA Wellness by June Saurin</p>
+      <h1>Kontakt aufnehmen</h1>
+
+      <div class="prose hero__body">
+        <p>
+          Ich freue mich darauf, Sie persönlich bei LUMA Wellness by June Saurin in Buxtehude
+          begrüßen zu dürfen. Vereinbaren Sie jetzt Ihren Massage-Termin und entdecken Sie
+          ganzheitliche Anwendungen, die auf Ihr körperliches und seelisches Wohlbefinden
+          ausgerichtet sind.
+        </p>
+        <p>
+          Wenn ich gerade mit einer Anwendung beschäftigt bin, kann ich Ihren Anruf möglicherweise
+          nicht sofort entgegennehmen. Senden Sie mir in diesem Fall einfach eine WhatsApp-Nachricht
+          an <a href={`https://wa.me/${waNumber}`} class="underline-gold" rel="noopener">+49 178 8875085</a>,
+          und ich melde mich schnellstmöglich zurück, um einen passenden Termin mit Ihnen zu finden.
+        </p>
+        <p>
+          Alternativ erreichen Sie mich auch gerne per E-Mail an
+          <a href={`mailto:${BUSINESS.email}`} class="underline-gold">june@luma-wellness.com</a>
+          oder über das untenstehende Kontaktformular auf dieser Webseite. Ich beantworte Ihre
+          Anfrage so rasch wie möglich, damit Sie bald die Vorzüge meiner international
+          ausgezeichneten Massage-Expertise in Buxtehude genießen können.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell contact__grid">
+      <!-- Direct routes first: these work today. -->
+      <div class="channels">
+        <a class="channel panel" href={`tel:${BUSINESS.phoneE164}`}>
+          <span class="channel__label">Anrufen</span>
+          <span class="channel__value">{BUSINESS.phone}</span>
+        </a>
+        <a class="channel panel" href={`https://wa.me/${waNumber}`} rel="noopener">
+          <span class="channel__label">WhatsApp</span>
+          <span class="channel__value">{BUSINESS.whatsapp}</span>
+        </a>
+        <a class="channel panel" href={`mailto:${BUSINESS.email}`}>
+          <span class="channel__label">E-Mail</span>
+          <span class="channel__value">{BUSINESS.email}</span>
+        </a>
+      </div>
+
+      <form class="form panel" method="post" action="#" novalidate>
+        <p class="form__intro">Füllen Sie das untenstehende Formular aus.</p>
+
+        <div class="form__row">
+          <label class="field">
+            <span class="field__label">Vorname</span>
+            <input type="text" name="vorname" autocomplete="given-name" />
+          </label>
+          <label class="field">
+            <span class="field__label">Nachname</span>
+            <input type="text" name="nachname" autocomplete="family-name" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input type="email" name="email" autocomplete="email" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Thema</span>
+          <input type="text" name="thema" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Hier schreiben...</span>
+          <textarea name="nachricht" rows="5"></textarea>
+        </label>
+
+        <!-- Honeypot plus a timing field, so the form stays fast and accessible
+             without a CAPTCHA. Both are read by create-booking in stage 5. -->
+        <div class="hp" aria-hidden="true">
+          <label>Firma<input type="text" name="firma" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <input type="hidden" name="ts" value="" />
+
+        <button type="submit" class="pill form__submit" disabled>Senden Sie</button>
+
+        <p class="form__note">
+          Das Formular wird derzeit noch angebunden. Bitte erreichen Sie mich in der Zwischenzeit
+          telefonisch, per WhatsApp oder per E-Mail.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell info">
+      <div class="info__copy">
+        <p class="eyebrow">Relax. Erfrischen. Wiederbeleben.</p>
+        <h2>Kontakt Info</h2>
+
+        <dl class="info__list">
+          <div>
+            <dt>Tel:</dt>
+            <dd><a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></dd>
+          </div>
+          <div>
+            <dt>Adresse</dt>
+            <dd>Hauptstraße 19,<br />21614 Buxtehude</dd>
+          </div>
+        </dl>
+
+        <p class="info__note">
+          *Bitte beachten Sie, dass sich mein Studio in der Filiale HAUTNAH befindet, wie auf dem
+          Außenbild unten zu sehen ist.
+        </p>
+
+        <!-- Click-to-load, never an embed on page load: an embedded map would
+             drag in a third party and force a TTDSG consent banner. -->
+        <p class="info__map">
+          <a href={BUSINESS.mapUrl} class="underline-gold" rel="noopener" target="_blank">
+            In Google Maps öffnen
+          </a>
+        </p>
+      </div>
+
+      <figure class="info__figure">
+        <Photo
+          src={studioExterior}
+          alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
+          widths={[520, 800, 1100]}
+          sizes="(max-width: 900px) 92vw, 52vw"
+          ratio="4 / 3"
+        />
+      </figure>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem); }
+  .hero__body { margin-top: clamp(1.75rem, 3vw, 2.5rem); max-width: 62ch; }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+
+  /* --- Channels --- */
+
+  .channels { display: grid; gap: 0.85rem; }
+
+  .channel {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.4rem 1.6rem;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .channel__label {
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .channel__value {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .channel:hover { transform: translateY(-2px); }
+  }
+
+  /* --- Form --- */
+
+  .form { padding: clamp(1.75rem, 3.5vw, 2.75rem); display: grid; gap: 1.15rem; }
+
+  .form__intro { margin: 0 0 0.4rem; color: var(--ink-soft); font-size: var(--step-small); }
+
+  .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+
+  .field { display: grid; gap: 0.5rem; }
+
+  .field__label {
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.8rem 1rem;
+    font-family: var(--font-body);
+    font-size: var(--step-small);
+    font-weight: 300;
+    color: var(--ink);
+    background: rgb(255 255 255 / 0.7);
+    border: 0;
+    border-radius: var(--radius-interactive);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 1px 0 rgb(43 38 34 / 0.06);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .field textarea { resize: vertical; line-height: 1.6; }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 0 0 2px var(--gold);
+  }
+
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .form__submit { margin-top: 0.4rem; justify-self: start; }
+  .form__submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .form__note {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+
+  /* --- Info --- */
+
+  .info {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .info__copy h2 { margin-bottom: 2rem; }
+
+  .info__list { margin: 0; display: grid; gap: 1.35rem; }
+  .info__list > div { display: grid; gap: 0.3rem; }
+  .info__list dt {
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .info__list dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.9vw, 1.4rem);
+    line-height: 1.4;
+  }
+
+  .info__note {
+    margin-top: 1.75rem;
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--ink-mute);
+    line-height: 1.55;
+  }
+
+  .info__map { margin-top: 1.25rem; font-size: var(--step-small); }
+  .info__figure { margin: 0; }
+
+  @media (max-width: 900px) {
+    .contact__grid, .info { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .form__row { grid-template-columns: 1fr; }
+  }
+</style>

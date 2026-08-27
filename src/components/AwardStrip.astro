@@ -1,0 +1,77 @@
+---
+/**
+ * Chapter 2 of the scroll narrative: the credibility strip.
+ *
+ * Section 9.2 specifies a seamless infinite marquee. Stage 2 is static by
+ * contract, so this ships as the still form, which doubles as the
+ * prefers-reduced-motion grammar the spec requires. Stage 6 duplicates the
+ * track and adds the translateX loop; the markup is already shaped for it.
+ */
+import { AWARDS } from '../lib/site';
+---
+
+<section class="strip" aria-label="Internationale Auszeichnungen">
+  <div class="strip__track">
+    {
+      AWARDS.map((a) => (
+        <span class="strip__item">
+          <span class="strip__year">{a.year}</span>
+          <span class="strip__award">{a.short}</span>
+        </span>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .strip {
+    padding-block: clamp(2rem, 4vw, 3.25rem);
+    overflow: hidden;
+    /* Hairlines of caught light, never dark rules. */
+    border-block: 1px solid rgb(184 147 78 / 0.14);
+  }
+
+  /* Auto-fit rather than a fixed column count: five fixed columns overflowed
+     1440 and pushed the whole page into horizontal scroll. This cannot, because
+     every track is allowed to shrink to the container. */
+  .strip__track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    justify-items: center;
+    align-items: center;
+    gap: 1rem clamp(0.75rem, 2vw, 2rem);
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .strip__item {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.55rem;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .strip__year {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--gold-text);
+    letter-spacing: 0.04em;
+  }
+
+  /* Gold small caps on porcelain. Gold never carries text below 18px as body
+     copy; this is a letterspaced label, held at AA-large by weight and size. */
+  .strip__award {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 720px) {
+    .strip__award { font-size: 0.6875rem; letter-spacing: 0.1em; }
+  }
+</style>

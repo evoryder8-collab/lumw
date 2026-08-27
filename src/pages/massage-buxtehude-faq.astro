@@ -1,0 +1,137 @@
+---
+/**
+ * FAQ. The eleven live entries, verbatim, feeding a FAQPage graph.
+ *
+ * Answers are open <details> by default so the text is server-rendered and
+ * visible with JavaScript disabled. Section 4: answer the question directly in
+ * the first sentence under each heading, which the live copy already does.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, faqNode,
+} from '../lib/schema';
+
+const title = 'Best Massage in Buxtehude | LUMA Wellness by June Saurin';
+const description =
+  'Besuchen Sie LUMA Wellness in Buxtehude für die beste Massage im Landkreis Stade. Unsere Experten bieten Massage Buxtehude, Thai Massage Buxtehude, Schwangerschafts-, Sport- und Luxusmassagen. Erleben Sie außergewöhnliche Entspannung und buchen Sie jetzt online bei June Saurin.';
+const path = '/massage-buxtehude-faq';
+
+const faq = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+
+const schema = graph([
+  businessNode(),
+  personNode(),
+  websiteNode(),
+  webPageNode({ title, description, path, hasBreadcrumb: true }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: 'FAQ', path },
+  ]),
+  faqNode(path, faq.map((f) => ({ question: f.data.question, answerText: f.data.answerText }))),
+]);
+---
+
+<Layout {title} {description} {path} schema={schema}>
+  <section class="hero">
+    <div class="shell shell--mid">
+      <p class="eyebrow">LUMA Wellness Buxtehude</p>
+      <h1>Häufig gestellte Fragen</h1>
+      <p class="lede hero__lede">
+        Willkommen bei den LUMA Wellness FAQ. Hier finden Sie hilfreiche Antworten auf häufig
+        gestellte Fragen von geschätzten Kunden in Buxtehude und der umliegenden Region. Ob Sie
+        nach der perfekten „Massage Buxtehude" suchen oder die beste „Thai Massage Buxtehude"
+        erleben möchten, ich bin hier, um Sie zu beraten.
+      </p>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell shell--mid">
+      <ol class="faq">
+        {
+          faq.map((f, i) => (
+            <li class="faq__item">
+              <details class="faq__details" open>
+                <summary class="faq__summary">
+                  <span class="faq__num">{String(i + 1).padStart(2, '0')}</span>
+                  <h2 class="faq__q">{f.data.question}</h2>
+                  <span class="faq__chev" aria-hidden="true"></span>
+                </summary>
+                <div class="prose faq__a" set:html={f.data.answerHtml} />
+              </details>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section close">
+    <div class="shell shell--narrow close__inner">
+      <h2 class="close__title">Noch eine Frage offen?</h2>
+      <p class="lede">Schreiben Sie mir, ich melde mich schnellstmöglich zurück.</p>
+      <a href="/contact" class="pill">Kontakt aufnehmen</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem); }
+  .hero__lede { margin-top: 1.75rem; max-width: 60ch; }
+
+  .faq { list-style: none; margin: 0; padding: 0; display: grid; }
+
+  .faq__item { border-bottom: 1px solid rgb(184 147 78 / 0.14); }
+  .faq__item:first-child { border-top: 1px solid rgb(184 147 78 / 0.14); }
+
+  .faq__summary {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.6rem 0.25rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__summary::-webkit-details-marker { display: none; }
+  .faq__summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+  .faq__num {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--gold-text);
+    letter-spacing: 0.06em;
+  }
+
+  .faq__q {
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    line-height: 1.28;
+    margin: 0;
+    font-weight: 300;
+  }
+
+  .faq__chev {
+    width: 11px;
+    height: 11px;
+    margin-top: 0.35rem;
+    border-right: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    transform: rotate(45deg);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .faq__details[open] .faq__chev { transform: rotate(-135deg); }
+
+  .faq__a {
+    padding: 0 0.25rem 2rem;
+    max-width: 66ch;
+  }
+  .faq__a :global(p) { color: var(--ink-soft); }
+  .faq__a :global(ul) { margin-top: 0.5rem; }
+
+  .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .faq__summary:hover .faq__q { color: var(--gold-text); }
+  }
+</style>

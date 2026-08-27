@@ -1,0 +1,417 @@
+---
+/**
+ * Home. Copy verbatim from the live page; title, description and H1 unchanged.
+ *
+ * Chapter order follows section 9.2: dawn hero, credibility strip, service
+ * chapters, June, testimonial, booking, closing loop. Motion arrives in stage 6
+ * on this same structure.
+ */
+import Photo from '../components/Photo.astro';
+import { heroPreload } from '../lib/heroPreload';
+import { socialImageUrl } from '../lib/images';
+import Layout from '../layouts/Layout.astro';
+import AwardStrip from '../components/AwardStrip.astro';
+import { BUSINESS } from '../lib/site';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode,
+} from '../lib/schema';
+
+import junePortrait from '../assets/june-portrait.webp';
+import studioWorking from '../assets/studio-june-working.webp';
+import studioExterior from '../assets/studio-exterior-hautnah.webp';
+
+const title =
+  'Massage Buxtehude – LUMA Wellness by June Saurin | Goldprämierte Massagen & Wellness';
+const description =
+  'Massage in Buxtehude bei LUMA Wellness – internationale Goldmedaillen-Massagen & ganzheitliche Entspannung in Hauptstraße 19. Jetzt Termin sichern & Wohlbefinden steigern!';
+const path = '/';
+
+const angebote = [
+  {
+    name: 'LUMA Aroma-Luxus Massage (Klassiker)',
+    text: 'Diese einzigartige Behandlung kombiniert die bewährten Techniken der klassischen Massage mit den therapeutischen Eigenschaften von Bio-Aromatherapie-Ölen.',
+  },
+  {
+    name: 'LUMA Gold-Medalie Signature Massage',
+    text: 'Eine exklusive Massage, die preisgekrönte Techniken aus internationalen Wettbewerben vereint und durch eine maßgeschneiderte Klanglandschaft ergänzt wird. Die LUMA Gold-Medalie Signature Massage kombiniert Elemente aus verschiedenen Massagestilen, individuell auf Ihre Bedürfnisse abgestimmt, und entführt Sie mit beruhigender Musik und Naturklängen in eine Welt tiefster Entspannung. Ideal für alle, die ein einzigartiges, luxuriöses Wellness-Erlebnis suchen, das Körper und Geist harmonisch in Einklang bringt.',
+  },
+  {
+    name: 'LUMA THAI-Solution Massage (Nuad-Benja-Phaki)',
+    text: 'Traditionelle thailändische Techniken zur Verbesserung der Beweglichkeit und des Energieflusses. Diese Massageform kombiniert sanfte Dehnungen mit Druckpunkttherapie, um Verspannungen zu lösen und die Flexibilität zu erhöhen.',
+  },
+  {
+    name: 'LUMA Schwangerschaftsmassage',
+    text: 'Sanfte, sichere Techniken zur Linderung von Schwangerschaftsbeschwerden. Diese speziell entwickelte Massage unterstützt werdende Mütter dabei, Schmerzen zu reduzieren, Stress abzubauen und das allgemeine Wohlbefinden zu steigern.',
+  },
+  {
+    name: 'STARK BALL MASSAGE / Sportmassage',
+    text: 'Speziell für Athleten und körperlich aktive Personen zur Verbesserung der Flexibilität und zur Vorbeugung von Verletzungen. Diese Massage hilft, Muskelverspannungen zu lösen, die Regeneration zu fördern und die Leistungsfähigkeit zu steigern.',
+  },
+  {
+    name: 'Gesichts- und Kopfmassage inkl. Gua Sha',
+    text: 'Verjüngende Behandlungen, die die Haut straffen, die Durchblutung fördern und für ein erfrischtes Erscheinungsbild sorgen.',
+  },
+];
+
+const heroSizes = '(max-width: 900px) 78vw, 40vw';
+const preloadImage = await heroPreload(junePortrait, [420, 640, 900], heroSizes);
+
+const ogImage = await socialImageUrl(junePortrait, Astro.site);
+
+const schema = graph([
+  businessNode([
+    await socialImageUrl(junePortrait, Astro.site),
+    await socialImageUrl(studioWorking, Astro.site),
+    await socialImageUrl(studioExterior, Astro.site),
+  ]),
+  personNode(await socialImageUrl(junePortrait, Astro.site)),
+  websiteNode(),
+  webPageNode({ title, description, path, imageUrl: await socialImageUrl(junePortrait, Astro.site) }),
+]);
+---
+
+<Layout {title} {description} {path} schema={schema} {ogImage} {preloadImage}>
+  <!-- Chapter 1. Dawn hero. The page breathes before the user moves. -->
+  <section class="hero">
+    <div class="shell hero__inner">
+      <div class="hero__copy">
+        <p class="eyebrow">Weltweit ausgezeichnete Massage</p>
+        <h1 class="hero__title">Beste Massage in Buxtehude</h1>
+        <p class="hero__sub">
+          LUMA Wellness by June Saurin, Ihre ausgezeichnete Therapeutin.
+        </p>
+        <div class="hero__actions">
+          <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+          <a href="/meineangebote-preise" class="underline-gold hero__ghost">
+            Alle Angebote &amp; Preise
+          </a>
+        </div>
+      </div>
+
+      <figure class="hero__figure">
+        <Photo
+          src={junePortrait}
+          alt="June Saurin, international ausgezeichnete Massagetherapeutin bei LUMA Wellness in Buxtehude"
+          widths={[420, 640, 900]}
+          sizes={heroSizes}
+          ratio="4 / 5"
+          priority
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Chapter 2. Credibility strip. -->
+  <AwardStrip />
+
+  <!-- Chapter 3. Intro. -->
+  <section class="section">
+    <div class="shell shell--mid">
+      <h2 class="section__title">
+        Grosse Wirkung, kleiner Körper – erleben Sie LUMA Wellness in Buxtehude
+      </h2>
+      <div class="prose intro__body">
+        <p>
+          Trotz meines zierlichen Körpers übertreffe ich sämtliche Erwartungen mit Kraft und
+          Geschicklichkeit. Schon nach einer einzigen Sitzung spüren Sie die Qualität meiner Arbeit
+          und erleben positive Effekte. Mit einer Vielfalt an Techniken und Werkzeugen erschaffe ich
+          ein maßgeschneidertes Massageerlebnis, das Körper und Geist gleichermaßen anspricht.
+        </p>
+        <p>
+          Ich, June Saurin, bringe unermüdliche Entschlossenheit und ein tiefes Herz für
+          ganzheitliche Massagen nach Buxtehude. Diese Passion bescherte mir ein erfülltes Leben
+          voller Erfolge und höchster Kundenzufriedenheit.
+        </p>
+        <p class="intro__link">
+          <a href="/meineangebote-preise" class="underline-gold">Alle Angebote &amp; Preise</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 4. Ganzheitliche Massagen, against the studio photograph. -->
+  <section class="section holistic">
+    <div class="shell holistic__inner">
+      <figure class="holistic__figure">
+        <Photo
+          src={studioWorking}
+          alt="June Saurin bei einer ganzheitlichen Massage im LUMA Wellness Studio in Buxtehude"
+          widths={[520, 760, 1040]}
+          sizes="(max-width: 900px) 88vw, 48vw"
+          ratio="5 / 4"
+        />
+      </figure>
+
+      <div class="holistic__copy">
+        <p class="eyebrow">Heilung ist mehr als nur äusserlich</p>
+        <h2>Ganzheitliche Massagen in Buxtehude</h2>
+        <div class="prose">
+          <p>
+            Heilung geht über die rein physische Ebene hinaus. Bei LUMA Wellness by June Saurin in
+            Buxtehude ist sie nicht nur mit wissenschaftlicher und medizinischer Expertise verknüpft,
+            sondern kann auch spirituell von innen heraus erwachen. Ein gesunder Geist funktioniert
+            optimal in einem gesunden Körper – genau das fördern meine Massagen: tiefgreifende
+            körperliche Entspannung und geistiges Wohlbefinden. Durch die Kombination traditioneller
+            thailändischer Techniken mit modernen Wellnessansätzen schaffe ich eine harmonische
+            Balance, die Ihnen hilft, Stress abzubauen und Ihre innere Energie wiederzuentdecken.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 5. Angebotsübersicht. -->
+  <section class="section">
+    <div class="shell">
+      <h2 class="section__title section__title--center">
+        Meine Massage und Wellnessangebote in Buxtehude
+      </h2>
+
+      <ul class="offers">
+        {
+          angebote.map((a) => (
+            <li class="offers__item panel">
+              <h3 class="offers__name">{a.name}</h3>
+              <p class="offers__text">{a.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="offers__foot">
+        <p>
+          <a href="/meineangebote-preise" class="underline-gold">
+            Komplette Liste der Massage-Dienstleistungen hier.
+          </a>
+        </p>
+        <p class="offers__cta-text">
+          Kontaktieren Sie mich noch heute, um Ihren Termin zu buchen und die besten Massagen in
+          Buxtehude zu erleben!
+        </p>
+        <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 6. Hours and location. -->
+  <section class="section hours">
+    <div class="shell hours__inner">
+      <div class="hours__col panel">
+        <p class="eyebrow">Öffnungszeit</p>
+        <dl class="hours__list">
+          <div><dt>Montag-Freitag</dt><dd>10:00 - 18:00</dd></div>
+          <div><dt>Samstag</dt><dd>11:00 - 16:00</dd></div>
+          <div><dt>Sonntag</dt><dd>Geschlossen</dd></div>
+        </dl>
+      </div>
+
+      <div class="hours__col panel">
+        <p class="eyebrow">Standort</p>
+        <p class="hours__address">Hauptstrasse 19, 21614 Buxtehude DE</p>
+        <p class="hours__note">
+          *Bitte beachten Sie, dass sich mein Studio in der Filiale HAUTNAH befindet, wie auf dem
+          Außenbild unten zu sehen ist.
+        </p>
+        <p class="hours__contact">
+          <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a>
+          <a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a>
+        </p>
+      </div>
+
+      <figure class="hours__figure">
+        <Photo
+          src={studioExterior}
+          alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
+          widths={[520, 800, 1100]}
+          sizes="(max-width: 900px) 92vw, 62vw"
+          ratio="16 / 9"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Chapter 7. Closing loop. The dawn motif returns behind the final CTA. -->
+  <section class="section close">
+    <div class="shell shell--narrow close__inner">
+      <p class="eyebrow">LUMA Wellness by June Saurin</p>
+      <h2 class="close__title">Beste Massage in Buxtehude</h2>
+      <p class="lede close__lede">Termine nur nach vorheriger Absprache.</p>
+      <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* --- Hero ------------------------------------------------------------- */
+
+  .hero {
+    display: flex;
+    align-items: center;
+    min-height: min(88svh, 900px);
+    padding-block: clamp(3rem, 8vw, 7rem);
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .hero__title {
+    /* One light display line in ink. The luxury signal is very large, very
+       light type with enormous whitespace. */
+    font-size: var(--step-display);
+    line-height: 0.98;
+    max-width: 12ch;
+  }
+
+  .hero__sub {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 34ch;
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .hero__ghost { font-size: var(--step-small); color: var(--ink-soft); }
+
+  .hero__figure { margin: 0; }
+
+  /* --- Sections ---------------------------------------------------------- */
+
+  .section__title { max-width: 20ch; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .section__title--center { max-width: 24ch; margin-inline: auto; text-align: center; }
+
+  .intro__body { max-width: 62ch; }
+  .intro__link { margin-top: 2rem; }
+
+  /* --- Holistic ---------------------------------------------------------- */
+
+  .holistic__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .holistic__figure { margin: 0; }
+  .holistic__copy h2 { margin-bottom: 1.5rem; }
+
+  /* --- Offers ------------------------------------------------------------ */
+
+  .offers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+    gap: clamp(1rem, 2vw, 1.75rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .offers__item { padding: clamp(1.75rem, 3vw, 2.5rem); }
+
+  .offers__name {
+    font-size: 1.22rem;
+    line-height: 1.25;
+    margin-bottom: 0.9rem;
+  }
+
+  .offers__text {
+    font-size: var(--step-small);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .offers__foot {
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    text-align: center;
+  }
+
+  .offers__foot p { margin: 0; max-width: 52ch; }
+  .offers__cta-text { color: var(--ink-soft); }
+
+  /* --- Hours ------------------------------------------------------------- */
+
+  .hours__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .hours__col { padding: clamp(1.75rem, 3vw, 2.5rem); }
+
+  .hours__list { margin: 0; display: grid; gap: 1rem; }
+  .hours__list > div { display: flex; justify-content: space-between; gap: 1rem; }
+  .hours__list dt { color: var(--ink-soft); font-size: var(--step-small); }
+  .hours__list dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+
+  .hours__address {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+
+  .hours__note {
+    font-size: 0.875rem;
+    color: var(--ink-mute);
+    font-style: italic;
+    line-height: 1.55;
+  }
+
+  .hours__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+    margin-top: 1.25rem;
+    font-size: var(--step-small);
+  }
+
+  .hours__figure { grid-column: 1 / -1; margin: 0; }
+
+  /* --- Closing loop ------------------------------------------------------ */
+
+  .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
+  .close__title { max-width: 14ch; }
+  .close__lede { margin: 0; }
+
+  /* --- Responsive -------------------------------------------------------- */
+
+  @media (max-width: 900px) {
+    .hero__inner,
+    .holistic__inner,
+    .hours__inner { grid-template-columns: 1fr; }
+
+    .hero__inner { gap: 2rem; }
+    .hero__figure { order: -1; max-width: 22rem; }
+    .hero__title { max-width: none; }
+    .holistic__figure { order: -1; }
+  }
+
+  /* On a phone a 4:5 portrait ate the whole first viewport and pushed the H1
+     and the CTA below the fold. Capping the frame keeps the headline, the sub
+     and the gold pill visible without cropping June out of her own photograph. */
+  @media (max-width: 900px) {
+    .hero { min-height: 0; padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 6vw, 4rem); }
+    .hero__figure :global(.media) { max-height: 38svh; }
+    .hero__figure :global(img) { object-position: 50% 22%; }
+  }
+</style>

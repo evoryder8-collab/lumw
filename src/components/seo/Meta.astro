@@ -1,0 +1,58 @@
+---
+/**
+ * Titles, descriptions and canonicals are copied exactly from the live site at
+ * cutover. No creative rewrites: never change URL and title in the same release
+ * (CLAUDE.md section 7).
+ *
+ * Canonicals carry no trailing slash because the live Wix URLs carry none, and
+ * the canonical is the strongest identifier Google holds for these pages.
+ *
+ * noindex defaults to ON. Section 7 step 1 says staging is built noindex and
+ * step 5 removes it in the cutover release, so shipping it the other way round
+ * would risk indexing the staging build. Flip with PUBLIC_INDEXABLE=true.
+ */
+import { SITE_URL } from '../../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'profile';
+}
+
+const { title, description, path, ogImage, ogType = 'website' } = Astro.props;
+
+const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
+const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true';
+const image = ogImage ? new URL(ogImage, SITE_URL).href : undefined;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+{
+  indexable ? (
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  ) : (
+    <meta name="robots" content="noindex, nofollow" />
+  )
+}
+
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content="LUMA WELLNESS by June Saurin" />
+<meta property="og:locale" content="de_DE" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{image && <meta property="og:image" content={image} />}
+{image && <meta property="og:image:alt" content={title} />}
+
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{image && <meta name="twitter:image" content={image} />}
+
+<meta name="geo.region" content="DE-NI" />
+<meta name="geo.placename" content="Buxtehude" />

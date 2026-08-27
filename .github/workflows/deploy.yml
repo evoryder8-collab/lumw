@@ -1,0 +1,61 @@
+name: Build and deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs pages:write to deploy; nothing else is granted.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never two deploys at once, but let a running one finish so the site is never
+# left half-published mid-propagation.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # `npm run build` runs check:urls as part of the build script, so a
+      # missing URL fails here and never reaches the deploy job.
+      - name: Build
+        run: npm run build
+        env:
+          # Staging stays noindex until the DNS cutover release. Flip this to
+          # 'true' in the same release that points DNS at Pages.
+          PUBLIC_INDEXABLE: 'false'
+
+      - name: Validate JSON-LD on every page
+        run: npm run check:jsonld
+
+      - name: Check contrast against the wash
+        run: npm run check:contrast
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

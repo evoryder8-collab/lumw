@@ -1,0 +1,287 @@
+---
+/**
+ * The 18 /service-page/ routes.
+ *
+ * These are the URLs most at risk in the migration: four of them carry
+ * non-ASCII characters (schröpfkopf x2, rücken, fuß) that must survive
+ * byte-identically. The slug comes from the collection data, never from a
+ * filename, so macOS cannot decompose it into git on the way past.
+ *
+ * Names and configured durations disagree on three entries. That is live and
+ * stays live at cutover.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+import { imageByName, socialImageUrl } from '../../lib/images';
+import { heroPreload } from '../../lib/heroPreload';
+import { BUSINESS } from '../../lib/site';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
+} from '../../lib/schema';
+
+export const getStaticPaths = (async () => {
+  const services = await getCollection('services');
+  return services.map((s) => ({
+    params: { slug: s.data.slug },
+    props: { service: s.data, all: services.map((x) => x.data) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { service, all } = Astro.props;
+
+const image = imageByName(service.image);
+
+const path = `/service-page/${service.slug}`;
+const title = service.seoTitle;
+const description = service.seoDescription;
+
+/** The other durations of the same treatment, so every variant is reachable. */
+const siblings = all
+  .filter((s) => s.family === service.family && s.slug !== service.slug)
+  .sort((a, b) => a.durationMin - b.durationMin);
+
+const familyOffers = all
+  .filter((s) => s.family === service.family)
+  .sort((a, b) => a.durationMin - b.durationMin);
+
+const imageUrl = image ? await socialImageUrl(image, Astro.site) : undefined;
+
+const heroSizes = '(max-width: 900px) 88vw, 42vw';
+const preloadImage = image ? await heroPreload(image, [420, 640, 900], heroSizes) : undefined;
+
+const schema = graph([
+  businessNode(),
+  personNode(),
+  websiteNode(),
+  webPageNode({ title, description, path, imageUrl, hasBreadcrumb: true }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: 'MEINE ANGEBOTE & PREISE', path: '/meineangebote-preise' },
+    { name: service.name, path },
+  ]),
+  serviceNode({
+    family: service.family,
+    name: service.familyName,
+    description: service.description,
+    imageUrl,
+    url: `${BUSINESS.name ? 'https://www.luma-wellness.com' : ''}${path}`,
+    offers: familyOffers.map((s) => ({
+      durationMin: s.durationMin,
+      priceEur: s.priceEur,
+      url: `https://www.luma-wellness.com/service-page/${s.slug}`,
+    })),
+  }),
+]);
+---
+
+<Layout {title} {description} {path} schema={schema} ogImage={imageUrl} {preloadImage}>
+  <article>
+    <section class="hero">
+      <div class="shell hero__inner">
+        <div class="hero__copy">
+          <nav class="crumbs" aria-label="Brotkrumennavigation">
+            <a href="/" class="underline-gold">Startseite</a>
+            <span aria-hidden="true">/</span>
+            <a href="/meineangebote-preise" class="underline-gold">Angebote &amp; Preise</a>
+          </nav>
+
+          <p class="eyebrow">{service.tagline}</p>
+          <h1 class="hero__title">{service.name}</h1>
+
+          <dl class="facts">
+            <div class="fact">
+              <dt>Dauer</dt>
+              <dd>{service.durationMin} Minuten</dd>
+            </div>
+            <div class="fact">
+              <dt>Preis</dt>
+              <dd class="fact__price">{service.priceEur}€</dd>
+            </div>
+          </dl>
+
+          <div class="hero__actions">
+            <a href="/contact" class="pill">Termin anfragen</a>
+            <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold hero__ghost">
+              {BUSINESS.phone}
+            </a>
+          </div>
+        </div>
+
+        {
+          image && (
+            <figure class="hero__figure">
+              <Photo
+                src={image}
+                alt={service.imageAlt ?? service.name}
+                widths={[420, 640, 900]}
+                sizes={heroSizes}
+                ratio="4 / 5"
+                priority
+              />
+            </figure>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="section--tight">
+      <div class="shell shell--mid">
+        <div class="prose desc">
+          <p>{service.description}</p>
+        </div>
+      </div>
+    </section>
+
+    {
+      siblings.length > 0 && (
+        <section class="section--tight">
+          <div class="shell shell--mid">
+            <h2 class="siblings__title">Weitere Dauern dieser Behandlung</h2>
+            <ul class="siblings">
+              {siblings.map((s) => (
+                <li>
+                  <a href={`/service-page/${s.slug}`} class="sibling panel">
+                    <span class="sibling__dur">{s.durationMin} Minuten</span>
+                    <span class="sibling__price">{s.priceEur}€</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="section close">
+      <div class="shell shell--narrow close__inner">
+        <p class="eyebrow">Termine nur nach vorheriger Absprache</p>
+        <h2 class="close__title">{service.familyName} buchen</h2>
+        <a href="/contact" class="pill">Termin anfragen</a>
+        <p class="close__back">
+          <a href="/meineangebote-preise" class="underline-gold">Alle Angebote &amp; Preise</a>
+        </p>
+      </div>
+    </section>
+  </article>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem); }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.8125rem;
+    color: var(--ink-mute);
+  }
+  .crumbs span { color: var(--gold); }
+
+  .hero__title {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1.04;
+    max-width: 16ch;
+  }
+
+  /* --- Facts --- */
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
+  }
+
+  .fact { display: grid; gap: 0.35rem; }
+
+  .fact dt {
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .fact dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+    color: var(--ink);
+  }
+
+  .fact__price { color: var(--gold-text); }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+
+  .hero__ghost { font-size: var(--step-small); color: var(--ink-soft); }
+
+  .hero__figure { margin: 0; }
+
+  .desc { max-width: 64ch; }
+  .desc :global(p) { font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.65; }
+
+  /* --- Siblings --- */
+
+  .siblings__title {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .siblings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0.85rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sibling {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.25rem 1.5rem;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .sibling__dur { font-size: var(--step-small); color: var(--ink-soft); }
+
+  .sibling__price {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .sibling:hover { transform: translateY(-2px); }
+    .sibling:hover .sibling__price { color: var(--gold-text); }
+  }
+
+  /* --- Close --- */
+
+  .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.4rem; }
+  .close__title { max-width: 18ch; }
+  .close__back { font-size: var(--step-small); margin: 0; }
+
+  @media (max-width: 900px) {
+    .hero__inner { grid-template-columns: 1fr; }
+    .hero__figure { order: -1; max-width: 20rem; }
+    .hero__title { max-width: none; }
+  }
+</style>

@@ -1,0 +1,7 @@
+---
+/** One @graph per page. Emitted unescaped so the linter and Google both parse it. */
+interface Props { data: unknown }
+const { data } = Astro.props;
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+<script type="application/ld+json" is:inline set:html={json} />

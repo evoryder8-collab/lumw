@@ -1,0 +1,290 @@
+---
+/**
+ * MEINE ANGEBOTE & PREISE. Nine treatment sections, verbatim, with the live
+ * price lines exactly as written. Prices here disagree with Wix Bookings for
+ * Thai, and Stark Ball has a section with nothing bookable while Schroepfkopf
+ * is bookable with no section. Both are known inconsistencies and neither is
+ * fixed at cutover.
+ *
+ * Each treatment emits a Service node with an Offer per duration carrying the
+ * price exactly as it appears in the copy.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Photo from '../components/Photo.astro';
+import { imageByName, socialImageUrl } from '../lib/images';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
+} from '../lib/schema';
+
+const title =
+  'Massageangebote & Preise in Buxtehude – LUMA Wellness by June Saurin | Ganzheitliche Therapien';
+const description =
+  'Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19. ✓ International ausgezeichnete Massage-Expertin ✓ Wellnessbehandlungen ✓ Persönliche Beratung. Jetzt Wunschtermin sichern!';
+const path = '/meineangebote-preise';
+
+const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
+
+const img = imageByName;
+
+// Schema images are rendered at a social-friendly width rather than pointing at
+// the raw originals, which Astro would otherwise have to emit in full.
+const serviceImageUrls: Record<string, string | undefined> = Object.fromEntries(
+  await Promise.all(
+    treatments.map(async (t) => {
+      const i = img(t.data.image);
+      return [t.data.id, i ? await socialImageUrl(i, Astro.site) : undefined];
+    }),
+  ),
+);
+
+const schema = graph([
+  businessNode(),
+  personNode(),
+  websiteNode(),
+  webPageNode({ title, description, path, hasBreadcrumb: true }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: 'MEINE ANGEBOTE & PREISE', path },
+  ]),
+  ...treatments.map((t) =>
+    serviceNode({
+      family: t.data.id,
+      name: t.data.name.replace(/^\|\s*/, '').trim(),
+      description: t.data.body.find((b) => b.type === 'p')?.text ?? t.data.name,
+      offers: t.data.prices.map((p) => ({ durationMin: p.durationMin, priceEur: p.priceEur })),
+      url: `https://www.luma-wellness.com${path}`,
+      imageUrl: serviceImageUrls[t.data.id],
+    }),
+  ),
+]);
+
+const money = (n: number) => `${n}€`;
+---
+
+<Layout {title} {description} {path} schema={schema}>
+  <section class="hero">
+    <div class="shell">
+      <p class="eyebrow">LUMA Wellness by June Saurin</p>
+      <h1>Meine Angebote &amp; Preise</h1>
+      <p class="lede hero__lede">
+        Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19.
+      </p>
+    </div>
+  </section>
+
+  <!-- Price index. Lets a visitor scan every price without scrolling the whole
+       page, and gives the section anchors somewhere to be linked from. -->
+  <section class="section--tight">
+    <div class="shell">
+      <ul class="index">
+        {
+          treatments.map((t) => (
+            <li class="index__item">
+              <a href={`#${t.data.id}`} class="index__link">
+                <span class="index__name">{t.data.name.replace(/^\|\s*/, '')}</span>
+                <span class="index__prices">
+                  {t.data.prices.map((p) => (
+                    <span class="index__price">
+                      <span class="index__dur">{p.durationMin}min</span>
+                      {money(p.priceEur)}
+                    </span>
+                  ))}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    treatments.map((t, i) => {
+      const image = img(t.data.image);
+      return (
+        <section class="section treatment" id={t.data.id}>
+          <div class="shell treatment__inner">
+            <div class:list={['treatment__media', i % 2 === 1 && 'treatment__media--flip']}>
+              {image && (
+                <figure>
+                  <Photo
+                    src={image}
+                    alt={t.data.imageAlt ?? t.data.name}
+                    widths={[420, 640, 900]}
+                    sizes="(max-width: 900px) 88vw, 38vw"
+                    ratio="4 / 5"
+                  />
+                </figure>
+              )}
+            </div>
+
+            <div class="treatment__copy">
+              <p class="treatment__num">{t.data.number}</p>
+              <h2 class="treatment__name">{t.data.name.replace(/^\|\s*/, '')}</h2>
+
+              <div class="prose treatment__body">
+                {t.data.body.map((b) =>
+                  b.type === 'p' ? (
+                    <p>{b.text}</p>
+                  ) : b.type === 'benefit' ? (
+                    <p class="benefit">
+                      <strong>{b.label}:</strong> {b.text}
+                    </p>
+                  ) : (
+                    <ul>{b.items.map((it) => <li>{it}</li>)}</ul>
+                  ),
+                )}
+              </div>
+
+              <div class="price panel">
+                <span class="price__label">Preis</span>
+                <span class="price__values">
+                  {t.data.prices.map((p) => (
+                    <span class="price__pair">
+                      <span class="price__dur">{p.durationMin}min.</span>
+                      <span class="price__amt">{money(p.priceEur)}</span>
+                    </span>
+                  ))}
+                </span>
+              </div>
+
+              <p class="treatment__cta">
+                <a href="/contact" class="pill">Termin anfragen</a>
+              </p>
+            </div>
+          </div>
+        </section>
+      );
+    })
+  }
+
+  <section class="section close">
+    <div class="shell shell--narrow close__inner">
+      <h2 class="close__title">Ihren Termin sichern</h2>
+      <p class="lede">Termine nur nach vorheriger Absprache.</p>
+      <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2rem); }
+  .hero__lede { margin-top: 1.5rem; }
+
+  /* --- Price index --- */
+
+  .index { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+
+  .index__item { border-bottom: 1px solid rgb(184 147 78 / 0.14); }
+  .index__item:first-child { border-top: 1px solid rgb(184 147 78 / 0.14); }
+
+  .index__link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding: 1.15rem 0.25rem;
+    transition: padding-inline 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .index__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 2vw, 1.45rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .index__prices { display: flex; flex-wrap: wrap; gap: 0.4rem 1.35rem; }
+
+  .index__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: var(--step-small);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .index__dur { color: var(--ink-mute); font-size: 0.8125rem; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .index__link:hover { padding-inline: 0.75rem 0.25rem; }
+    .index__link:hover .index__name { color: var(--gold-text); }
+  }
+
+  /* --- Treatment --- */
+
+  .treatment { padding-block: clamp(3rem, 7vw, 6.5rem); scroll-margin-top: 6rem; }
+
+  .treatment__inner {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .treatment__media { position: sticky; top: 6rem; }
+  .treatment__media figure { margin: 0; }
+  .treatment__media--flip { order: 2; }
+
+  .treatment__num {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--gold-text);
+    margin: 0 0 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .treatment__name {
+    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+    line-height: 1.1;
+    margin-bottom: 1.75rem;
+  }
+
+  .treatment__body { max-width: 64ch; }
+  .benefit { color: var(--ink-soft); }
+
+  /* --- Price block --- */
+
+  .price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 2rem;
+    margin-top: 2.25rem;
+    padding: 1.35rem 1.75rem;
+  }
+
+  .price__label {
+    font-size: var(--step-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .price__values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.75rem; }
+
+  .price__pair { display: inline-flex; align-items: baseline; gap: 0.5rem; }
+  .price__dur { font-size: 0.875rem; color: var(--ink-mute); }
+
+  .price__amt {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+    color: var(--ink);
+  }
+
+  .treatment__cta { margin-top: 1.75rem; }
+
+  /* --- Close --- */
+
+  .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
+
+  @media (max-width: 900px) {
+    .treatment__inner { grid-template-columns: 1fr; }
+    .treatment__media { position: static; max-width: 20rem; order: -1 !important; }
+  }
+</style>

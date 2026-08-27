@@ -1,0 +1,325 @@
+---
+/**
+ * UBER MICH. Title, description and H1 copied exactly from the live page,
+ * including the missing umlaut in "UBER MICH" (inconsistency 7, fixed later).
+ *
+ * This is the E-E-A-T page. The award record is rendered as text and marked up
+ * in Person.award, and the competition photographs are the evidence.
+ */
+import { socialImageUrl } from '../lib/images';
+import Layout from '../layouts/Layout.astro';
+import Photo from '../components/Photo.astro';
+import { heroPreload } from '../lib/heroPreload';
+import { AWARDS } from '../lib/site';
+import {
+  graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
+} from '../lib/schema';
+
+import junePortrait from '../assets/june-portrait.webp';
+import awardCertificate from '../assets/award-certificate.webp';
+import awardTrophies from '../assets/award-trophies.webp';
+import competitionStage from '../assets/award-competition-stage.webp';
+import withNadine from '../assets/june-with-nadine-stark.webp';
+
+const title = 'UBER MICH | LUMA Wellness';
+const description =
+  'Erfahren Sie mehr über June Saurin, Gründerin von LUMA Wellness in Buxtehude. Spezialistin für professionelle Massagen und ganzheitliche Entspannung.';
+const path = '/about';
+
+const heroSizes = '(max-width: 900px) 76vw, 38vw';
+const preloadImage = await heroPreload(junePortrait, [400, 600, 860], heroSizes);
+
+const ogImage = await socialImageUrl(junePortrait, Astro.site);
+
+const schema = graph([
+  businessNode(),
+  personNode(await socialImageUrl(junePortrait, Astro.site)),
+  websiteNode(),
+  webPageNode({
+    title, description, path,
+    imageUrl: await socialImageUrl(junePortrait, Astro.site),
+    hasBreadcrumb: true,
+  }),
+  breadcrumbNode(path, [
+    { name: 'Startseite', path: '/' },
+    { name: 'UBER MICH', path: '/about' },
+  ]),
+]);
+---
+
+<Layout {title} {description} {path} schema={schema} {ogImage} ogType="profile" {preloadImage}>
+  <section class="hero">
+    <div class="shell hero__inner">
+      <div>
+        <p class="eyebrow">Weltweit ausgezeichnete Massage</p>
+        <h1>UBER MICH</h1>
+        <p class="lede hero__lede">
+          June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
+          therapeutischer Erfahrung.
+        </p>
+      </div>
+
+      <figure class="hero__figure">
+        <Photo
+          src={junePortrait}
+          alt="Porträt von June Saurin, Gründerin von LUMA Wellness in Buxtehude"
+          widths={[400, 600, 860]}
+          sizes={heroSizes}
+          ratio="4 / 5"
+          priority
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell shell--mid">
+      <div class="prose story">
+        <p>
+          June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
+          therapeutischer Erfahrung. Ursprünglich in Thailand geboren und heute in Deutschland
+          ansässig, wuchs sie in unmittelbarer Nähe von Elite-Massagetherapeuten auf – der
+          Grundstein für ihre herausragende Karriere in der Wellness-Branche war damit gelegt.
+        </p>
+        <p>
+          Im Jahr 2023 demonstrierte June Saurin ihr Können erstmals auf internationaler Ebene: Bei
+          der Schweizer Massage-Meisterschaft in Zürich (12. März 2023) gewann sie eine
+          Silbermedaille in der Kategorie Wellness und setzte sich gegen einige der besten
+          Therapeuten weltweit durch. Weniger als einen Monat später sicherte sie sich bei der
+          Intercontinental Massage Championship 2023 in Athen eine weitere Silbermedaille. Darüber
+          hinaus nahm sie an einem einzigartigen 1-vs-1 Massage Battle (M1 Massage Gala/Damen
+          Division) teil, schaffte es ins Finale und verließ den Wettbewerb mit Dankbarkeit und
+          Stolz.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The record, rendered as text as well as marked up. -->
+  <section class="section--tight">
+    <div class="shell">
+      <div class="record">
+        <div class="record__list">
+          <p class="eyebrow">Die Bilanz 2023</p>
+          <ol>
+            {
+              AWARDS.map((a) => (
+                <li class="record__item">
+                  <span class="record__award">{a.short}</span>
+                  <span class="record__meta">{a.event} · {a.place}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+
+        <figure class="record__figure">
+          <Photo
+            src={awardTrophies}
+            alt="June Saurin mit ihren Pokalen und Medaillen der internationalen Massage-Meisterschaften 2023"
+            widths={[380, 560, 760]}
+            sizes="(max-width: 900px) 82vw, 36vw"
+            ratio="2 / 3"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell shell--mid">
+      <div class="prose story">
+        <p>
+          Im September 2023 trat June bei der Universal Massage Championship in Penzberg,
+          Deutschland an, um ihre Fähigkeiten in den Kategorien Wellness &amp; Spa sowie Freestyle
+          Eastern erneut unter Beweis zu stellen. Hier gelang ihr der Durchbruch: Sie gewann ihre
+          erste Goldmedaille in der Kategorie Wellness &amp; Spa, eine Silbermedaille in Freestyle
+          Eastern und wurde mit dem 3. Platz beim prestigeträchtigen "Champ of the Champs Award"
+          ausgezeichnet. Somit verließ sie zum ersten Mal einen internationalen Wettbewerb mit mehr
+          als einer Medaille und bewies erneut ihr Elite-Niveau.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell">
+      <div class="gallery">
+        <figure>
+          <Photo
+            src={competitionStage}
+            alt="June Saurin im Wettkampf bei einer internationalen Massage-Meisterschaft"
+            widths={[380, 620, 900]}
+            sizes="(max-width: 760px) 88vw, 32vw"
+            ratio="3 / 2"
+          />
+        </figure>
+        <figure>
+          <Photo
+            src={awardCertificate}
+            alt="June Saurin mit ihrer Urkunde und den Medaillen der Massage-Meisterschaft 2023"
+            widths={[380, 620, 900]}
+            sizes="(max-width: 760px) 88vw, 32vw"
+            ratio="3 / 2"
+          />
+        </figure>
+        <figure>
+          <Photo
+            src={withNadine}
+            alt="June Saurin mit Weltmeisterin Nadine Stark Chognon, Entwicklerin der STARK BALL MASSAGE"
+            widths={[380, 620, 900]}
+            sizes="(max-width: 760px) 88vw, 32vw"
+            ratio="3 / 2"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell shell--mid">
+      <div class="prose story">
+        <p>
+          Die Kunden von LUMA Wellness by June Saurin sind von ihrem Talent regelrecht fasziniert.
+          Bereits nach einer einzigen Sitzung sind viele überzeugt, weitere Termine zu buchen – ein
+          klares Zeichen für ihre herausragende Massagekompetenz.
+        </p>
+        <p>
+          Gönnen Sie sich Selbstfürsorge auf höchstem Niveau: Bei LUMA WELLNESS by June Saurin in
+          Buxtehude bieten wir erstklassige Massagetherapie, um Ihr körperliches und seelisches
+          Wohlbefinden zu fördern und Ihre innere Balance zu stärken. Mit international anerkannten
+          Techniken, Leidenschaft für ganzheitliche Heilung und einem unvergleichlichen Feingefühl
+          setzt sich June Saurin dafür ein, Ihnen genau jene heilende Note zu geben, die Sie
+          brauchen, um sich rundum wohlzufühlen und Ihr Bestes zu geben.
+        </p>
+        <p>
+          Erleben Sie den Unterschied und lassen Sie sich von weltweit prämierten Massagetechniken
+          in Buxtehude inspirieren. Buchen Sie noch heute Ihren Termin und entdecken Sie, was eine
+          international ausgezeichnete Therapeutin für Ihr Wohlbefinden leisten kann.
+        </p>
+      </div>
+
+      <p class="story__cta">
+        <a href="/contact" class="pill">Massage Buchen</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Testimonial in air. One quote alone on the pale wash. -->
+  <section class="section testimonial">
+    <div class="shell shell--narrow">
+      <p class="eyebrow testimonial__label">Empfehlungsschreiben</p>
+      <blockquote class="testimonial__quote">
+        <p>
+          "Unglaubliche Therapeutin, ich konnte immer sagen, wenn jemand wirklich sein Bestes gibt
+          oder nicht für ihre Arbeit. Sie gab ihr Bestes jedes Mal, lassen Sie sich nicht von ihrer
+          Größe täuschen, sie packt eine Menge Schlag und sie zugeschnitten den Druck nach meiner
+          Toleranz, absolut empfehlen"
+        </p>
+        <footer class="testimonial__cite">Luka - Buxtehude</footer>
+      </blockquote>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 4vw, 3.5rem); }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .hero__lede { margin-top: clamp(1.5rem, 3vw, 2.25rem); max-width: 32ch; }
+  .hero__figure { margin: 0; }
+
+  .story { max-width: 64ch; }
+  .story__cta { margin-top: 2.5rem; }
+
+  /* --- The record --- */
+
+  .record {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .record__list ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .record__item {
+    display: grid;
+    gap: 0.3rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid rgb(184 147 78 / 0.16);
+  }
+  .record__item:last-child { border-bottom: 0; }
+
+  .record__award {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.85rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .record__meta {
+    font-size: 0.875rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.02em;
+  }
+
+  .record__figure { margin: 0; }
+
+  /* --- Gallery --- */
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.85rem, 2vw, 1.5rem);
+  }
+  .gallery figure { margin: 0; }
+
+  /* --- Testimonial. Generous emptiness around it. --- */
+
+  .testimonial { text-align: center; }
+  .testimonial__label { margin-bottom: 2rem; }
+
+  .testimonial__quote { margin: 0; }
+
+  .testimonial__quote p {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.2vw, 2.35rem);
+    font-weight: 300;
+    line-height: 1.32;
+    color: var(--ink);
+    max-width: none;
+    margin: 0 auto 2rem;
+    text-wrap: balance;
+  }
+
+  .testimonial__cite {
+    font-size: var(--step-small);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  @media (max-width: 900px) {
+    .hero__inner, .record { grid-template-columns: 1fr; }
+    .hero__figure { order: -1; max-width: 20rem; }
+    .record__figure { max-width: 18rem; }
+  }
+
+  @media (max-width: 760px) {
+    .gallery { grid-template-columns: 1fr; }
+  }
+</style>
