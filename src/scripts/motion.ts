@@ -601,6 +601,69 @@ function initFloatPausing() {
   onCleanup(() => io.disconnect());
 }
 
+/* ------------------------------------------------------------- progress */
+
+/**
+ * A hairline of gold across the top that tracks read position. On a page that
+ * is thirteen screens tall with six pinned chapters, it is the difference
+ * between scrolling and knowing where you are.
+ */
+function initProgress() {
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  if (!bar || REDUCED) return;
+
+  const st = ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    onUpdate: (self) => gsap.set(bar, { scaleX: self.progress }),
+  });
+  onCleanup(() => st.kill());
+}
+
+/* ------------------------------------------------------ chapter counter */
+
+/**
+ * While the pinned sequence is running, a small fixed counter names which
+ * chapter is on screen. It appears with the first chapter and leaves with the
+ * last, so it never sits over the rest of the page.
+ */
+function initChapterCounter() {
+  const chapters = [...document.querySelectorAll<HTMLElement>('[data-chapter]')];
+  const counter = document.querySelector<HTMLElement>('[data-chapter-counter]');
+  if (!counter || chapters.length === 0 || REDUCED) return;
+
+  const now = counter.querySelector<HTMLElement>('[data-chapter-now]');
+  const total = counter.querySelector<HTMLElement>('[data-chapter-total]');
+  if (total) total.textContent = String(chapters.length).padStart(2, '0');
+
+  const triggers = chapters.map((ch, i) =>
+    ScrollTrigger.create({
+      trigger: ch,
+      start: 'top 60%',
+      end: 'bottom 40%',
+      onToggle: (self) => {
+        if (!self.isActive) return;
+        counter.classList.add('is-visible');
+        if (now) now.textContent = String(i + 1).padStart(2, '0');
+      },
+    }),
+  );
+
+  // Leave when the sequence does.
+  const bounds = ScrollTrigger.create({
+    trigger: chapters[0],
+    endTrigger: chapters[chapters.length - 1],
+    start: 'top 70%',
+    end: 'bottom 30%',
+    onToggle: (self) => counter.classList.toggle('is-visible', self.isActive),
+  });
+
+  onCleanup(() => {
+    triggers.forEach((t) => t.kill());
+    bounds.kill();
+  });
+}
+
 /* -------------------------------------------------------------------- boot */
 
 /**
@@ -645,6 +708,8 @@ function boot() {
   initMotes();
   initFloatPausing();
   initScrollDrift();
+  initProgress();
+  initChapterCounter();
   installRevealFailsafe();
 
   ScrollTrigger.refresh();

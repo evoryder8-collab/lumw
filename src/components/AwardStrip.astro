@@ -71,7 +71,45 @@ import { AWARDS } from '../lib/site';
     color: var(--ink-soft);
   }
 
-  @media (max-width: 720px) {
-    .strip__award { font-size: 0.6875rem; letter-spacing: 0.1em; }
+  /* On a phone five awards in a grid wrap into orphans and read as a list of
+     leftovers. A snap rail turns the record into something you swipe through,
+     which is both native to the device and how the medals deserve to be shown. */
+  @media (max-width: 900px) {
+    .strip { padding-block: clamp(1.75rem, 6vw, 2.5rem); }
+
+    .strip__track {
+      display: flex;
+      grid-template-columns: none;
+      justify-content: flex-start;
+      gap: 0.7rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      /* The rail runs to both edges so the last card can peek. */
+      margin-inline: calc(var(--gutter) * -1);
+      width: calc(100% + var(--gutter) * 2);
+      max-width: none;
+      padding-inline: var(--gutter);
+    }
+    .strip__track::-webkit-scrollbar { display: none; }
+
+    .strip__item {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      display: grid;
+      justify-items: start;
+      gap: 0.3rem;
+      min-width: 10.5rem;
+      padding: 0.85rem 1rem 0.95rem;
+      border-radius: var(--radius-interactive);
+      background: rgb(255 255 255 / 0.62);
+      box-shadow: var(--shadow-float-sm), var(--edge-daylight);
+      text-align: left;
+    }
+
+    .strip__year { font-size: 0.75rem; }
+    .strip__award { font-size: 0.6875rem; letter-spacing: 0.1em; line-height: 1.4; }
   }
 </style>

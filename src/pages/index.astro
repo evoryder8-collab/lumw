@@ -73,8 +73,8 @@ const angebote = [
   },
 ];
 
-const heroSizes = '(max-width: 900px) 78vw, 40vw';
-const preloadImage = await heroPreload(junePortrait, [420, 640, 900], heroSizes);
+const heroSizes = '(max-width: 900px) 100vw, 40vw';
+const preloadImage = await heroPreload(junePortrait, [480, 720, 900, 1100], heroSizes);
 
 const ogImage = await socialImageUrl(junePortrait, Astro.site);
 
@@ -113,11 +113,11 @@ const schema = graph([
         </div>
       </div>
 
-      <figure class="hero__figure float float--slow" data-drift>
+      <figure class="hero__figure float float--slow bleed" data-drift>
         <Photo
           src={junePortrait}
           alt="June Saurin, international ausgezeichnete Massagetherapeutin bei LUMA Wellness in Buxtehude"
-          widths={[420, 640, 900]}
+          widths={[480, 720, 900, 1100]}
           sizes={heroSizes}
           ratio="4 / 5"
           priority
@@ -157,7 +157,7 @@ const schema = graph([
   <!-- Chapter 4. Ganzheitliche Massagen, against the studio photograph. -->
   <section class="section holistic" data-sunbeam>
     <div class="shell holistic__inner">
-      <figure class="holistic__figure float float--slow" data-drift>
+      <figure class="holistic__figure float float--slow bleed" data-drift>
         <Photo
           src={studioWorking}
           alt="June Saurin bei einer ganzheitlichen Massage im LUMA Wellness Studio in Buxtehude"
@@ -194,6 +194,13 @@ const schema = graph([
 
     </div>
 
+    <!-- Names the chapter you are inside while the pinned sequence runs. -->
+    <div class="chapter-counter" data-chapter-counter aria-hidden="true">
+      <span data-chapter-now>01</span>
+      <span class="chapter-counter__rule"></span>
+      <span data-chapter-total>06</span>
+    </div>
+
     <!-- Chapter 3. Each treatment pins for one viewport: the image scale-reveals
          from clip-path: inset(), the copy staggers, the name settles. Same
          grammar every chapter, so the rhythm becomes the identity. On mobile and
@@ -203,15 +210,15 @@ const schema = graph([
         <div class="chapter" data-chapter>
           <div class="shell chapter__inner">
             <figure
-              class:list={['chapter__media', i % 2 === 1 && 'chapter__media--flip']}
+              class:list={['chapter__media', 'bleed', i % 2 === 1 && 'chapter__media--flip']}
               data-chapter-media
               data-drift
             >
               <Photo
                 src={a.image}
                 alt={a.alt}
-                widths={[420, 680, 940]}
-                sizes="(max-width: 900px) 88vw, 44vw"
+                widths={[480, 760, 1000]}
+                sizes="(max-width: 900px) 100vw, 44vw"
                 ratio="4 / 5"
               />
             </figure>
@@ -275,7 +282,7 @@ const schema = graph([
         </p>
       </div>
 
-      <figure class="hours__figure float float--slow" data-drift>
+      <figure class="hours__figure float float--slow bleed" data-drift>
         <Photo
           src={studioExterior}
           alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
@@ -372,6 +379,35 @@ const schema = graph([
 
   .holistic__figure { margin: 0; }
   .holistic__copy h2 { margin-bottom: 1.5rem; }
+
+  /* --- Chapter counter --------------------------------------------------- */
+
+  .chapter-counter {
+    position: fixed;
+    z-index: 40;
+    right: var(--gutter);
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-text);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .chapter-counter.is-visible { opacity: 1; }
+  .chapter-counter__rule { width: 1px; height: 2rem; background: rgb(184 147 78 / 0.42); }
+
+  @media (max-width: 900px) {
+    .chapter-counter { right: 0.65rem; font-size: 0.625rem; }
+    .chapter-counter__rule { height: 1.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .chapter-counter { display: none; } }
 
   /* --- Pinned chapters --------------------------------------------------- */
   /* Each chapter reserves its full height up front so a pin never shifts
@@ -512,13 +548,37 @@ const schema = graph([
 
     .chapter__inner { gap: clamp(1rem, 3.5vw, 1.5rem); align-content: start; }
 
-    .chapter__media {
+    /* The scoped `margin: 0` on these figures outranks the global .bleed
+       helper, so the bleed is declared here where the specificity is right. */
+    .chapter__media,
+    .hero__figure {
+      margin-inline: calc(var(--gutter) * -1);
+      width: calc(100% + var(--gutter) * 2);
       max-width: none;
-      order: -1 !important;
-      justify-self: stretch;
     }
-    /* Cap the frame so the copy always shares the screen with it. */
-    .chapter__media :global(.media) { max-height: 36svh; }
+
+    .chapter__media { order: -1 !important; justify-self: stretch; }
+
+    /* A 4:5 frame capped by height collapses into a narrow column: the ratio
+       wins and the width follows it. On a phone the frame is re-cut to
+       landscape so a height cap still leaves it edge to edge. */
+    .chapter__media :global(.media) {
+      aspect-ratio: 16 / 11 !important;
+      width: 100%;
+      max-height: 34svh;
+      border-radius: 0 0 var(--radius-media) var(--radius-media);
+    }
+
+    .hero__figure :global(.media) {
+      aspect-ratio: 1 / 1 !important;
+      width: 100%;
+      max-height: 44svh;
+      border-radius: 0 0 var(--radius-media) var(--radius-media);
+    }
+    .hero__figure :global(img) { object-position: 50% 18%; }
+    .holistic__figure :global(.media),
+    .hours__figure :global(.media) { border-radius: var(--radius-media); }
+    .holistic__figure, .hours__figure { margin-inline: 0; width: 100%; }
 
     .chapter__num { margin-bottom: 0.6rem; }
     .chapter__name { max-width: none; font-size: clamp(1.5rem, 7vw, 2.1rem); }

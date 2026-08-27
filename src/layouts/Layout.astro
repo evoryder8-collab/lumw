@@ -12,6 +12,7 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import MotionIsland from '../components/motion/MotionIsland.astro';
+import ThumbBar from '../components/ThumbBar.astro';
 import { ClientRouter } from 'astro:transitions';
 import { url } from '../lib/site';
 import '../styles/global.css';
@@ -95,6 +96,8 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="aurora" aria-hidden="true"><div class="aurora__conic"></div></div>
     <div class="grain" aria-hidden="true"></div>
 
+    <div class="progress" aria-hidden="true"><div class="progress__bar" data-progress></div></div>
+
     <SiteHeader />
 
     <main id="main">
@@ -103,6 +106,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <SiteFooter />
 
+    <ThumbBar />
     <MotionIsland />
   </body>
 </html>

@@ -68,9 +68,12 @@
   --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, sans-serif;
 
-  --step-display: clamp(2.75rem, 8vw, 7rem);
-  --step-h2: clamp(1.9rem, 4.2vw, 3.4rem);
-  --step-h3: clamp(1.35rem, 2.4vw, 1.9rem);
+  /* The mobile end of every ramp is pushed up hard. A phone has one column and
+     no peripheral vision to fill, so the display face has to carry the drama
+     that whitespace carries on a desktop. */
+  --step-display: clamp(3.6rem, 15vw, 7rem);
+  --step-h2: clamp(2.35rem, 9vw, 3.4rem);
+  --step-h3: clamp(1.6rem, 6vw, 1.9rem);
   --step-body: 1.125rem;   /* 18px */
   --step-small: 0.9375rem; /* 15px */
   --step-eyebrow: 0.75rem;
@@ -306,16 +309,30 @@ a { color: inherit; text-decoration: none; }
 /* The nav is sticky, so anything can scroll under it, including a dark
    competition photograph. At 55% white the ink lost its contrast floor over
    dark media. 82% keeps the frosted read and guarantees legibility over the
-   worst thing the page can put behind it. */
+   worst thing the page can put behind it.
+   
+   The frost lives on a pseudo-element rather than the element itself, because
+   backdrop-filter makes an element the containing block for its
+   position: fixed descendants - which silently trapped the full-screen mobile
+   menu inside the header pill. */
 .glass {
+  position: relative;
+  box-shadow: var(--shadow-float-sm), inset 0 1px 0 rgb(255 255 255 / 0.85);
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
   background: rgb(255 255 255 / 0.82);
   backdrop-filter: blur(20px) saturate(1.15);
-  box-shadow: var(--shadow-float-sm), inset 0 1px 0 rgb(255 255 255 / 0.85);
 }
 
 /* No backdrop-filter support: fall back to something opaque enough to read. */
 @supports not (backdrop-filter: blur(1px)) {
-  .glass { background: rgb(255 255 255 / 0.95); }
+  .glass::before { background: rgb(255 255 255 / 0.95); }
 }
 
 /* --- The one primary CTA style: gold pill, ink text ---------------------- */
@@ -599,6 +616,15 @@ a { color: inherit; text-decoration: none; }
    flashes before the island runs, and the final state if it never does. */
 
 .line-mask { display: block; overflow: hidden; }
+
+/* SplitText masks each line in a .line-inner-mask with overflow: clip, which
+   shears the descender off a display serif at tight leading. A sliver of
+   padding, cancelled by an equal negative margin, gives the glyph room without
+   changing the layout or letting the line escape before it is revealed. */
+.line-inner-mask {
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
 .line-mask > * { display: block; will-change: transform; }
 
 /* Only hide pre-reveal content once the island has confirmed it will animate.
@@ -664,4 +690,126 @@ a { color: inherit; text-decoration: none; }
   .motes { display: none; }
   .motion-ready [data-reveal] .line-mask > *,
   .motion-ready [data-fade] { transform: none; opacity: 1; }
+}
+
+
+/* ==========================================================================
+   Mobile. Not a narrowed desktop: a different composition.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  /* Media goes to the edges of the glass. An inset rounded rectangle floating
+     in a margin is what makes a phone layout read as a template. */
+  .bleed {
+    margin-inline: calc(var(--gutter) * -1);
+    width: calc(100% + var(--gutter) * 2);
+    max-width: none;
+  }
+
+  /* Bleeding media keeps a radius only where it is not touching an edge. */
+  .bleed :global(.media),
+  .bleed .media {
+    border-radius: 0 0 var(--radius-media) var(--radius-media);
+  }
+
+  /* Tight enough to feel composed, loose enough that the line mask on a
+     reveal does not shear the descender off "Buxtehude". */
+  h1 { line-height: 1.0;  letter-spacing: -0.034em; }
+  h2 { line-height: 1.06; letter-spacing: -0.026em; }
+  h3 { line-height: 1.1;  letter-spacing: -0.02em; }
+
+  .eyebrow { letter-spacing: 0.28em; font-size: 0.6875rem; }
+  .lede { font-size: 1.12rem; line-height: 1.5; }
+}
+
+/* --- Thumb bar --------------------------------------------------------- */
+/* A booking business on a phone lives or dies on whether the action is under
+   the thumb. This is the only element on the site that follows the viewport. */
+
+.thumb-bar {
+  position: fixed;
+  z-index: 60;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.7rem var(--gutter);
+  padding-bottom: max(0.7rem, env(safe-area-inset-bottom));
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: blur(20px) saturate(1.15);
+  box-shadow: 0 -10px 40px rgb(43 38 34 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  transform: translateY(110%);
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.thumb-bar.is-up { transform: none; }
+
+@media (max-width: 900px) { .thumb-bar { display: flex; } }
+@media print { .thumb-bar { display: none; } }
+
+.thumb-bar__cta {
+  flex: 1;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: var(--gold-fill);
+  color: var(--ink);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 24px rgb(184 147 78 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.45);
+}
+
+.thumb-bar__icon {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink);
+  background: rgb(255 255 255 / 0.75);
+  box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.32), 0 6px 18px rgb(43 38 34 / 0.07);
+}
+
+.thumb-bar__icon svg { width: 19px; height: 19px; }
+
+.thumb-bar__cta:active, .thumb-bar__icon:active { transform: scale(0.97); }
+
+/* Nothing at the end of the page may sit under the bar. */
+@media (max-width: 900px) {
+  body { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom)); }
+}
+
+/* --- Scroll progress --------------------------------------------------- */
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 70;
+  pointer-events: none;
+  background: transparent;
+}
+
+.progress__bar {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-fill) 55%, var(--gold-spec) 100%);
+}
+
+@media (min-width: 901px) { .progress { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb-bar { transition: none; }
 }

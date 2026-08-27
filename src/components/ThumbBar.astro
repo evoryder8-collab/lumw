@@ -1,0 +1,66 @@
+---
+/**
+ * The thumb bar. Mobile only.
+ *
+ * June's business is bookings, and on a phone the only thing that reliably
+ * converts is an action inside the thumb arc. It carries the booking CTA plus
+ * the two channels that actually work today: phone and WhatsApp.
+ *
+ * It stays hidden until the hero has passed, so it never covers the first
+ * impression, and hides again over the closing CTA so the page never shows two
+ * competing primary actions at once.
+ */
+import { BUSINESS, url } from '../lib/site';
+
+const wa = BUSINESS.phoneE164.replace('+', '');
+---
+
+<div class="thumb-bar" data-thumb-bar aria-hidden="false">
+  <a class="thumb-bar__cta" href={url('/contact')}>Termin anfragen</a>
+
+  <a class="thumb-bar__icon" href={`tel:${BUSINESS.phoneE164}`} aria-label={`Anrufen: ${BUSINESS.phone}`}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/>
+    </svg>
+  </a>
+
+  <a class="thumb-bar__icon" href={`https://wa.me/${wa}`} rel="noopener" aria-label="WhatsApp Nachricht senden">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20.5l1.8-5.3A8.4 8.4 0 1 1 21 11.5Z"/>
+      <path d="M8.6 9.1c.2-.5.4-.5.6-.5h.5c.2 0 .4 0 .6.5l.7 1.6c.1.2 0 .4-.1.6l-.4.5c-.1.2-.2.3 0 .6a6 6 0 0 0 2.7 2.3c.3.1.5.1.6 0l.5-.6c.2-.2.4-.2.6-.1l1.5.8c.2.1.4.2.4.4 0 .5-.3 1.4-1.4 1.6a4 4 0 0 1-2.4-.4 9 9 0 0 1-4.5-4.4c-.4-.9-.4-1.7-.3-2.2a2 2 0 0 1 .4-.7Z"/>
+    </svg>
+  </a>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-thumb-bar]');
+  if (bar) {
+    // No JS framework and no scroll listener: two observers decide the state.
+    const hero = document.querySelector('.hero');
+    const closing = document.querySelector('.close');
+
+    let heroGone = false;
+    let closingHere = false;
+    const sync = () => bar.classList.toggle('is-up', heroGone && !closingHere);
+
+    if (hero) {
+      new IntersectionObserver(
+        ([e]) => { heroGone = !e.isIntersecting; sync(); },
+        { threshold: 0, rootMargin: '-40% 0px 0px 0px' },
+      ).observe(hero);
+    } else {
+      heroGone = true;
+      sync();
+    }
+
+    // Never two primary actions on screen at once.
+    if (closing) {
+      new IntersectionObserver(
+        ([e]) => { closingHere = e.isIntersecting; sync(); },
+        { threshold: 0.35 },
+      ).observe(closing);
+    }
+  }
+</script>

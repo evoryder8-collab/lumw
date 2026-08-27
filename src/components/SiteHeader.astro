@@ -8,7 +8,7 @@
  * widget is meant to be the only interactive island on the whole site.
  */
 import { Image } from 'astro:assets';
-import { NAV, url } from '../lib/site';
+import { NAV, BUSINESS, url } from '../lib/site';
 import logo from '../assets/logo-luma-mark.webp';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -39,22 +39,45 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <nav class="nav" aria-label="Hauptnavigation">
       <ul class="nav__list">
         {
-          NAV.map((item) => (
-            <li>
+          NAV.map((item, i) => (
+            <li style={`--i:${i}`}>
               <a
                 href={url(item.href)}
                 class="nav__link underline-gold"
                 aria-current={path === item.href ? 'page' : undefined}
               >
-                {item.label}
+                <span class="nav__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span class="nav__label">{item.label}</span>
               </a>
             </li>
           ))
         }
-        <li class="nav__cta">
+        <li class="nav__cta" style={`--i:${NAV.length}`}>
           <a href={url('/contact')} class="pill">Jetzt buchen</a>
         </li>
       </ul>
+
+      {/* Only rendered inside the full-screen panel. On a phone the menu is
+          where someone looks for the phone number and the hours, so it carries
+          them rather than sending people back to the footer. */}
+      <div class="nav__meta">
+        <div class="nav__meta-row">
+          <span class="nav__meta-label">Telefon</span>
+          <a href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a>
+        </div>
+        <div class="nav__meta-row">
+          <span class="nav__meta-label">E-Mail</span>
+          <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
+        </div>
+        <div class="nav__meta-row">
+          <span class="nav__meta-label">Adresse</span>
+          <span>Hauptstraße 19, 21614 Buxtehude</span>
+        </div>
+        <div class="nav__meta-row">
+          <span class="nav__meta-label">Öffnungszeit</span>
+          <span>Mo&ndash;Fr 10&ndash;18 · Sa 11&ndash;16</span>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
@@ -154,36 +177,137 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       padding: 0 10px;
       cursor: pointer;
       border-radius: 999px;
+      position: relative;
+      z-index: 3;
     }
     .nav-burger span {
       display: block;
       height: 1px;
       background: var(--ink);
-      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
     }
     .nav-toggle:focus-visible + .nav-burger { outline: 2px solid var(--gold); outline-offset: 3px; }
     .nav-toggle:checked + .nav-burger span:first-child { transform: translateY(3px) rotate(45deg); }
     .nav-toggle:checked + .nav-burger span:last-child { transform: translateY(-3px) rotate(-45deg); }
 
+    /* A full-screen takeover rather than a dropdown. Still pure CSS off a
+       checkbox, so it opens with JavaScript disabled. */
     .nav {
-      position: absolute;
-      inset-inline: var(--gutter);
-      top: calc(100% + 0.5rem);
-      background: rgb(255 255 255 / 0.9);
-      backdrop-filter: blur(20px) saturate(1.1);
-      border-radius: var(--radius-media);
-      box-shadow: var(--shadow-float), inset 0 1px 0 rgb(255 255 255 / 0.8);
-      padding: 1.4rem;
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(1.5rem, 5vw, 2.5rem);
+      padding: 6rem var(--gutter) calc(2rem + env(safe-area-inset-bottom));
+      background: var(--porcelain);
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-8px);
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+      transition: opacity 0.5s ease, visibility 0.5s;
     }
-    .nav-toggle:checked ~ .nav { opacity: 1; visibility: visible; transform: none; }
 
-    .nav__list { flex-direction: column; align-items: stretch; gap: 0.35rem; }
-    .nav__link { display: block; padding: 0.85rem 0.5rem; font-size: 0.75rem; }
-    .nav__cta { margin-top: 0.6rem; }
-    .nav__cta .pill { width: 100%; }
+    /* The wash and a wide gold bloom follow the menu open, so the panel is lit
+       rather than a flat sheet of paper. */
+    .nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(80% 50% at 12% 8%, var(--wash-gold) 0%, transparent 62%),
+        radial-gradient(70% 45% at 96% 84%, var(--wash-blush) 0%, transparent 60%);
+      opacity: 0.55;
+    }
+
+    .nav-toggle:checked ~ .nav { opacity: 1; visibility: visible; }
+
+    .nav__list {
+      position: relative;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      border-top: 1px solid rgb(184 147 78 / 0.2);
+    }
+
+    .nav__list > li {
+      border-bottom: 1px solid rgb(184 147 78 / 0.2);
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: calc(var(--i, 0) * 60ms + 80ms);
+    }
+    .nav-toggle:checked ~ .nav .nav__list > li { opacity: 1; transform: none; }
+
+    .nav__link {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: baseline;
+      gap: 0.9rem;
+      padding: 1.05rem 0.15rem;
+      font-size: 1rem;
+      /* The desktop rule keeps nav labels on one line; here the longest label
+         is wider than the screen and has to be allowed to break. */
+      white-space: normal;
+    }
+
+    .nav__num {
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      color: var(--gold-text);
+      letter-spacing: 0.1em;
+    }
+
+    /* The nav labels are the one place the display face gets to be loud. */
+    .nav__label {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 6.4vw, 2.15rem);
+      font-weight: 300;
+      letter-spacing: -0.022em;
+      line-height: 1.04;
+      text-wrap: balance;
+      text-transform: none;
+      color: var(--ink);
+    }
+    .nav__link[aria-current='page'] .nav__label { color: var(--gold-text); }
+    .nav__link::after { display: none; }
+
+    .nav__cta { border-bottom: 0 !important; padding-top: 1.5rem; }
+    .nav__cta .pill { width: 100%; font-size: 0.75rem; padding-block: 1.05rem; }
+
+    .nav__meta {
+      position: relative;
+      display: grid;
+      gap: 0.85rem;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease 0.34s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.34s;
+    }
+    .nav-toggle:checked ~ .nav .nav__meta { opacity: 1; transform: none; }
+
+    .nav__meta-row {
+      display: grid;
+      grid-template-columns: 6.5rem 1fr;
+      gap: 0.75rem;
+      align-items: baseline;
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+    }
+
+    .nav__meta-label {
+      font-size: 0.5625rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-text);
+    }
+
+    /* The page behind must not scroll while the takeover is open. */
+    .nav-toggle:checked ~ .nav { overscroll-behavior: contain; overflow-y: auto; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav, .nav__list > li, .nav__meta { transition-duration: 0.001ms !important; }
+  }
+
 </style>
