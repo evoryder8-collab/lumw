@@ -10,6 +10,7 @@
  * price exactly as it appears in the copy.
  */
 import { getCollection } from 'astro:content';
+import { url } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import { imageByName, socialImageUrl } from '../lib/images';
@@ -24,6 +25,45 @@ const description =
 const path = '/meineangebote-preise';
 
 const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
+const services = await getCollection('services');
+
+/**
+ * A card morphs into the service page hero on tap, so it has to link there.
+ * The two datasets do not line up perfectly: Stark Ball has a section here but
+ * nothing bookable, so its card falls back to the in-page anchor. Both of those
+ * are known live inconsistencies, not bugs to fix at cutover.
+ */
+const TREATMENT_TO_FAMILY: Record<string, string> = {
+  'aroma-luxus': 'aroma-luxus',
+  'balance-stone': 'balance-stone',
+  'thai-solution': 'thai',
+  'schwangerschaft': 'schwangerschaft',
+  'gold-medalie': 'gold-medalie',
+  'gesicht-kopf': 'gesicht-kopf',
+  'schulter-nacken-ruecken': 'schulter-nacken-ruecken',
+  'fuss': 'fuss',
+};
+
+/**
+ * The italic lead on each card is the treatment's live Wix Bookings tagline,
+ * not new copy. Stark Ball has no bookable service and therefore no tagline, so
+ * it uses the opening clause of its own section instead.
+ */
+const leadFor = (id: string): string => {
+  const family = TREATMENT_TO_FAMILY[id];
+  const svc = family ? services.find((s) => s.data.family === family) : undefined;
+  if (svc) return svc.data.tagline;
+  return 'Eine geschützte Methode der Weltmeisterin Nadine Stark Chognon.';
+};
+
+const cardTarget = (id: string) => {
+  const family = TREATMENT_TO_FAMILY[id];
+  if (!family) return null;
+  const match = services
+    .filter((s) => s.data.family === family)
+    .sort((a, b) => a.data.durationMin - b.data.durationMin)[0];
+  return match ? { href: url(`/service-page/${match.data.slug}`), family } : null;
+};
 
 const img = imageByName;
 
@@ -65,9 +105,9 @@ const money = (n: number) => `${n}€`;
 <Layout {title} {description} {path} schema={schema}>
   <section class="hero">
     <div class="shell">
-      <p class="eyebrow">LUMA Wellness by June Saurin</p>
-      <h1>Meine Angebote &amp; Preise</h1>
-      <p class="lede hero__lede">
+      <p class="eyebrow" data-fade>LUMA Wellness by June Saurin</p>
+      <h1 data-reveal>Meine Angebote &amp; Preise</h1>
+      <p class="lede hero__lede" data-fade>
         Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19.
       </p>
     </div>
@@ -77,93 +117,129 @@ const money = (n: number) => `${n}€`;
        page, and gives the section anchors somewhere to be linked from. -->
   <section class="section--tight">
     <div class="shell">
-      <ul class="index">
+      <ul class="cards">
         {
-          treatments.map((t) => (
-            <li class="index__item">
-              <a href={`#${t.data.id}`} class="index__link">
-                <span class="index__name">{t.data.name.replace(/^\|\s*/, '')}</span>
-                <span class="index__prices">
-                  {t.data.prices.map((p) => (
-                    <span class="index__price">
-                      <span class="index__dur">{p.durationMin}min</span>
-                      {money(p.priceEur)}
+          treatments.map((t, i) => {
+            const image = img(t.data.image);
+            const target = cardTarget(t.data.id);
+            const isSignature = t.data.id === 'gold-medalie';
+            // Card shows the lead plus the opening paragraph; the rest of the
+            // live copy stays on the page inside a native <details>, so the word
+            // count never drops below the page this replaces.
+            const [first, ...rest] = t.data.body;
+            return (
+              <li
+                class:list={['card', isSignature && 'card--signature']}
+                data-tilt
+                data-fade
+              >
+                <span class="tilt__shadow" aria-hidden="true"></span>
+
+                <article class="card__inner float">
+                  {/* The photograph is the top of the card itself. It is masked
+                      to fade downward so it meets the card's own porcelain
+                      instead of ending on a hard edge, and the type sits in
+                      that fade. */}
+                  {image && (
+                    <span
+                      class="card__photo"
+                      transition:name={target ? `svc-${target.family}` : undefined}
+                    >
+                      <Photo
+                        src={image}
+                        alt=""
+                        widths={[380, 560, 760]}
+                        sizes="(max-width: 640px) 88vw, (max-width: 1100px) 44vw, 30vw"
+                        ratio="4 / 3"
+                        dissolve={false}
+                      />
                     </span>
-                  ))}
-                </span>
-              </a>
-            </li>
-          ))
+                  )}
+
+                  <span class="card__linework" aria-hidden="true"></span>
+                  <span class="tilt__glare" aria-hidden="true"></span>
+
+                  {isSignature && <span class="card__ribbon" aria-hidden="true">Signature</span>}
+
+                  <div class="card__content">
+                    <header class="card__head">
+                      <span class="card__index" aria-hidden="true">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <p class="card__eyebrow">{isSignature ? 'Signature' : 'Behandlung'}</p>
+                    </header>
+
+                    <h2 class="card__name sheen">{t.data.name.replace(/^\|\s*/, '')}</h2>
+                    <div class="card__rule" aria-hidden="true"></div>
+
+                    <p class="card__lead">{leadFor(t.data.id)}</p>
+
+                    <dl class="rates">
+                      {t.data.prices.map((pr) => (
+                        <div class="rate">
+                          <dt class="rate__dur">{pr.durationMin} Min.</dt>
+                          <span class="rate__leader" aria-hidden="true"></span>
+                          <dd class="rate__amount">
+                            <span class="rate__cur">EUR</span>
+                            <span class="rate__num">{pr.priceEur}</span>
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    <div class="card__body prose">
+                      {first && first.type === 'p' && <p>{first.text}</p>}
+                    </div>
+
+                    {rest.length > 0 && (
+                      <details class="card__more">
+                        <summary class="card__more-toggle">
+                          <span class="card__more-open">Ganze Beschreibung</span>
+                          <span class="card__more-close">Beschreibung schließen</span>
+                          <span class="card__more-chev" aria-hidden="true"></span>
+                        </summary>
+                        <div class="card__body card__body--full prose">
+                          {rest.map((b) =>
+                            b.type === 'p' ? (
+                              <p>{b.text}</p>
+                            ) : b.type === 'benefit' ? (
+                              <p class="benefit"><strong>{b.label}:</strong> {b.text}</p>
+                            ) : (
+                              <ul>{b.items.map((it) => <li>{it}</li>)}</ul>
+                            ),
+                          )}
+                        </div>
+                      </details>
+                    )}
+
+                    <a class="card__cta" href={target ? target.href : url('/contact')} data-magnetic>
+                      <span data-magnetic-label>
+                        {target ? 'Details & Termin' : 'Termin anfragen'}
+                      </span>
+                      <svg viewBox="0 0 24 12" aria-hidden="true" class="card__arrow">
+                        <path d="M0 6h21M16 1l5 5-5 5" fill="none" stroke="currentColor"
+                              stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </a>
+
+                    <p class="card__meta">LUMA · {String(i + 1).padStart(2, '0')}</p>
+                  </div>
+                </article>
+              </li>
+            );
+          })
         }
       </ul>
     </div>
   </section>
 
-  {
-    treatments.map((t, i) => {
-      const image = img(t.data.image);
-      return (
-        <section class="section treatment" id={t.data.id}>
-          <div class="shell treatment__inner">
-            <div class:list={['treatment__media', i % 2 === 1 && 'treatment__media--flip']}>
-              {image && (
-                <figure>
-                  <Photo
-                    src={image}
-                    alt={t.data.imageAlt ?? t.data.name}
-                    widths={[420, 640, 900]}
-                    sizes="(max-width: 900px) 88vw, 38vw"
-                    ratio="4 / 5"
-                  />
-                </figure>
-              )}
-            </div>
-
-            <div class="treatment__copy">
-              <p class="treatment__num">{t.data.number}</p>
-              <h2 class="treatment__name">{t.data.name.replace(/^\|\s*/, '')}</h2>
-
-              <div class="prose treatment__body">
-                {t.data.body.map((b) =>
-                  b.type === 'p' ? (
-                    <p>{b.text}</p>
-                  ) : b.type === 'benefit' ? (
-                    <p class="benefit">
-                      <strong>{b.label}:</strong> {b.text}
-                    </p>
-                  ) : (
-                    <ul>{b.items.map((it) => <li>{it}</li>)}</ul>
-                  ),
-                )}
-              </div>
-
-              <div class="price panel">
-                <span class="price__label">Preis</span>
-                <span class="price__values">
-                  {t.data.prices.map((p) => (
-                    <span class="price__pair">
-                      <span class="price__dur">{p.durationMin}min.</span>
-                      <span class="price__amt">{money(p.priceEur)}</span>
-                    </span>
-                  ))}
-                </span>
-              </div>
-
-              <p class="treatment__cta">
-                <a href="/contact" class="pill">Termin anfragen</a>
-              </p>
-            </div>
-          </div>
-        </section>
-      );
-    })
-  }
-
   <section class="section close">
     <div class="shell shell--narrow close__inner">
-      <h2 class="close__title">Ihren Termin sichern</h2>
+      <h2 class="close__title" data-reveal>Ihren Termin sichern</h2>
       <p class="lede">Termine nur nach vorheriger Absprache.</p>
-      <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+      <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+        <span data-magnetic-label>Buchen Sie eine Massage</span>
+      </a>
     </div>
   </section>
 </Layout>
@@ -172,119 +248,313 @@ const money = (n: number) => `${n}€`;
   .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2rem); }
   .hero__lede { margin-top: 1.5rem; }
 
-  /* --- Price index --- */
+  /* ======================================================================
+     Treatment cards.
 
-  .index { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+     The photograph is not a thumbnail sitting on top of a panel: it is the top
+     of the card, bled to the rounded edge and masked so it dissolves downward
+     into the card's own porcelain. The type then sits inside that fade, which
+     is what stops the card reading as an image box with a caption under it.
+     ====================================================================== */
 
-  .index__item { border-bottom: 1px solid rgb(184 147 78 / 0.14); }
-  .index__item:first-child { border-top: 1px solid rgb(184 147 78 / 0.14); }
-
-  .index__link {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
-    padding: 1.15rem 0.25rem;
-    transition: padding-inline 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .index__name {
-    font-family: var(--font-display);
-    font-size: clamp(1.05rem, 2vw, 1.45rem);
-    font-weight: 300;
-    line-height: 1.2;
-    color: var(--ink);
-  }
-
-  .index__prices { display: flex; flex-wrap: wrap; gap: 0.4rem 1.35rem; }
-
-  .index__price {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    font-size: var(--step-small);
-    color: var(--ink);
-    white-space: nowrap;
-  }
-
-  .index__dur { color: var(--ink-mute); font-size: 0.8125rem; }
-
-  @media (hover: hover) and (pointer: fine) {
-    .index__link:hover { padding-inline: 0.75rem 0.25rem; }
-    .index__link:hover .index__name { color: var(--gold-text); }
-  }
-
-  /* --- Treatment --- */
-
-  .treatment { padding-block: clamp(3rem, 7vw, 6.5rem); scroll-margin-top: 6rem; }
-
-  .treatment__inner {
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: clamp(2rem, 5vw, 4.5rem);
-    align-items: start;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: clamp(1.25rem, 2.6vw, 2.25rem);
+    perspective: 1600px;
   }
 
-  .treatment__media { position: sticky; top: 6rem; }
-  .treatment__media figure { margin: 0; }
-  .treatment__media--flip { order: 2; }
+  .card { position: relative; min-width: 0; }
 
-  .treatment__num {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    color: var(--gold-text);
-    margin: 0 0 0.75rem;
-    letter-spacing: 0.08em;
-  }
-
-  .treatment__name {
-    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
-    line-height: 1.1;
-    margin-bottom: 1.75rem;
-  }
-
-  .treatment__body { max-width: 64ch; }
-  .benefit { color: var(--ink-soft); }
-
-  /* --- Price block --- */
-
-  .price {
+  .card__inner {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    max-width: 100%;
+    height: 100%;
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.75rem 2rem;
-    margin-top: 2.25rem;
-    padding: 1.35rem 1.75rem;
+    flex-direction: column;
+    /* Opposite corners answer each other so it never reads as a rounded box. */
+    border-radius: clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem)
+                   clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem);
+    background:
+      radial-gradient(120% 80% at 15% 100%, var(--wash-gold) 0%, transparent 62%),
+      radial-gradient(110% 70% at 95% 88%, var(--wash-blush) 0%, transparent 60%),
+      var(--surface-strong);
+    box-shadow: var(--shadow-float), var(--edge-daylight);
+    backdrop-filter: blur(10px);
   }
 
-  .price__label {
-    font-size: var(--step-eyebrow);
+  .tilt__shadow {
+    border-radius: clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem)
+                   clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem);
+  }
+
+  /* --- The photograph, dissolving into the card ------------------------- */
+
+  .card__photo {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 0;
+    display: block;
+    /* Fades to nothing before the type starts, so image and surface meet
+       without an edge anywhere. */
+    -webkit-mask-image: linear-gradient(to bottom,
+      #000 0%, #000 42%, rgb(0 0 0 / 0.72) 62%, rgb(0 0 0 / 0.28) 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom,
+      #000 0%, #000 42%, rgb(0 0 0 / 0.72) 62%, rgb(0 0 0 / 0.28) 80%, transparent 100%);
+  }
+
+  .card__photo :global(.media) { border-radius: 0; box-shadow: none; background: none; }
+
+  /* A warm veil over the lower half of the photograph so the eyebrow and the
+     numeral keep their contrast wherever the image happens to be dark. */
+  .card__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+      transparent 0%, transparent 30%,
+      rgb(250 247 242 / 0.35) 58%,
+      rgb(250 247 242 / 0.82) 82%,
+      var(--porcelain) 100%);
+  }
+
+  .card__linework {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500' fill='none' stroke='%23b8934e' stroke-width='0.7' opacity='0.3'%3E%3Cpath d='M-30 430 C 90 350, 180 460, 300 330 S 430 280, 470 210'/%3E%3Cpath d='M210 -20 C 260 110, 190 210, 250 320 S 280 430, 240 540'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+  }
+
+  .card--signature .card__inner {
+    background:
+      radial-gradient(120% 80% at 15% 100%, var(--wash-gold) 0%, transparent 58%),
+      radial-gradient(110% 70% at 95% 88%, var(--wash-blush) 0%, transparent 56%),
+      rgb(255 255 255 / 0.9);
+    box-shadow: var(--shadow-lift), var(--edge-daylight);
+  }
+
+  .card__ribbon {
+    position: absolute;
+    top: 1.15rem;
+    right: -3.1rem;
+    z-index: 4;
+    width: 10.5rem;
+    padding: 0.36rem 0;
+    text-align: center;
+    transform: rotate(45deg);
+    background: linear-gradient(100deg, var(--gold) 0%, var(--gold-fill) 45%, var(--gold-spec) 100%);
+    color: var(--ink);
+    font-size: 0.5625rem;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    box-shadow: 0 8px 22px rgb(43 38 34 / 0.16);
+  }
+
+  /* --- Content, sitting inside the fade --------------------------------- */
+
+  .card__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* Pushes the type down into the faded part of the photograph. */
+    padding: clamp(11rem, 22vw, 14.5rem) clamp(1.4rem, 2.4vw, 2rem) clamp(1.5rem, 2.4vw, 2rem);
+  }
+
+  .card__head { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem; }
+
+  .card__index {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+    font-weight: 300;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(184 147 78 / 0.5);
+    letter-spacing: -0.02em;
+    user-select: none;
+  }
+
+  .card__eyebrow {
+    margin: 0;
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
     color: var(--gold-text);
   }
 
-  .price__values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.75rem; }
-
-  .price__pair { display: inline-flex; align-items: baseline; gap: 0.5rem; }
-  .price__dur { font-size: 0.875rem; color: var(--ink-mute); }
-
-  .price__amt {
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 2.4vw, 1.75rem);
-    color: var(--ink);
+  .card__name {
+    font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+    line-height: 1.14;
+    letter-spacing: -0.01em;
+    margin: 0;
+    overflow-wrap: break-word;
+    text-wrap: balance;
   }
 
-  .treatment__cta { margin-top: 1.75rem; }
+  .card__rule {
+    height: 1px;
+    margin: 0.95rem 0 1.05rem;
+    background: linear-gradient(90deg,
+      rgb(184 147 78 / 0.45) 0%, rgb(184 147 78 / 0.16) 55%, transparent 100%);
+  }
 
-  /* --- Close --- */
+  .card__lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--gold-text);
+    margin: 0 0 1.1rem;
+    overflow-wrap: break-word;
+  }
+
+  /* --- Rates: duration, leader, figure ---------------------------------- */
+
+  .rates { margin: 0 0 1.15rem; display: grid; gap: 0; }
+
+  .rate {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding-block: 0.5rem;
+  }
+  .rate > * { min-width: 0; }
+
+  .rate__dur {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .rate__leader {
+    height: 1px;
+    transform: translateY(-0.3em);
+    background-image: radial-gradient(circle, rgb(111 101 88 / 0.5) 0.9px, transparent 1px);
+    background-size: 6px 1px;
+    background-repeat: repeat-x;
+  }
+
+  .rate__amount { margin: 0; display: inline-flex; align-items: baseline; gap: 0.35rem; white-space: nowrap; }
+
+  .rate__cur {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .rate__num {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--ink);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  /* --- Body and disclosure ---------------------------------------------- */
+
+  .card__body :global(p) { font-size: 0.875rem; line-height: 1.62; overflow-wrap: break-word; }
+  .card__body :global(li) { font-size: 0.875rem; }
+
+  .card__more { margin-top: 0.85rem; }
+
+  .card__more-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .card__more-toggle::-webkit-details-marker { display: none; }
+  .card__more-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+  .card__more-close { display: none; }
+  .card__more[open] .card__more-open { display: none; }
+  .card__more[open] .card__more-close { display: inline; }
+
+  .card__more-chev {
+    width: 7px; height: 7px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .card__more[open] .card__more-chev { transform: rotate(-135deg) translateY(-1px); }
+
+  .card__body--full { margin-top: 0.9rem; }
+
+  /* --- CTA and meta ------------------------------------------------------ */
+
+  .card__cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 46px;
+    margin-top: auto;
+    padding: 0.8rem 1.25rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.36), 0 6px 20px rgb(43 38 34 / 0.05);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    transition: box-shadow 0.4s ease, background 0.4s ease;
+  }
+
+  .card__arrow {
+    width: 20px; height: 10px; flex: none;
+    color: var(--gold-text);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card__cta:hover {
+      background: rgb(255 255 255 / 0.88);
+      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.62), 0 10px 28px rgb(43 38 34 / 0.09);
+    }
+    .card__cta:hover .card__arrow { transform: translateX(4px); }
+  }
+
+  .card__meta {
+    margin: 0.9rem 0 0;
+    font-size: 0.5625rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
 
   .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
 
-  @media (max-width: 900px) {
-    .treatment__inner { grid-template-columns: 1fr; }
-    .treatment__media { position: static; max-width: 20rem; order: -1 !important; }
+  @media (max-width: 520px) {
+    .card__content { padding-top: clamp(9rem, 42vw, 12rem); }
+    .card__ribbon { right: -3.4rem; width: 10rem; font-size: 0.5rem; }
   }
 </style>

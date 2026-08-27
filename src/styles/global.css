@@ -7,31 +7,9 @@
    behind a single deferred island.
    ========================================================================= */
 
-/* --- Self-hosted variable faces. Never the Google CDN: German courts have
-       ruled it transmits visitor IPs without consent. Latin subset only, which
-       covers every glyph in the German copy. --------------------------------- */
-
-@font-face {
-  font-family: 'Fraunces';
-  src: url('/fonts/fraunces-latin-var.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-stretch: normal;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/hankengrotesk-latin-var.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-stretch: normal;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
-}
+/* Font faces are declared in Layout.astro, where the deploy base can be
+   interpolated into the url(). A hardcoded /fonts/ path here 404s on any
+   deploy that is not served from the domain root. */
 
 /* --- 9.1 Tokens ---------------------------------------------------------- */
 
@@ -202,6 +180,7 @@ a { color: inherit; text-decoration: none; }
      Above that the wash starts reading as a colour and gold text loses its
      contrast floor on the hotspots. */
   opacity: 0.38;
+  animation: drift-a 42s ease-in-out infinite alternate;
 }
 
 .aurora::after {
@@ -209,6 +188,42 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(52% 40% at 72% 82%, var(--wash-sky) 0%, transparent 68%),
     radial-gradient(38% 32% at 26% 74%, var(--wash-gold) 0%, transparent 64%);
   opacity: 0.32;
+  animation: drift-b 34s ease-in-out infinite alternate;
+}
+
+/* The barely-visible conic rotation at 120s. Its job is to keep the field from
+   ever settling into a pattern the eye can lock onto. */
+.aurora__conic {
+  position: absolute;
+  inset: -40%;
+  opacity: 0.16;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    var(--wash-gold) 70deg,
+    transparent 140deg,
+    var(--wash-blush) 220deg,
+    transparent 300deg
+  );
+  filter: blur(80px);
+  animation: conic-spin 120s linear infinite;
+}
+
+/* Transform only. Nothing here touches layout or paint geometry. */
+@keyframes drift-a {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(3.5%, -2.5%, 0) scale(1.08); }
+  100% { transform: translate3d(-2.5%, 3%, 0) scale(1.04); }
+}
+
+@keyframes drift-b {
+  0%   { transform: translate3d(0, 0, 0) scale(1.05); }
+  50%  { transform: translate3d(-4%, 2%, 0) scale(1); }
+  100% { transform: translate3d(2.5%, -3.5%, 0) scale(1.09); }
+}
+
+@keyframes conic-spin {
+  to { transform: rotate(360deg); }
 }
 
 /* --- Film grain ---------------------------------------------------------- */
@@ -288,10 +303,19 @@ a { color: inherit; text-decoration: none; }
   backdrop-filter: blur(8px);
 }
 
+/* The nav is sticky, so anything can scroll under it, including a dark
+   competition photograph. At 55% white the ink lost its contrast floor over
+   dark media. 82% keeps the frosted read and guarantees legibility over the
+   worst thing the page can put behind it. */
 .glass {
-  background: rgb(255 255 255 / 0.55);
-  backdrop-filter: blur(16px) saturate(1.1);
-  box-shadow: var(--shadow-float-sm), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  background: rgb(255 255 255 / 0.82);
+  backdrop-filter: blur(20px) saturate(1.15);
+  box-shadow: var(--shadow-float-sm), inset 0 1px 0 rgb(255 255 255 / 0.85);
+}
+
+/* No backdrop-filter support: fall back to something opaque enough to read. */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass { background: rgb(255 255 255 / 0.95); }
 }
 
 /* --- The one primary CTA style: gold pill, ink text ---------------------- */
@@ -407,4 +431,233 @@ a { color: inherit; text-decoration: none; }
 @media print {
   .aurora, .grain { display: none; }
   body { background: #fff; }
+}
+
+
+/* ==========================================================================
+   Stage 6. Motion primitives that need no JavaScript.
+   Everything here animates transform, opacity or a masked pseudo-element only.
+   ========================================================================== */
+
+/* --- Floating idle motion ------------------------------------------------ */
+/* Cards drift 8px over 7 to 10s on desynced delays. Paired with the deepening
+   shadow this reads as objects floating in bright air. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .float { animation: float-y 8.5s ease-in-out infinite alternate; will-change: transform; }
+  .float:nth-child(2n)   { animation-duration: 9.7s;  animation-delay: -1.4s; }
+  .float:nth-child(3n)   { animation-duration: 7.4s;  animation-delay: -2.9s; }
+  .float:nth-child(3n+1) { animation-duration: 10s;   animation-delay: -0.7s; }
+  /* Paused while offscreen so idle cards cost nothing. */
+  .float:not(.is-onscreen) { animation-play-state: paused; }
+}
+
+@keyframes float-y {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -8px, 0); }
+}
+
+/* --- Specular sheen sweep ------------------------------------------------ */
+/* The gleam. 120deg gradient, transparent to gold-spec at 45%, swept across
+   gold pills, gold display words and medal icons. */
+
+.sheen { position: relative; overflow: hidden; isolation: isolate; }
+
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgb(232 213 168 / 0.45) 48%,
+    rgb(255 252 245 / 0.55) 52%,
+    transparent 70%
+  );
+  transform: translateX(-150%);
+}
+
+.sheen.is-sweeping::after {
+  animation: sheen-sweep 1.2s cubic-bezier(0.25, 0.6, 0.3, 1) forwards;
+}
+
+@keyframes sheen-sweep {
+  from { transform: translateX(-150%); }
+  to   { transform: translateX(250%); }
+}
+
+/* --- Halo bloom ---------------------------------------------------------- */
+/* Sunlight pooling behind the element. Two haloed elements per viewport max,
+   which is enforced by only ever applying this class to a primary CTA. */
+
+.halo { position: relative; isolation: isolate; }
+
+.halo::before {
+  content: '';
+  position: absolute;
+  inset: -70%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(232 213 168 / 0.55) 0%, transparent 72%);
+  filter: blur(34px);
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+}
+
+.halo.is-lit::before,
+.halo:hover::before,
+.halo:focus-visible::before { opacity: 1; }
+
+/* --- Conic border shimmer ------------------------------------------------ */
+/* A ring of caught light. Booking card and the Gold Medalie card only. */
+
+@property --shimmer-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.conic-ring { position: relative; }
+
+.conic-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--shimmer-angle),
+    transparent 0deg,
+    var(--gold-fill) 60deg,
+    var(--gold-spec) 110deg,
+    transparent 190deg,
+    transparent 360deg
+  );
+  /* Masked to the border so only the 1px ring paints. */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .conic-ring::before { animation: shimmer-spin 8s linear infinite; }
+}
+
+@keyframes shimmer-spin {
+  to { --shimmer-angle: 360deg; }
+}
+
+/* --- Sunbeam pass -------------------------------------------------------- */
+/* A very wide, very soft diagonal band of warm white that crosses a section
+   once as it enters, like sun moving across a wall. One at a time: the island
+   only ever attaches this to the section currently in view. */
+
+.sunbeam { position: relative; overflow: clip; }
+
+.sunbeam__ray {
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 55%;
+  height: 160%;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 251 242 / 0.12) 38%,
+    rgb(255 253 248 / 0.14) 50%,
+    rgb(255 251 242 / 0.10) 62%,
+    transparent 100%
+  );
+  filter: blur(28px);
+  transform: translate3d(-120%, 0, 0) rotate(8deg);
+  opacity: 0;
+}
+
+/* --- Light motes --------------------------------------------------------- */
+
+.motes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Line reveals -------------------------------------------------------- */
+/* SplitText writes the mask wrappers; these are the resting states so nothing
+   flashes before the island runs, and the final state if it never does. */
+
+.line-mask { display: block; overflow: hidden; }
+.line-mask > * { display: block; will-change: transform; }
+
+/* Only hide pre-reveal content once the island has confirmed it will animate.
+   Without this gate the copy is invisible when JavaScript fails. */
+.motion-ready [data-reveal] .line-mask > * { transform: translateY(110%); }
+.motion-ready [data-fade] { opacity: 0; transform: translateY(24px); }
+
+/* --- Tilt ---------------------------------------------------------------- */
+
+.tilt, [data-tilt] { transform-style: preserve-3d; will-change: transform; }
+
+/* The float and the tilt must never share an element: a CSS keyframe animating
+   transform overrides GSAP's inline transform, and the tilt silently does
+   nothing. The card tilts, an inner wrapper floats. */
+[data-tilt].float { animation: none !important; }
+
+.tilt__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgb(255 253 248 / 0.25) 0%,
+    transparent 58%
+  );
+}
+
+/* The card visibly rises off the page: a shadow pseudo-element deepens rather
+   than animating box-shadow, which would repaint every frame. */
+.tilt__shadow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--shadow-lift);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* --- Pointer gating ------------------------------------------------------ */
+/* Tilt, magnetic, glare and hover sheens exist only for fine pointers. Touch
+   gets the scroll grammar, which is the primary art. */
+
+@media not all and (hover: hover) and (pointer: fine) {
+  .tilt__glare, .tilt__shadow { display: none; }
+}
+
+/* --- Reduced motion: the full alternate grammar -------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora::before,
+  .aurora::after,
+  .aurora__conic { animation: none !important; }
+  .float { animation: none !important; }
+  .conic-ring::before { animation: none !important; }
+  .sheen::after { display: none; }
+  .sunbeam__ray { display: none; }
+  .motes { display: none; }
+  .motion-ready [data-reveal] .line-mask > *,
+  .motion-ready [data-fade] { transform: none; opacity: 1; }
 }

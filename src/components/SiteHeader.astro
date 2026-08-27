@@ -8,7 +8,7 @@
  * widget is meant to be the only interactive island on the whole site.
  */
 import { Image } from 'astro:assets';
-import { NAV } from '../lib/site';
+import { NAV, url } from '../lib/site';
 import logo from '../assets/logo-luma-mark.webp';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -18,7 +18,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   <a class="skip" href="#main">Zum Inhalt springen</a>
 
   <div class="header__inner glass">
-    <a class="brand" href="/" aria-label="LUMA WELLNESS by June Saurin, zur Startseite">
+    <a class="brand" href={url('/')} aria-label="LUMA WELLNESS by June Saurin, zur Startseite">
       <Image src={logo} alt="" width={44} height={44} loading="eager" class="brand__mark" />
       <span class="brand__text">
         <span class="brand__name">LUMA</span>
@@ -42,7 +42,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
           NAV.map((item) => (
             <li>
               <a
-                href={item.href}
+                href={url(item.href)}
                 class="nav__link underline-gold"
                 aria-current={path === item.href ? 'page' : undefined}
               >
@@ -52,7 +52,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
           ))
         }
         <li class="nav__cta">
-          <a href="/contact" class="pill">Jetzt buchen</a>
+          <a href={url('/contact')} class="pill">Jetzt buchen</a>
         </li>
       </ul>
     </nav>

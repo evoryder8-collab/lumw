@@ -1,0 +1,53 @@
+---
+/**
+ * The single deferred motion island.
+ *
+ * Everything in the motion layer arrives through this one script and nowhere
+ * else. It waits for the LCP paint before importing, so the hero never competes
+ * with GSAP for bandwidth, and it does not import at all under reduced motion
+ * beyond the small amount needed to settle the page into its static grammar.
+ */
+---
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const load = () => import('../../scripts/motion.ts');
+
+  if (reduced) {
+    // Reduced motion still needs the reveal states cleared, but nothing is
+    // scheduled against the scroll and no rAF loop ever starts. Loading on idle
+    // keeps it off the critical path entirely.
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(load, { timeout: 2000 });
+    } else {
+      setTimeout(load, 400);
+    }
+  } else {
+    // Wait for the largest contentful paint, then load on the next idle slot.
+    let fired = false;
+    const go = () => {
+      if (fired) return;
+      fired = true;
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(load, { timeout: 1200 });
+      } else {
+        setTimeout(load, 200);
+      }
+    };
+
+    try {
+      const po = new PerformanceObserver(() => {
+        po.disconnect();
+        go();
+      });
+      po.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch {
+      /* no LCP observer: fall through to the load handler */
+    }
+
+    // Belt and braces, and the path older browsers take.
+    if (document.readyState === 'complete') setTimeout(go, 300);
+    else addEventListener('load', () => setTimeout(go, 300), { once: true });
+  }
+</script>

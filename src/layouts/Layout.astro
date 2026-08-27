@@ -11,6 +11,9 @@ import Meta from '../components/seo/Meta.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import MotionIsland from '../components/motion/MotionIsland.astro';
+import { ClientRouter } from 'astro:transitions';
+import { url } from '../lib/site';
 import '../styles/global.css';
 
 interface Props {
@@ -25,6 +28,8 @@ interface Props {
 }
 
 const { title, description, path, ogImage, ogType, schema, preloadImage } = Astro.props;
+
+const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <!doctype html>
@@ -36,7 +41,7 @@ const { title, description, path, ogImage, ogType, schema, preloadImage } = Astr
 
     <link
       rel="preload"
-      href="/fonts/fraunces-latin-var.woff2"
+      href={url('/fonts/fraunces-latin-var.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
@@ -55,9 +60,30 @@ const { title, description, path, ogImage, ogType, schema, preloadImage } = Astr
       )
     }
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap.xml" />
+    <style is:inline set:html={`
+      @font-face {
+        font-family: 'Fraunces';
+        src: url('${fontBase}/fonts/fraunces-latin-var.woff2') format('woff2-variations');
+        font-weight: 100 900; font-style: normal; font-display: swap;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: 'Hanken Grotesk';
+        src: url('${fontBase}/fonts/hankengrotesk-latin-var.woff2') format('woff2-variations');
+        font-weight: 100 900; font-style: normal; font-display: swap;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+      }
+    `} />
+
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <link rel="sitemap" href={url('/sitemap.xml')} />
+
+    {/* View Transitions. Fallback is instant navigation, which is what a
+        browser without support already does. */}
+    <ClientRouter fallback="none" />
 
     <Meta {title} {description} {path} {ogImage} {ogType} />
     {schema && <JsonLd data={schema} />}
@@ -66,7 +92,7 @@ const { title, description, path, ogImage, ogType, schema, preloadImage } = Astr
   <body>
     <!-- The background itself is the heaven-like element. Static in stages 1-3;
          stage 6 animates these same two layers and nothing restructures. -->
-    <div class="aurora" aria-hidden="true"></div>
+    <div class="aurora" aria-hidden="true"><div class="aurora__conic"></div></div>
     <div class="grain" aria-hidden="true"></div>
 
     <SiteHeader />
@@ -76,5 +102,7 @@ const { title, description, path, ogImage, ogType, schema, preloadImage } = Astr
     </main>
 
     <SiteFooter />
+
+    <MotionIsland />
   </body>
 </html>

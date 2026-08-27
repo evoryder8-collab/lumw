@@ -7,6 +7,7 @@
  * the first sentence under each heading, which the live copy already does.
  */
 import { getCollection } from 'astro:content';
+import { url } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, faqNode,
@@ -36,8 +37,8 @@ const schema = graph([
   <section class="hero">
     <div class="shell shell--mid">
       <p class="eyebrow">LUMA Wellness Buxtehude</p>
-      <h1>Häufig gestellte Fragen</h1>
-      <p class="lede hero__lede">
+      <h1 data-reveal>Häufig gestellte Fragen</h1>
+      <p class="lede hero__lede" data-fade>
         Willkommen bei den LUMA Wellness FAQ. Hier finden Sie hilfreiche Antworten auf häufig
         gestellte Fragen von geschätzten Kunden in Buxtehude und der umliegenden Region. Ob Sie
         nach der perfekten „Massage Buxtehude" suchen oder die beste „Thai Massage Buxtehude"
@@ -69,9 +70,11 @@ const schema = graph([
 
   <section class="section close">
     <div class="shell shell--narrow close__inner">
-      <h2 class="close__title">Noch eine Frage offen?</h2>
+      <h2 class="close__title" data-reveal>Noch eine Frage offen?</h2>
       <p class="lede">Schreiben Sie mir, ich melde mich schnellstmöglich zurück.</p>
-      <a href="/contact" class="pill">Kontakt aufnehmen</a>
+      <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+        <span data-magnetic-label>Kontakt aufnehmen</span>
+      </a>
     </div>
   </section>
 </Layout>

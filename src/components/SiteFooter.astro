@@ -1,6 +1,6 @@
 ---
 /** Footer copy is verbatim from the live site, on the deepest porcelain. */
-import { NAV, BUSINESS } from '../lib/site';
+import { NAV, BUSINESS, url } from '../lib/site';
 ---
 
 <footer class="footer">
@@ -13,7 +13,7 @@ import { NAV, BUSINESS } from '../lib/site';
     <nav class="footer__col" aria-label="Fußzeilennavigation">
       <h2 class="footer__title">Menu</h2>
       <ul>
-        {NAV.map((i) => <li><a href={i.href} class="underline-gold">{i.label}</a></li>)}
+        {NAV.map((i) => <li><a href={url(i.href)} class="underline-gold">{i.label}</a></li>)}
       </ul>
     </nav>
 
@@ -37,7 +37,7 @@ import { NAV, BUSINESS } from '../lib/site';
       </ul>
       <p class="footer__note">Termine nur nach vorheriger Absprache.</p>
 
-      <a href="/contact" class="pill footer__cta">
+      <a href={url('/contact')} class="pill footer__cta">
         Jetzt buchen<span class="footer__cta-sub">Klick hier</span>
       </a>
     </div>
@@ -46,8 +46,8 @@ import { NAV, BUSINESS } from '../lib/site';
   <div class="shell footer__base">
     <p class="footer__copy">© 2026 LUMA WELLNESS by June Saurin.</p>
     <ul class="footer__legal">
-      <li><a href="/datenschutzrichtlinie" class="underline-gold">Datenschutzrichtlinie</a></li>
-      <li><a href="/nutzungsbedingungen" class="underline-gold">Nutzungsbedingungen</a></li>
+      <li><a href={url('/datenschutzrichtlinie')} class="underline-gold">Datenschutzrichtlinie</a></li>
+      <li><a href={url('/nutzungsbedingungen')} class="underline-gold">Nutzungsbedingungen</a></li>
     </ul>
   </div>
 </footer>

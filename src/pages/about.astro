@@ -10,7 +10,7 @@ import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import { heroPreload } from '../lib/heroPreload';
-import { AWARDS } from '../lib/site';
+import { AWARDS, url } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
 } from '../lib/schema';
@@ -52,8 +52,8 @@ const schema = graph([
     <div class="shell hero__inner">
       <div>
         <p class="eyebrow">Weltweit ausgezeichnete Massage</p>
-        <h1>UBER MICH</h1>
-        <p class="lede hero__lede">
+        <h1 data-reveal>UBER MICH</h1>
+        <p class="lede hero__lede" data-fade>
           June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
           therapeutischer Erfahrung.
         </p>
@@ -74,7 +74,7 @@ const schema = graph([
 
   <section class="section--tight">
     <div class="shell shell--mid">
-      <div class="prose story">
+      <div class="prose story" data-fade>
         <p>
           June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
           therapeutischer Erfahrung. Ursprünglich in Thailand geboren und heute in Deutschland
@@ -104,7 +104,7 @@ const schema = graph([
           <ol>
             {
               AWARDS.map((a) => (
-                <li class="record__item">
+                <li class="record__item float">
                   <span class="record__award">{a.short}</span>
                   <span class="record__meta">{a.event} · {a.place}</span>
                 </li>
@@ -128,7 +128,7 @@ const schema = graph([
 
   <section class="section--tight">
     <div class="shell shell--mid">
-      <div class="prose story">
+      <div class="prose story" data-fade>
         <p>
           Im September 2023 trat June bei der Universal Massage Championship in Penzberg,
           Deutschland an, um ihre Fähigkeiten in den Kategorien Wellness &amp; Spa sowie Freestyle
@@ -178,7 +178,7 @@ const schema = graph([
 
   <section class="section--tight">
     <div class="shell shell--mid">
-      <div class="prose story">
+      <div class="prose story" data-fade>
         <p>
           Die Kunden von LUMA Wellness by June Saurin sind von ihrem Talent regelrecht fasziniert.
           Bereits nach einer einzigen Sitzung sind viele überzeugt, weitere Termine zu buchen – ein
@@ -200,16 +200,18 @@ const schema = graph([
       </div>
 
       <p class="story__cta">
-        <a href="/contact" class="pill">Massage Buchen</a>
+        <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+          <span data-magnetic-label>Massage Buchen</span>
+        </a>
       </p>
     </div>
   </section>
 
   <!-- Testimonial in air. One quote alone on the pale wash. -->
-  <section class="section testimonial">
+  <section class="section testimonial" data-sunbeam>
     <div class="shell shell--narrow">
       <p class="eyebrow testimonial__label">Empfehlungsschreiben</p>
-      <blockquote class="testimonial__quote">
+      <blockquote class="testimonial__quote" data-reveal>
         <p>
           "Unglaubliche Therapeutin, ich konnte immer sagen, wenn jemand wirklich sein Bestes gibt
           oder nicht für ihre Arbeit. Sie gab ihr Bestes jedes Mal, lassen Sie sich nicht von ihrer

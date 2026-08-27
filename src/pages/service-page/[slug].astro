@@ -16,7 +16,7 @@ import Layout from '../../layouts/Layout.astro';
 import Photo from '../../components/Photo.astro';
 import { imageByName, socialImageUrl } from '../../lib/images';
 import { heroPreload } from '../../lib/heroPreload';
-import { BUSINESS } from '../../lib/site';
+import { BUSINESS, url } from '../../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
 } from '../../lib/schema';
@@ -82,13 +82,13 @@ const schema = graph([
       <div class="shell hero__inner">
         <div class="hero__copy">
           <nav class="crumbs" aria-label="Brotkrumennavigation">
-            <a href="/" class="underline-gold">Startseite</a>
+            <a href={url('/')} class="underline-gold">Startseite</a>
             <span aria-hidden="true">/</span>
-            <a href="/meineangebote-preise" class="underline-gold">Angebote &amp; Preise</a>
+            <a href={url('/meineangebote-preise')} class="underline-gold">Angebote &amp; Preise</a>
           </nav>
 
-          <p class="eyebrow">{service.tagline}</p>
-          <h1 class="hero__title">{service.name}</h1>
+          <p class="eyebrow" data-fade>{service.tagline}</p>
+          <h1 class="hero__title" data-reveal>{service.name}</h1>
 
           <dl class="facts">
             <div class="fact">
@@ -102,7 +102,9 @@ const schema = graph([
           </dl>
 
           <div class="hero__actions">
-            <a href="/contact" class="pill">Termin anfragen</a>
+            <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+              <span data-magnetic-label>Termin anfragen</span>
+            </a>
             <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold hero__ghost">
               {BUSINESS.phone}
             </a>
@@ -111,7 +113,7 @@ const schema = graph([
 
         {
           image && (
-            <figure class="hero__figure">
+            <figure class="hero__figure" transition:name={`svc-${service.family}`}>
               <Photo
                 src={image}
                 alt={service.imageAlt ?? service.name}
@@ -126,9 +128,9 @@ const schema = graph([
       </div>
     </section>
 
-    <section class="section--tight">
+    <section class="section--tight" data-sunbeam>
       <div class="shell shell--mid">
-        <div class="prose desc">
+        <div class="prose desc" data-fade>
           <p>{service.description}</p>
         </div>
       </div>
@@ -142,7 +144,7 @@ const schema = graph([
             <ul class="siblings">
               {siblings.map((s) => (
                 <li>
-                  <a href={`/service-page/${s.slug}`} class="sibling panel">
+                  <a href={url(`/service-page/${s.slug}`)} class="sibling panel float">
                     <span class="sibling__dur">{s.durationMin} Minuten</span>
                     <span class="sibling__price">{s.priceEur}€</span>
                   </a>
@@ -157,10 +159,12 @@ const schema = graph([
     <section class="section close">
       <div class="shell shell--narrow close__inner">
         <p class="eyebrow">Termine nur nach vorheriger Absprache</p>
-        <h2 class="close__title">{service.familyName} buchen</h2>
-        <a href="/contact" class="pill">Termin anfragen</a>
+        <h2 class="close__title" data-reveal>{service.familyName} buchen</h2>
+        <a href={url('/contact')} class="pill sheen" data-magnetic>
+          <span data-magnetic-label>Termin anfragen</span>
+        </a>
         <p class="close__back">
-          <a href="/meineangebote-preise" class="underline-gold">Alle Angebote &amp; Preise</a>
+          <a href={url('/meineangebote-preise')} class="underline-gold">Alle Angebote &amp; Preise</a>
         </p>
       </div>
     </section>

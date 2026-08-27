@@ -14,6 +14,13 @@
 
 export const SITE_URL = 'https://www.luma-wellness.com';
 
+/**
+ * Prefix an internal path with the deploy base. Canonicals and structured data
+ * always use the production URL; only href attributes need the staging prefix.
+ */
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+export const url = (p: string) => (p === '/' ? `${BASE}/` : `${BASE}${p}`);
+
 export const BUSINESS = {
   name: 'LUMA WELLNESS by June Saurin',
   shortName: 'LUMA Wellness',

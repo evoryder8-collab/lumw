@@ -38,6 +38,11 @@ jobs:
           # Staging stays noindex until the DNS cutover release. Flip this to
           # 'true' in the same release that points DNS at Pages.
           PUBLIC_INDEXABLE: 'false'
+          # Staging is served from evoryder8-collab.github.io/lumw, so assets
+          # need that prefix. Without it every image and stylesheet 404s while
+          # the HTML still returns 200, which looks like a site with no photos.
+          # Set this to '/' in the same release that points DNS at the domain.
+          PUBLIC_BASE: '/lumw'
 
       - name: Validate JSON-LD on every page
         run: npm run check:jsonld

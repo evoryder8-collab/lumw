@@ -11,7 +11,7 @@ import { heroPreload } from '../lib/heroPreload';
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import AwardStrip from '../components/AwardStrip.astro';
-import { BUSINESS } from '../lib/site';
+import { BUSINESS, url } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode,
 } from '../lib/schema';
@@ -19,6 +19,12 @@ import {
 import junePortrait from '../assets/june-portrait.webp';
 import studioWorking from '../assets/studio-june-working.webp';
 import studioExterior from '../assets/studio-exterior-hautnah.webp';
+import imgAroma from '../assets/treatment-back-warm.webp';
+import imgGold from '../assets/award-competition-gold.webp';
+import imgThai from '../assets/award-competition-stretch.webp';
+import imgPregnancy from '../assets/treatment-pregnancy.webp';
+import imgStark from '../assets/june-with-nadine-stark.webp';
+import imgFacial from '../assets/treatment-facial.webp';
 
 const title =
   'Massage Buxtehude – LUMA Wellness by June Saurin | Goldprämierte Massagen & Wellness';
@@ -26,28 +32,42 @@ const description =
   'Massage in Buxtehude bei LUMA Wellness – internationale Goldmedaillen-Massagen & ganzheitliche Entspannung in Hauptstraße 19. Jetzt Termin sichern & Wohlbefinden steigern!';
 const path = '/';
 
+// Chapter 3 of the scroll narrative. Same six items and the same verbatim copy
+// as the live page; the presentation becomes a pinned chapter per treatment.
 const angebote = [
   {
+    image: imgAroma,
+    alt: 'Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude',
     name: 'LUMA Aroma-Luxus Massage (Klassiker)',
     text: 'Diese einzigartige Behandlung kombiniert die bewährten Techniken der klassischen Massage mit den therapeutischen Eigenschaften von Bio-Aromatherapie-Ölen.',
   },
   {
+    image: imgGold,
+    alt: 'June Saurin bei der goldprämierten Gold-Medalie Massage',
     name: 'LUMA Gold-Medalie Signature Massage',
     text: 'Eine exklusive Massage, die preisgekrönte Techniken aus internationalen Wettbewerben vereint und durch eine maßgeschneiderte Klanglandschaft ergänzt wird. Die LUMA Gold-Medalie Signature Massage kombiniert Elemente aus verschiedenen Massagestilen, individuell auf Ihre Bedürfnisse abgestimmt, und entführt Sie mit beruhigender Musik und Naturklängen in eine Welt tiefster Entspannung. Ideal für alle, die ein einzigartiges, luxuriöses Wellness-Erlebnis suchen, das Körper und Geist harmonisch in Einklang bringt.',
   },
   {
+    image: imgThai,
+    alt: 'June Saurin bei einer thailändischen Dehnungstechnik',
     name: 'LUMA THAI-Solution Massage (Nuad-Benja-Phaki)',
     text: 'Traditionelle thailändische Techniken zur Verbesserung der Beweglichkeit und des Energieflusses. Diese Massageform kombiniert sanfte Dehnungen mit Druckpunkttherapie, um Verspannungen zu lösen und die Flexibilität zu erhöhen.',
   },
   {
+    image: imgPregnancy,
+    alt: 'Sanfte Schwangerschaftsmassage für werdende Mütter',
     name: 'LUMA Schwangerschaftsmassage',
     text: 'Sanfte, sichere Techniken zur Linderung von Schwangerschaftsbeschwerden. Diese speziell entwickelte Massage unterstützt werdende Mütter dabei, Schmerzen zu reduzieren, Stress abzubauen und das allgemeine Wohlbefinden zu steigern.',
   },
   {
+    image: imgStark,
+    alt: 'June Saurin mit Weltmeisterin Nadine Stark Chognon',
     name: 'STARK BALL MASSAGE / Sportmassage',
     text: 'Speziell für Athleten und körperlich aktive Personen zur Verbesserung der Flexibilität und zur Vorbeugung von Verletzungen. Diese Massage hilft, Muskelverspannungen zu lösen, die Regeneration zu fördern und die Leistungsfähigkeit zu steigern.',
   },
   {
+    image: imgFacial,
+    alt: 'Gesichts- und Kopfmassage inklusive Gua Sha',
     name: 'Gesichts- und Kopfmassage inkl. Gua Sha',
     text: 'Verjüngende Behandlungen, die die Haut straffen, die Durchblutung fördern und für ein erfrischtes Erscheinungsbild sorgen.',
   },
@@ -73,16 +93,21 @@ const schema = graph([
 <Layout {title} {description} {path} schema={schema} {ogImage} {preloadImage}>
   <!-- Chapter 1. Dawn hero. The page breathes before the user moves. -->
   <section class="hero">
+    <!-- Light motes. Hero and closing chapter only, paused offscreen. -->
+    <canvas class="motes" aria-hidden="true"></canvas>
+
     <div class="shell hero__inner">
       <div class="hero__copy">
-        <p class="eyebrow">Weltweit ausgezeichnete Massage</p>
-        <h1 class="hero__title">Beste Massage in Buxtehude</h1>
-        <p class="hero__sub">
+        <p class="eyebrow" data-fade>Weltweit ausgezeichnete Massage</p>
+        <h1 class="hero__title" data-reveal>Beste Massage in Buxtehude</h1>
+        <p class="hero__sub" data-fade>
           LUMA Wellness by June Saurin, Ihre ausgezeichnete Therapeutin.
         </p>
-        <div class="hero__actions">
-          <a href="/contact" class="pill">Buchen Sie eine Massage</a>
-          <a href="/meineangebote-preise" class="underline-gold hero__ghost">
+        <div class="hero__actions" data-fade>
+          <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+            <span data-magnetic-label>Buchen Sie eine Massage</span>
+          </a>
+          <a href={url('/meineangebote-preise')} class="underline-gold hero__ghost">
             Alle Angebote &amp; Preise
           </a>
         </div>
@@ -107,10 +132,10 @@ const schema = graph([
   <!-- Chapter 3. Intro. -->
   <section class="section">
     <div class="shell shell--mid">
-      <h2 class="section__title">
+      <h2 class="section__title" data-reveal>
         Grosse Wirkung, kleiner Körper – erleben Sie LUMA Wellness in Buxtehude
       </h2>
-      <div class="prose intro__body">
+      <div class="prose intro__body" data-fade>
         <p>
           Trotz meines zierlichen Körpers übertreffe ich sämtliche Erwartungen mit Kraft und
           Geschicklichkeit. Schon nach einer einzigen Sitzung spüren Sie die Qualität meiner Arbeit
@@ -123,14 +148,14 @@ const schema = graph([
           voller Erfolge und höchster Kundenzufriedenheit.
         </p>
         <p class="intro__link">
-          <a href="/meineangebote-preise" class="underline-gold">Alle Angebote &amp; Preise</a>
+          <a href={url('/meineangebote-preise')} class="underline-gold">Alle Angebote &amp; Preise</a>
         </p>
       </div>
     </div>
   </section>
 
   <!-- Chapter 4. Ganzheitliche Massagen, against the studio photograph. -->
-  <section class="section holistic">
+  <section class="section holistic" data-sunbeam>
     <div class="shell holistic__inner">
       <figure class="holistic__figure">
         <Photo
@@ -143,9 +168,9 @@ const schema = graph([
       </figure>
 
       <div class="holistic__copy">
-        <p class="eyebrow">Heilung ist mehr als nur äusserlich</p>
-        <h2>Ganzheitliche Massagen in Buxtehude</h2>
-        <div class="prose">
+        <p class="eyebrow" data-fade>Heilung ist mehr als nur äusserlich</p>
+        <h2 data-reveal>Ganzheitliche Massagen in Buxtehude</h2>
+        <div class="prose" data-fade>
           <p>
             Heilung geht über die rein physische Ebene hinaus. Bei LUMA Wellness by June Saurin in
             Buxtehude ist sie nicht nur mit wissenschaftlicher und medizinischer Expertise verknüpft,
@@ -163,24 +188,53 @@ const schema = graph([
   <!-- Chapter 5. Angebotsübersicht. -->
   <section class="section">
     <div class="shell">
-      <h2 class="section__title section__title--center">
+      <h2 class="section__title section__title--center" data-reveal>
         Meine Massage und Wellnessangebote in Buxtehude
       </h2>
 
-      <ul class="offers">
-        {
-          angebote.map((a) => (
-            <li class="offers__item panel">
-              <h3 class="offers__name">{a.name}</h3>
-              <p class="offers__text">{a.text}</p>
-            </li>
-          ))
-        }
-      </ul>
+    </div>
+
+    <!-- Chapter 3. Each treatment pins for one viewport: the image scale-reveals
+         from clip-path: inset(), the copy staggers, the name settles. Same
+         grammar every chapter, so the rhythm becomes the identity. On mobile and
+         under reduced motion these fall back to in-view reveals. -->
+    {
+      angebote.map((a, i) => (
+        <div class="chapter" data-chapter>
+          <div class="shell chapter__inner">
+            <figure
+              class:list={['chapter__media', i % 2 === 1 && 'chapter__media--flip']}
+              data-chapter-media
+            >
+              <Photo
+                src={a.image}
+                alt={a.alt}
+                widths={[420, 680, 940]}
+                sizes="(max-width: 900px) 88vw, 44vw"
+                ratio="4 / 5"
+              />
+            </figure>
+
+            <div class="chapter__copy" data-chapter-copy>
+              <p class="chapter__num">{String(i + 1).padStart(2, '0')} / 06</p>
+              <h3 class="chapter__name">{a.name}</h3>
+              <p class="chapter__text">{a.text}</p>
+              <p class="chapter__cta" data-chapter-price>
+                <a href={url('/meineangebote-preise')} class="underline-gold">
+                  Preise ansehen
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+
+    <div class="shell">
 
       <div class="offers__foot">
         <p>
-          <a href="/meineangebote-preise" class="underline-gold">
+          <a href={url('/meineangebote-preise')} class="underline-gold">
             Komplette Liste der Massage-Dienstleistungen hier.
           </a>
         </p>
@@ -188,13 +242,15 @@ const schema = graph([
           Kontaktieren Sie mich noch heute, um Ihren Termin zu buchen und die besten Massagen in
           Buxtehude zu erleben!
         </p>
-        <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+        <a href={url('/contact')} class="pill sheen" data-magnetic>
+          <span data-magnetic-label>Buchen Sie eine Massage</span>
+        </a>
       </div>
     </div>
   </section>
 
   <!-- Chapter 6. Hours and location. -->
-  <section class="section hours">
+  <section class="section hours" data-sunbeam>
     <div class="shell hours__inner">
       <div class="hours__col panel">
         <p class="eyebrow">Öffnungszeit</p>
@@ -231,18 +287,28 @@ const schema = graph([
   </section>
 
   <!-- Chapter 7. Closing loop. The dawn motif returns behind the final CTA. -->
+  <!-- Chapter 7. The dawn wash and the motes from chapter 1 return behind the
+       final CTA. Same motif, same line. -->
   <section class="section close">
+    <canvas class="motes" aria-hidden="true"></canvas>
+
     <div class="shell shell--narrow close__inner">
-      <p class="eyebrow">LUMA Wellness by June Saurin</p>
-      <h2 class="close__title">Beste Massage in Buxtehude</h2>
-      <p class="lede close__lede">Termine nur nach vorheriger Absprache.</p>
-      <a href="/contact" class="pill">Buchen Sie eine Massage</a>
+      <p class="eyebrow" data-fade>LUMA Wellness by June Saurin</p>
+      <h2 class="close__title" data-reveal>Beste Massage in Buxtehude</h2>
+      <p class="lede close__lede" data-fade>Termine nur nach vorheriger Absprache.</p>
+      <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+        <span data-magnetic-label>Buchen Sie eine Massage</span>
+      </a>
     </div>
   </section>
 </Layout>
 
 <style>
   /* --- Hero ------------------------------------------------------------- */
+
+  .hero { position: relative; }
+  .hero .motes, .close .motes { z-index: 0; }
+  .hero__inner, .close__inner { position: relative; z-index: 1; }
 
   .hero {
     display: flex;
@@ -306,31 +372,51 @@ const schema = graph([
   .holistic__figure { margin: 0; }
   .holistic__copy h2 { margin-bottom: 1.5rem; }
 
-  /* --- Offers ------------------------------------------------------------ */
+  /* --- Pinned chapters --------------------------------------------------- */
+  /* Each chapter reserves its full height up front so a pin never shifts
+     layout. CLS budget is 0.02 and pinning is the usual way that gets blown. */
 
-  .offers {
+  .chapter {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+
+  .chapter__inner {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
-    gap: clamp(1rem, 2vw, 1.75rem);
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+    width: 100%;
   }
 
-  .offers__item { padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .chapter__media { margin: 0; will-change: clip-path; }
+  .chapter__media--flip { order: 2; }
+  .chapter__media :global(img) { will-change: transform; }
 
-  .offers__name {
-    font-size: 1.22rem;
-    line-height: 1.25;
-    margin-bottom: 0.9rem;
+  .chapter__num {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    color: var(--gold-text);
+    margin: 0 0 1rem;
   }
 
-  .offers__text {
-    font-size: var(--step-small);
-    line-height: 1.6;
+  .chapter__name {
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    line-height: 1.08;
+    margin-bottom: 1.25rem;
+    max-width: 16ch;
+  }
+
+  .chapter__text {
     color: var(--ink-soft);
-    margin: 0;
+    max-width: 52ch;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
   }
+
+  .chapter__cta { margin-top: 1.75rem; font-size: var(--step-small); }
 
   .offers__foot {
     display: grid;
@@ -398,7 +484,13 @@ const schema = graph([
   @media (max-width: 900px) {
     .hero__inner,
     .holistic__inner,
+    .chapter__inner,
     .hours__inner { grid-template-columns: 1fr; }
+
+    /* Pins are off on mobile, so chapters stop reserving a whole viewport. */
+    .chapter { min-height: 0; padding-block: clamp(2.5rem, 8vw, 4rem); }
+    .chapter__media { max-width: 22rem; order: -1 !important; }
+    .chapter__name { max-width: none; }
 
     .hero__inner { gap: 2rem; }
     .hero__figure { order: -1; max-width: 22rem; }

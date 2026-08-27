@@ -41,9 +41,9 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
   <section class="hero">
     <div class="shell shell--mid">
       <p class="eyebrow">LUMA Wellness by June Saurin</p>
-      <h1>Kontakt aufnehmen</h1>
+      <h1 data-reveal>Kontakt aufnehmen</h1>
 
-      <div class="prose hero__body">
+      <div class="prose hero__body" data-fade>
         <p>
           Ich freue mich darauf, Sie persönlich bei LUMA Wellness by June Saurin in Buxtehude
           begrüßen zu dürfen. Vereinbaren Sie jetzt Ihren Massage-Termin und entdecken Sie
@@ -71,15 +71,15 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
     <div class="shell contact__grid">
       <!-- Direct routes first: these work today. -->
       <div class="channels">
-        <a class="channel panel" href={`tel:${BUSINESS.phoneE164}`}>
+        <a class="channel panel" data-tilt href={`tel:${BUSINESS.phoneE164}`}>
           <span class="channel__label">Anrufen</span>
           <span class="channel__value">{BUSINESS.phone}</span>
         </a>
-        <a class="channel panel" href={`https://wa.me/${waNumber}`} rel="noopener">
+        <a class="channel panel" data-tilt href={`https://wa.me/${waNumber}`} rel="noopener">
           <span class="channel__label">WhatsApp</span>
           <span class="channel__value">{BUSINESS.whatsapp}</span>
         </a>
-        <a class="channel panel" href={`mailto:${BUSINESS.email}`}>
+        <a class="channel panel" data-tilt href={`mailto:${BUSINESS.email}`}>
           <span class="channel__label">E-Mail</span>
           <span class="channel__value">{BUSINESS.email}</span>
         </a>
@@ -131,11 +131,11 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-sunbeam>
     <div class="shell info">
       <div class="info__copy">
         <p class="eyebrow">Relax. Erfrischen. Wiederbeleben.</p>
-        <h2>Kontakt Info</h2>
+        <h2 data-reveal>Kontakt Info</h2>
 
         <dl class="info__list">
           <div>

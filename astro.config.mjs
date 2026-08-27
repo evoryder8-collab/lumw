@@ -6,8 +6,17 @@ import tailwindcss from '@tailwindcss/vite';
 // avoidable migration event (CLAUDE.md section 7).
 const SITE = 'https://www.luma-wellness.com';
 
+/**
+ * Staging lives at evoryder8-collab.github.io/lumw, production at the root of
+ * the custom domain. Without a base the staging build emits /_astro/... which
+ * 404s under the /lumw prefix, so every image and stylesheet silently breaks
+ * while the HTML still returns 200.
+ */
+const BASE = process.env.PUBLIC_BASE || '/';
+
 export default defineConfig({
   site: SITE,
+  base: BASE,
 
   // CLAUDE.md section 7 requires /path/index.html for every route, so that is
   // what ships.
