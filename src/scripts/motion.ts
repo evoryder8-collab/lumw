@@ -195,6 +195,16 @@ function initChapters() {
 
 /* --------------------------------------------------------------- 3D tilt */
 
+/**
+ * Section 9.3 specifies a 6deg cap and a 12px translateZ lift. On a real
+ * pointer at these card sizes that read as far too much, so both are tuned to
+ * 30 percent of the spec figures at Constantin's direction. Deliberate
+ * deviation, not drift: raise these two numbers to 6 and 12 to get the spec
+ * behaviour back.
+ */
+const TILT_MAX_DEG = 1.8;
+const TILT_LIFT_PX = 3.6;
+
 function initTilt() {
   if (!FINE_POINTER || REDUCED) return;
 
@@ -210,9 +220,9 @@ function initTilt() {
       const r = card.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width;
       const py = (e.clientY - r.top) / r.height;
-      rotY((px - 0.5) * 12); // capped at 6deg either side
-      rotX((0.5 - py) * 12);
-      lift(12);
+      rotY((px - 0.5) * 2 * TILT_MAX_DEG);
+      rotX((0.5 - py) * 2 * TILT_MAX_DEG);
+      lift(TILT_LIFT_PX);
       if (glare) {
         glare.style.setProperty('--glare-x', `${px * 100}%`);
         glare.style.setProperty('--glare-y', `${py * 100}%`);
