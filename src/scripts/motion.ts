@@ -25,6 +25,16 @@ const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE_POINTER = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const MOBILE = matchMedia('(max-width: 900px)').matches;
 
+/**
+ * Section 9.4 keeps pinned chapters on mobile at a 60vh pin distance and only
+ * drops to in-view reveals "if a real low-end Android stutters". So the pin
+ * stays, and the fallback is gated on the device actually being weak rather
+ * than on the viewport merely being narrow.
+ */
+const LOW_END =
+  (navigator.hardwareConcurrency ?? 8) <= 4 &&
+  ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
+
 /** Everything registered here is torn down before a View Transition swap. */
 const cleanups: Array<() => void> = [];
 const onCleanup = (fn: () => void) => cleanups.push(fn);
@@ -128,9 +138,10 @@ function initChapters() {
     const copy = chapter.querySelectorAll<HTMLElement>('[data-chapter-copy] > *');
     const price = chapter.querySelector<HTMLElement>('[data-chapter-price]');
 
-    // Reduced motion, and low-end mobile, get in-view reveals instead of a pin.
-    // Section 5 wins every argument.
-    if (REDUCED || MOBILE) {
+    // Reduced motion and genuinely weak hardware get in-view reveals instead
+    // of a pin. Section 5 wins every argument, but a mid-range phone is not a
+    // reason to throw the scroll narrative away.
+    if (REDUCED || LOW_END) {
       if (frame) gsap.set(frame, { clipPath: 'inset(0%)' });
       const tw = gsap.fromTo(
         [...copy, price].filter(Boolean) as HTMLElement[],
@@ -155,7 +166,8 @@ function initChapters() {
       scrollTrigger: {
         trigger: chapter,
         start: 'top top',
-        end: '+=100%',
+        // 60vh on mobile per section 9.4, a full viewport on desktop.
+        end: MOBILE ? '+=60%' : '+=100%',
         pin: true,
         pinSpacing: true,
         scrub: true, // no smoothing, so the page never detaches from the finger
@@ -172,7 +184,7 @@ function initChapters() {
       );
     }
     if (media) {
-      tl.fromTo(media, { scale: 1.14 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+      tl.fromTo(media, { scale: MOBILE ? 1.09 : 1.14 }, { scale: 1, ease: 'none', duration: 1 }, 0);
     }
     if (copy.length) {
       tl.fromTo(
@@ -318,13 +330,56 @@ function initHalo() {
           el.classList.remove('is-lit');
         }
       }
+      // Two haloed elements per viewport, maximum.
       [...visible].slice(0, 2).forEach((el) => el.classList.add('is-lit'));
       [...visible].slice(2).forEach((el) => el.classList.remove('is-lit'));
     },
     { threshold: 0.6 },
   );
   halos.forEach((h) => io.observe(h));
+
+  // A touch device never hovers, so the bloom would sit at one static value
+  // forever. On touch it breathes instead: the same pooled sunlight, slowly
+  // rising and falling, which is what makes the CTA feel alive in the hand.
+  if (!FINE_POINTER && !REDUCED) {
+    halos.forEach((h) => h.classList.add('halo--breathing'));
+  }
+
   onCleanup(() => io.disconnect());
+}
+
+/* ------------------------------------------------------- mobile parallax */
+
+/**
+ * Touch gets the scroll grammar, and that has to be worth having. Chapter
+ * media drifts against its frame as the chapter passes, which is the effect
+ * that makes a phone feel like it is moving through a scene rather than paging
+ * down a list.
+ */
+function initScrollDrift() {
+  if (REDUCED || LOW_END) return;
+
+  document.querySelectorAll<HTMLElement>('[data-drift]').forEach((el) => {
+    const inner = el.querySelector<HTMLElement>('img, picture') ?? el;
+    const st = gsap.fromTo(
+      inner,
+      { yPercent: -4 },
+      {
+        yPercent: 4,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      },
+    );
+    onCleanup(() => {
+      st.scrollTrigger?.kill();
+      st.kill();
+    });
+  });
 }
 
 /* --------------------------------------------------------- magnetic pills */
@@ -589,6 +644,7 @@ function boot() {
   initSunbeams();
   initMotes();
   initFloatPausing();
+  initScrollDrift();
   installRevealFailsafe();
 
   ScrollTrigger.refresh();

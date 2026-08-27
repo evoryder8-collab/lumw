@@ -113,7 +113,7 @@ const schema = graph([
         </div>
       </div>
 
-      <figure class="hero__figure">
+      <figure class="hero__figure float float--slow" data-drift>
         <Photo
           src={junePortrait}
           alt="June Saurin, international ausgezeichnete Massagetherapeutin bei LUMA Wellness in Buxtehude"
@@ -157,7 +157,7 @@ const schema = graph([
   <!-- Chapter 4. Ganzheitliche Massagen, against the studio photograph. -->
   <section class="section holistic" data-sunbeam>
     <div class="shell holistic__inner">
-      <figure class="holistic__figure">
+      <figure class="holistic__figure float float--slow" data-drift>
         <Photo
           src={studioWorking}
           alt="June Saurin bei einer ganzheitlichen Massage im LUMA Wellness Studio in Buxtehude"
@@ -205,6 +205,7 @@ const schema = graph([
             <figure
               class:list={['chapter__media', i % 2 === 1 && 'chapter__media--flip']}
               data-chapter-media
+              data-drift
             >
               <Photo
                 src={a.image}
@@ -252,7 +253,7 @@ const schema = graph([
   <!-- Chapter 6. Hours and location. -->
   <section class="section hours" data-sunbeam>
     <div class="shell hours__inner">
-      <div class="hours__col panel">
+      <div class="hours__col panel float">
         <p class="eyebrow">Öffnungszeit</p>
         <dl class="hours__list">
           <div><dt>Montag-Freitag</dt><dd>10:00 - 18:00</dd></div>
@@ -261,7 +262,7 @@ const schema = graph([
         </dl>
       </div>
 
-      <div class="hours__col panel">
+      <div class="hours__col panel float">
         <p class="eyebrow">Standort</p>
         <p class="hours__address">Hauptstrasse 19, 21614 Buxtehude DE</p>
         <p class="hours__note">
@@ -274,7 +275,7 @@ const schema = graph([
         </p>
       </div>
 
-      <figure class="hours__figure">
+      <figure class="hours__figure float float--slow" data-drift>
         <Photo
           src={studioExterior}
           alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
@@ -487,23 +488,52 @@ const schema = graph([
     .chapter__inner,
     .hours__inner { grid-template-columns: 1fr; }
 
-    /* Pins are off on mobile, so chapters stop reserving a whole viewport. */
-    .chapter { min-height: 0; padding-block: clamp(2.5rem, 8vw, 4rem); }
-    .chapter__media { max-width: 22rem; order: -1 !important; }
-    .chapter__name { max-width: none; }
-
     .hero__inner { gap: 2rem; }
-    .hero__figure { order: -1; max-width: 22rem; }
+
+    /* max-width on a stretched grid item aligns it to the start, which is why
+       the hero photograph sat off to the left on wider phones. */
+    .hero__figure { order: -1; max-width: 24rem; justify-self: center; width: 100%; }
     .hero__title { max-width: none; }
-    .holistic__figure { order: -1; }
+    .holistic__figure { order: -1; justify-self: center; width: 100%; }
+
+    /* Chapters stay pinned on mobile at a 60vh distance (section 9.4), so each
+       one is composed as a full screen: photograph above, copy beneath, no
+       drifting apart into two unrelated blocks. */
+    /* A pinned chapter is fixed to the top of the screen with the sticky header
+       over it, so centring pushed the photograph up under the nav and left a
+       void at the bottom. Anchoring to the top past the header height puts the
+       whole scene in the part of the screen a person can actually see. */
+    .chapter {
+      min-height: 100svh;
+      align-items: flex-start;
+      padding-block: 6.5rem clamp(1.5rem, 4vw, 2.5rem);
+      padding-top: calc(6.5rem + env(safe-area-inset-top));
+    }
+
+    .chapter__inner { gap: clamp(1rem, 3.5vw, 1.5rem); align-content: start; }
+
+    .chapter__media {
+      max-width: none;
+      order: -1 !important;
+      justify-self: stretch;
+    }
+    /* Cap the frame so the copy always shares the screen with it. */
+    .chapter__media :global(.media) { max-height: 36svh; }
+
+    .chapter__num { margin-bottom: 0.6rem; }
+    .chapter__name { max-width: none; font-size: clamp(1.5rem, 7vw, 2.1rem); }
+    .chapter__text { font-size: 0.9375rem; line-height: 1.6; }
+    .chapter__cta { margin-top: 1.1rem; }
+
+    .hours__figure { justify-self: center; width: 100%; }
   }
 
-  /* On a phone a 4:5 portrait ate the whole first viewport and pushed the H1
-     and the CTA below the fold. Capping the frame keeps the headline, the sub
-     and the gold pill visible without cropping June out of her own photograph. */
-  @media (max-width: 900px) {
-    .hero { min-height: 0; padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 6vw, 4rem); }
-    .hero__figure :global(.media) { max-height: 38svh; }
-    .hero__figure :global(img) { object-position: 50% 22%; }
+  /* On the smallest screens the photograph gives up height so the name and the
+     full paragraph both fit. Clamping the copy was worse: it cut sentences off
+     mid-word, which reads as broken rather than concise. */
+  @media (max-width: 430px) {
+    .chapter__media :global(.media) { max-height: 30svh; }
+    .chapter__text { font-size: 0.9rem; line-height: 1.55; }
   }
+
 </style>

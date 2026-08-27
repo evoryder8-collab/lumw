@@ -445,6 +445,9 @@ a { color: inherit; text-decoration: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   .float { animation: float-y 8.5s ease-in-out infinite alternate; will-change: transform; }
+  /* Media frames drift further and slower than a card, so a big image never
+     bobs like a button. */
+  .float--slow { animation-duration: 12s; }
   .float:nth-child(2n)   { animation-duration: 9.7s;  animation-delay: -1.4s; }
   .float:nth-child(3n)   { animation-duration: 7.4s;  animation-delay: -2.9s; }
   .float:nth-child(3n+1) { animation-duration: 10s;   animation-delay: -0.7s; }
@@ -654,6 +657,7 @@ a { color: inherit; text-decoration: none; }
   .aurora::after,
   .aurora__conic { animation: none !important; }
   .float { animation: none !important; }
+  .halo--breathing::before { animation: none !important; opacity: 0.5; }
   .conic-ring::before { animation: none !important; }
   .sheen::after { display: none; }
   .sunbeam__ray { display: none; }

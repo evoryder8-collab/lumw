@@ -113,7 +113,7 @@ const schema = graph([
 
         {
           image && (
-            <figure class="hero__figure" transition:name={`svc-${service.family}`}>
+            <figure class="hero__figure float float--slow" transition:name={`svc-${service.family}`} data-drift>
               <Photo
                 src={image}
                 alt={service.imageAlt ?? service.name}
