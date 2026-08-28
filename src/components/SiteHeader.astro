@@ -179,6 +179,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   /* --- Language --- */
 
   .lang-btn {
+    /* Above the header's decorative layers, so nothing can sit over it. */
+    position: relative;
+    z-index: 2;
     display: grid;
     place-items: center;
     width: 40px;
