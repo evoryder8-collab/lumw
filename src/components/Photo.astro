@@ -29,7 +29,7 @@ interface Props {
    * rather than the box - for cutouts that already have transparent edges,
    * where a frame just draws a white rectangle around nothing.
    */
-  variant?: 'frame' | 'orb';
+  variant?: 'frame' | 'orb' | 'fill';
 }
 
 const {
@@ -42,7 +42,7 @@ const {
 <div
   class:list={[
     'media',
-    variant === 'orb' ? 'media--orb' : dissolve && 'media--dissolve',
+    variant === 'orb' ? 'media--orb' : variant === 'fill' ? 'media--fill' : dissolve && 'media--dissolve',
     className,
   ]}
   style={ratio ? `aspect-ratio:${ratio}` : undefined}
@@ -76,6 +76,17 @@ const {
     box-shadow: var(--shadow-float), var(--edge-daylight);
   }
 
+  /* <picture> is display:inline with no height by default, so an <img> inside
+     it resolving `height: 100%` has no definite parent to measure against and
+     falls back to its intrinsic size. That left every framed photo whose source
+     ratio differed from its box sitting short inside it, with the container's
+     own background showing underneath. The wrapper has to fill the frame first. */
+  .media :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .media :global(img) {
     width: 100%;
     height: 100%;
@@ -87,6 +98,19 @@ const {
      stage. Most of June's usable photography is dark - competition shots on
      black, moody studio light - and without this each one lands as a hard
      rectangle, which is the one thing section 9.3 rules out. */
+  /* Fill: the photograph is the surface itself. No plate, no radius, no
+     shadow - it covers whatever it is placed inside. */
+  .media--fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto !important;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+
   /* An orb: no plate, no radius, no box shadow. The image is masked to a soft
      circle and its depth comes from drop-shadow, which follows the glyph of the
      cutout instead of a rectangle it does not fill. */

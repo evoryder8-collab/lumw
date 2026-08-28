@@ -12,6 +12,19 @@ import awardCompetitionGold from '../assets/award-competition-gold.webp';
 import awardCompetitionStretch from '../assets/award-competition-stretch.webp';
 import juneWithNadineStark from '../assets/june-with-nadine-stark.webp';
 
+/* The treatment cards read from a normalised set: one ratio, opaque, cropped to
+   the subject. See scripts/normalize-cards.mjs for why. */
+import cardBackWarm from '../assets/cards/treatment-back-warm.webp';
+import cardBackNeck from '../assets/cards/treatment-back-neck.webp';
+import cardBamboo from '../assets/cards/treatment-bamboo.webp';
+import cardFacial from '../assets/cards/treatment-facial.webp';
+import cardFoot from '../assets/cards/treatment-foot.webp';
+import cardPregnancy from '../assets/cards/treatment-pregnancy.webp';
+import cardCompetitionGold from '../assets/cards/award-competition-gold.webp';
+import cardCompetitionStretch from '../assets/cards/award-competition-stretch.webp';
+import cardNadineStark from '../assets/cards/june-with-nadine-stark.webp';
+
+
 /**
  * Explicit map rather than `import.meta.glob(..., { eager: true })`.
  *
@@ -58,3 +71,24 @@ export async function socialImageUrl(
   });
   return site ? new URL(built.src, site).href : built.src;
 }
+
+/**
+ * The card crop of a treatment photograph.
+ *
+ * Falls back to the original when a name has no normalised crop, so a new
+ * treatment renders something rather than nothing until `npm run cards` runs.
+ */
+const CARD_BY_NAME: Record<string, ImageMetadata> = {
+  'treatment-back-warm.webp': cardBackWarm,
+  'treatment-back-neck.webp': cardBackNeck,
+  'treatment-bamboo.webp': cardBamboo,
+  'treatment-facial.webp': cardFacial,
+  'treatment-foot.webp': cardFoot,
+  'treatment-pregnancy.webp': cardPregnancy,
+  'award-competition-gold.webp': cardCompetitionGold,
+  'award-competition-stretch.webp': cardCompetitionStretch,
+  'june-with-nadine-stark.webp': cardNadineStark,
+};
+
+export const cardImageByName = (name?: string): ImageMetadata | undefined =>
+  name ? (CARD_BY_NAME[name] ?? BY_NAME[name]) : undefined;

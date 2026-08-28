@@ -26,6 +26,16 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </span>
     </a>
 
+    {/* Sits before the checkbox so `.nav-toggle + .nav-burger` and
+        `.nav-toggle ~ .nav` keep matching; CSS order places it visually. */}
+    <button class="lang-btn" type="button" data-portal-open aria-label="Sprache wählen">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.25" />
+        <ellipse cx="12" cy="12" rx="3.5" ry="8.4" fill="none" stroke="currentColor" stroke-width="1.25" />
+        <path d="M3.9 9.4h16.2M3.9 14.6h16.2" fill="none" stroke="currentColor" stroke-width="1.25" />
+      </svg>
+    </button>
+
     <input
       type="checkbox"
       id="nav-toggle"
@@ -165,6 +175,48 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .nav__cta .pill { padding: 0.7rem 1.5rem; font-size: 0.6875rem; }
 
   /* --- Mobile disclosure, CSS only --- */
+
+  /* --- Language --- */
+
+  .lang-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.42);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.3);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease), color 0.4s var(--ease);
+  }
+  .lang-btn svg { width: 19px; height: 19px; }
+  .lang-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lang-btn:hover {
+      background: rgb(255 255 255 / 0.82);
+      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.66);
+      color: var(--ink);
+    }
+  }
+
+  /* Desktop: after the nav, at the right end of the bar. */
+  @media (min-width: 901px) {
+    .lang-btn { order: 3; margin-left: 0.9rem; }
+    .nav { margin-left: auto; }
+  }
+
+  /* Phone: pushed to the right so it pairs with the burger, but held a clear
+     16px clear of it - a 40px and a 44px target that close together is how
+     you get a mis-tap on the wrong one. */
+  @media (max-width: 900px) {
+    .lang-btn { margin-left: auto; margin-right: 1rem; }
+    .header__inner { gap: 0.75rem; }
+  }
 
   .nav-toggle { position: absolute; opacity: 0; pointer-events: none; }
   .nav-burger { display: none; }

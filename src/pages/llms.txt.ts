@@ -40,7 +40,7 @@ gewonnen:
 
 ${AWARDS.map((a) => `- ${a.award} (${a.place})`).join('\n')}
 
-## Behandlungen und Preise
+## Massagen und Preise
 
 ${treatments
   .map((t) => {

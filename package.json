@@ -13,7 +13,8 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "verify": "npm run build && npm run check:jsonld && npm run check:contrast",
     "assets": "node scripts/prepare-assets.mjs",
-    "map": "node scripts/fetch-map.mjs"
+    "map": "node scripts/fetch-map.mjs",
+    "cards": "node scripts/normalize-cards.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1",

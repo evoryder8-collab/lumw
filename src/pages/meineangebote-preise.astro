@@ -13,7 +13,7 @@ import { getCollection } from 'astro:content';
 import { url } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
-import { imageByName, socialImageUrl } from '../lib/images';
+import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
 } from '../lib/schema';
@@ -21,7 +21,7 @@ import {
 const title =
   'Massageangebote & Preise in Buxtehude – LUMA Wellness by June Saurin | Ganzheitliche Therapien';
 const description =
-  'Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19. ✓ International ausgezeichnete Massage-Expertin ✓ Wellnessbehandlungen ✓ Persönliche Beratung. Jetzt Wunschtermin sichern!';
+  'Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19. ✓ International ausgezeichnete Massage-Expertin ✓ Wellnessmassagen ✓ Persönliche Beratung. Jetzt Wunschtermin sichern!';
 const path = '/meineangebote-preise';
 
 const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
@@ -120,7 +120,7 @@ const money = (n: number) => `${n}€`;
       <ul class="cards">
         {
           treatments.map((t, i) => {
-            const image = img(t.data.image);
+            const image = cardImageByName(t.data.image);
             const target = cardTarget(t.data.id);
             const isSignature = t.data.id === 'gold-medalie';
             const [first, ...rest] = t.data.body;
@@ -143,7 +143,9 @@ const money = (n: number) => `${n}€`;
                       alt=""
                       widths={[420, 640, 860]}
                       sizes="(max-width: 640px) 100vw, (max-width: 1100px) 46vw, 31vw"
-                      ratio="16 / 11"
+                      {/* 7:6, matching scripts/normalize-cards.mjs. Tall enough
+                          that the photograph owns the top half of the card. */}
+                      ratio="7 / 6"
                       dissolve={false}
                     />
                   </span>
@@ -160,7 +162,7 @@ const money = (n: number) => `${n}€`;
                     <span class="card__index" aria-hidden="true">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <p class="card__eyebrow">{isSignature ? 'Signature' : 'Behandlung'}</p>
+                    <p class="card__eyebrow">{isSignature ? 'Signature' : 'Massage'}</p>
                   </header>
 
                   <h2 class:list={['card__name', isSignature && 'gilt gilt-live']}>
@@ -208,6 +210,14 @@ const money = (n: number) => `${n}€`;
                           ),
                         )}
                       </div>
+
+                      {/* The summary is the only way back, and by the time you
+                          have read a long description it is far above the fold.
+                          This closes it from where the reading actually ends. */}
+                      <button class="card__more-collapse" type="button" data-collapse>
+                        <span class="card__more-chev card__more-chev--up" aria-hidden="true"></span>
+                        Beschreibung schliessen
+                      </button>
                     </details>
                   )}
 
@@ -297,13 +307,21 @@ const money = (n: number) => `${n}€`;
     position: relative;
     display: block;
     z-index: 0;
-    /* The mask and the veil were both eating the photograph, which left the
-       top of the card nearly blank. The mask now holds full opacity most of
-       the way down and only lets go at the very bottom, where the type starts. */
-    -webkit-mask-image: linear-gradient(to bottom,
-      #000 0%, #000 74%, rgb(0 0 0 / 0.55) 89%, transparent 100%);
-    mask-image: linear-gradient(to bottom,
-      #000 0%, #000 74%, rgb(0 0 0 / 0.55) 89%, transparent 100%);
+    /* Every card fades the same way, because every photograph now arrives as
+       the same opaque 7:6 crop (scripts/normalize-cards.mjs). The falloff is
+       long and eased rather than a short ramp, so the picture dissolves into
+       the card instead of stopping at a visible edge - which is what the
+       near-opaque frames like the foot massage used to do. */
+    --card-fade: linear-gradient(to bottom,
+      #000 0%,
+      #000 52%,
+      rgb(0 0 0 / 0.92) 68%,
+      rgb(0 0 0 / 0.68) 80%,
+      rgb(0 0 0 / 0.34) 90%,
+      rgb(0 0 0 / 0.1) 96%,
+      transparent 100%);
+    -webkit-mask-image: var(--card-fade);
+    mask-image: var(--card-fade);
   }
 
   .card__photo :global(.media) { border-radius: 0; box-shadow: none; background: none; }
@@ -318,9 +336,10 @@ const money = (n: number) => `${n}€`;
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom,
-      transparent 0%, transparent 58%,
-      rgb(250 247 242 / 0.28) 78%,
-      rgb(250 247 242 / 0.78) 92%,
+      transparent 0%, transparent 46%,
+      rgb(250 247 242 / 0.16) 62%,
+      rgb(250 247 242 / 0.46) 76%,
+      rgb(250 247 242 / 0.82) 89%,
       var(--porcelain) 100%);
   }
 
@@ -540,6 +559,38 @@ const money = (n: number) => `${n}€`;
 
   .card__body--full { margin-top: 0.9rem; }
 
+  /* The way back out of a long description, at the end of it. */
+  .card__more-collapse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 1.1rem;
+    padding: 0.6rem 1.05rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.34);
+    font: inherit;
+    font-size: 0.5875rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    cursor: pointer;
+    transition: box-shadow 0.4s var(--ease), background 0.4s var(--ease);
+  }
+
+  .card__more-chev--up { transform: rotate(-135deg) translateY(1px); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card__more-collapse:hover {
+      background: rgb(255 255 255 / 0.9);
+      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.7);
+    }
+  }
+
+  .card__more-collapse:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
   /* --- CTA -------------------------------------------------------------- */
 
   .card__cta {
@@ -582,3 +633,29 @@ const money = (n: number) => `${n}€`;
     .card__ribbon { right: -3.4rem; width: 10rem; }
   }
 </style>
+
+<script>
+  /* Closing a long description from its foot would otherwise strand the reader
+     below the card, because the card collapses out from under them and its
+     summary ends up far above the viewport. Bring the summary back into view
+     whenever the collapse would leave it off screen. */
+  document.querySelectorAll<HTMLButtonElement>('[data-collapse]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const details = btn.closest('details');
+      const summary = details?.querySelector('summary');
+      if (!details || !summary) return;
+
+      details.open = false;
+
+      // Clear of the sticky header, which is about 90px on the narrowest phone.
+      const MARGIN = 110;
+      const top = summary.getBoundingClientRect().top;
+      if (top < MARGIN) {
+        window.scrollBy({
+          top: top - MARGIN,
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        });
+      }
+    });
+  });
+</script>

@@ -31,6 +31,15 @@ const choices = LOCALES.map((code) => ({
 <div class="portal" data-portal hidden aria-hidden="true">
   <span class="portal__grain" aria-hidden="true"></span>
 
+  {/* Only shown when the portal was reopened from the header: on a first
+      visit there is no previous state to return to. */}
+  <button class="portal__close" type="button" data-portal-close aria-label="Schliessen">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor"
+            stroke-width="1.4" stroke-linecap="round" />
+    </svg>
+  </button>
+
   <div class="portal__wash" aria-hidden="true">
     <span class="portal__blob portal__blob--a"></span>
     <span class="portal__blob portal__blob--b"></span>
@@ -100,6 +109,39 @@ const choices = LOCALES.map((code) => ({
 
   /* Leaves on the way out rather than blinking off. */
   .portal.is-leaving { animation: portal-out 0.75s var(--ease) forwards; }
+
+  /* Reopened from the header. There is a page behind it now, so it needs a way
+     out that is not a language choice, and the auto-continue countdown must
+     not run - nobody asked to be forwarded. */
+  .portal__close {
+    position: absolute;
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1rem, env(safe-area-inset-right));
+    z-index: 4;
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.5);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.34);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .portal.is-manual .portal__close { display: grid; }
+  .portal.is-manual .portal__auto { display: none; }
+  .portal__close svg { width: 17px; height: 17px; }
+  .portal__close:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .portal__close:hover {
+      background: rgb(255 255 255 / 0.85);
+      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.7);
+    }
+  }
   @keyframes portal-out {
     to { opacity: 0; transform: scale(1.03); visibility: hidden; }
   }
@@ -409,39 +451,81 @@ const choices = LOCALES.map((code) => ({
   const portal = document.querySelector<HTMLElement>('[data-portal]');
 
   if (portal) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const remember = (code: string) => {
+      try { localStorage.setItem(KEY, code); } catch { /* private mode */ }
+    };
+
+    /* The staged reveals are plain CSS animations with delays. They run once,
+       when the portal first gets a box, so a second opening would otherwise
+       show the panel already fully assembled. Stripping and restoring the
+       animation restarts them. */
+    const replayReveals = () => {
+      const animated = portal.querySelectorAll<HTMLElement>(
+        '.portal__mark, .portal__wordmark span, .portal__rule, .portal__prompt, .portal__grid li, .portal__auto',
+      );
+      animated.forEach((el) => { el.style.animation = 'none'; });
+      void portal.offsetWidth;
+      animated.forEach((el) => { el.style.animation = ''; });
+    };
+
+    const open = () => {
+      portal.classList.remove('is-leaving');
+      portal.hidden = false;
+      portal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      replayReveals();
+      portal.querySelector<HTMLElement>('[data-portal-pick]')?.focus();
+    };
+
+    const dismiss = () => {
+      document.body.style.overflow = '';
+      if (reduced) { portal.hidden = true; portal.setAttribute('aria-hidden', 'true'); return; }
+      portal.classList.add('is-leaving');
+      portal.addEventListener('animationend', () => {
+        portal.hidden = true;
+        portal.setAttribute('aria-hidden', 'true');
+      }, { once: true });
+    };
+
+    /* Picking a language always records the choice. German is this very page,
+       so it closes rather than navigating. Bound once, for both the first
+       visit and every reopening from the header. */
+    portal.querySelectorAll<HTMLAnchorElement>('[data-portal-pick]').forEach((tile) => {
+      tile.addEventListener('click', (event) => {
+        remember(tile.dataset.locale || 'de');
+        if (tile.dataset.locale === 'de') { event.preventDefault(); dismiss(); }
+      });
+    });
+
+    /* Reopened deliberately, so it must be possible to back out without
+       picking anything. On the first visit there is nothing to go back to. */
+    portal.querySelector<HTMLElement>('[data-portal-close]')
+      ?.addEventListener('click', dismiss);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !portal.hidden) dismiss();
+    });
+
+    // The header's globe. Reopening is always manual, so no countdown runs.
+    document.querySelectorAll<HTMLElement>('[data-portal-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        portal.classList.add('is-manual');
+        open();
+      });
+    });
+
     const alreadyChosen = (() => {
       try { return !!localStorage.getItem(KEY); } catch { return false; }
     })();
 
     // A visitor who has been here before, or who landed on a locale page from
-    // search, is never shown the door again.
+    // search, is never shown the door unasked.
     const onLocalePath = /^\/(en|th|es|pt|it)(\/|$)/.test(location.pathname);
 
     if (!alreadyChosen && !onLocalePath) {
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      portal.hidden = false;
-      portal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-
-      const remember = (code: string) => {
-        try { localStorage.setItem(KEY, code); } catch { /* private mode */ }
-      };
-
-      const dismiss = () => {
-        document.body.style.overflow = '';
-        if (reduced) { portal.hidden = true; return; }
-        portal.classList.add('is-leaving');
-        portal.addEventListener('animationend', () => { portal.hidden = true; }, { once: true });
-      };
-
-      portal.querySelectorAll<HTMLAnchorElement>('[data-portal-pick]').forEach((tile) => {
-        tile.addEventListener('click', () => {
-          remember(tile.dataset.locale || 'de');
-          // German is this very page: close rather than navigate.
-          if (tile.dataset.locale === 'de') { event?.preventDefault(); dismiss(); }
-        });
-      });
+      open();
 
       // --- Auto-continue -------------------------------------------------
       // Guess from the browser, show what will happen, and let it run. Anyone
@@ -496,7 +580,6 @@ const choices = LOCALES.map((code) => ({
         };
         requestAnimationFrame(tick);
       }
-
     }
   }
 </script>

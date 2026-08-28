@@ -95,7 +95,7 @@ export function personNode(imageUrl?: string): Node {
     knowsAbout: [
       'Thai-Massage', 'Aromatherapie-Massage', 'Hot-Stone-Massage',
       'Schwangerschaftsmassage', 'Schröpftherapie', 'Gua Sha',
-      'Sportmassage', 'Faszienbehandlung',
+      'Sportmassage', 'Faszienmassage',
     ],
   };
 }
