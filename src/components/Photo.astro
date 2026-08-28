@@ -23,17 +23,28 @@ interface Props {
   dissolve?: boolean;
   quality?: number;
   class?: string;
+  /**
+   * 'frame' is the default rounded plate. 'orb' drops the plate entirely and
+   * masks the image into a soft circle with a shadow that follows the alpha
+   * rather than the box - for cutouts that already have transparent edges,
+   * where a frame just draws a white rectangle around nothing.
+   */
+  variant?: 'frame' | 'orb';
 }
 
 const {
   src, alt, widths, sizes, ratio,
   priority = false, dissolve = true, quality = 62,
-  class: className = '',
+  class: className = '', variant = 'frame',
 } = Astro.props;
 ---
 
 <div
-  class:list={['media', dissolve && 'media--dissolve', className]}
+  class:list={[
+    'media',
+    variant === 'orb' ? 'media--orb' : dissolve && 'media--dissolve',
+    className,
+  ]}
   style={ratio ? `aspect-ratio:${ratio}` : undefined}
 >
   <Picture
@@ -76,6 +87,23 @@ const {
      stage. Most of June's usable photography is dark - competition shots on
      black, moody studio light - and without this each one lands as a hard
      rectangle, which is the one thing section 9.3 rules out. */
+  /* An orb: no plate, no radius, no box shadow. The image is masked to a soft
+     circle and its depth comes from drop-shadow, which follows the glyph of the
+     cutout instead of a rectangle it does not fill. */
+  .media--orb {
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .media--orb :global(img) {
+    object-fit: contain;
+    -webkit-mask-image: radial-gradient(circle at 50% 48%, #000 52%, rgb(0 0 0 / 0.55) 68%, transparent 82%);
+    mask-image: radial-gradient(circle at 50% 48%, #000 52%, rgb(0 0 0 / 0.55) 68%, transparent 82%);
+    filter: drop-shadow(0 26px 46px rgb(43 38 34 / 0.16)) drop-shadow(0 4px 10px rgb(43 38 34 / 0.08));
+  }
+
   .media--dissolve::after {
     content: '';
     position: absolute;
