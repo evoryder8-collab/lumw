@@ -123,108 +123,108 @@ const money = (n: number) => `${n}€`;
             const image = img(t.data.image);
             const target = cardTarget(t.data.id);
             const isSignature = t.data.id === 'gold-medalie';
-            // Card shows the lead plus the opening paragraph; the rest of the
-            // live copy stays on the page inside a native <details>, so the word
-            // count never drops below the page this replaces.
             const [first, ...rest] = t.data.body;
             return (
               <li
-                class:list={['card', isSignature && 'card--signature']}
-                data-tilt
-                data-fade
+                class:list={['card', 'spot', 'rim', isSignature && 'card--signature']}
+                data-card
+                data-tier={isSignature ? 'signature' : 'standard'}
+                data-reveal2
+                style={`--reveal-delay:${(i % 3) * 70}ms`}
               >
-                <span class="tilt__shadow" aria-hidden="true"></span>
+                {/* The photograph is the top of the card and fades into it. */}
+                {image && (
+                  <span
+                    class="card__photo"
+                    transition:name={target ? `svc-${target.family}` : undefined}
+                  >
+                    <Photo
+                      src={image}
+                      alt=""
+                      widths={[420, 640, 860]}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1100px) 46vw, 31vw"
+                      ratio="16 / 11"
+                      dissolve={false}
+                    />
+                  </span>
+                )}
 
-                <article class="card__inner float">
-                  {/* The photograph is the top of the card itself. It is masked
-                      to fade downward so it meets the card's own porcelain
-                      instead of ending on a hard edge, and the type sits in
-                      that fade. */}
-                  {image && (
-                    <span
-                      class="card__photo"
-                      transition:name={target ? `svc-${target.family}` : undefined}
-                    >
-                      <Photo
-                        src={image}
-                        alt=""
-                        widths={[380, 560, 760]}
-                        sizes="(max-width: 640px) 88vw, (max-width: 1100px) 44vw, 30vw"
-                        ratio="4 / 3"
-                        dissolve={false}
-                      />
+                <span class="card__linework" aria-hidden="true"></span>
+                <span class="spot__light" aria-hidden="true"></span>
+                <span class="brackets" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+
+                {isSignature && <span class="card__ribbon" aria-hidden="true">Signature</span>}
+
+                <div class="card__content">
+                  <header class="card__head">
+                    <span class="card__index" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
                     </span>
+                    <p class="card__eyebrow">{isSignature ? 'Signature' : 'Behandlung'}</p>
+                  </header>
+
+                  <h2 class:list={['card__name', isSignature && 'gilt gilt-live']}>
+                    {t.data.name.replace(/^\|\s*/, '')}
+                  </h2>
+
+                  <p class="card__lead">{leadFor(t.data.id)}</p>
+
+                  <div class="card__rule" aria-hidden="true"></div>
+
+                  <dl class="rates">
+                    {t.data.prices.map((pr, j) => (
+                      <div class="rate">
+                        <dt class="rate__dur">{pr.durationMin} Min.</dt>
+                        <span class="rate__leader" aria-hidden="true"></span>
+                        <dd class="rate__amount">
+                          <span class="rate__cur">EUR</span>
+                          <span class="rate__num" data-settle style={`--reveal-delay:${j * 90}ms`}>
+                            {pr.priceEur}
+                          </span>
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  <div class="card__body prose">
+                    {first && first.type === 'p' && <p>{first.text}</p>}
+                  </div>
+
+                  {rest.length > 0 && (
+                    <details class="card__more">
+                      <summary class="card__more-toggle">
+                        <span class="card__more-open">Ganze Beschreibung</span>
+                        <span class="card__more-close">Beschreibung schließen</span>
+                        <span class="card__more-chev" aria-hidden="true"></span>
+                      </summary>
+                      <div class="card__body card__body--full prose">
+                        {rest.map((b) =>
+                          b.type === 'p' ? (
+                            <p>{b.text}</p>
+                          ) : b.type === 'benefit' ? (
+                            <p class="benefit"><strong>{b.label}:</strong> {b.text}</p>
+                          ) : (
+                            <ul>{b.items.map((it) => <li>{it}</li>)}</ul>
+                          ),
+                        )}
+                      </div>
+                    </details>
                   )}
 
-                  <span class="card__linework" aria-hidden="true"></span>
-                  <span class="tilt__glare" aria-hidden="true"></span>
-
-                  {isSignature && <span class="card__ribbon" aria-hidden="true">Signature</span>}
-
-                  <div class="card__content">
-                    <header class="card__head">
-                      <span class="card__index" aria-hidden="true">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <p class="card__eyebrow">{isSignature ? 'Signature' : 'Behandlung'}</p>
-                    </header>
-
-                    <h2 class="card__name sheen">{t.data.name.replace(/^\|\s*/, '')}</h2>
-                    <div class="card__rule" aria-hidden="true"></div>
-
-                    <p class="card__lead">{leadFor(t.data.id)}</p>
-
-                    <dl class="rates">
-                      {t.data.prices.map((pr) => (
-                        <div class="rate">
-                          <dt class="rate__dur">{pr.durationMin} Min.</dt>
-                          <span class="rate__leader" aria-hidden="true"></span>
-                          <dd class="rate__amount">
-                            <span class="rate__cur">EUR</span>
-                            <span class="rate__num">{pr.priceEur}</span>
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-
-                    <div class="card__body prose">
-                      {first && first.type === 'p' && <p>{first.text}</p>}
-                    </div>
-
-                    {rest.length > 0 && (
-                      <details class="card__more">
-                        <summary class="card__more-toggle">
-                          <span class="card__more-open">Ganze Beschreibung</span>
-                          <span class="card__more-close">Beschreibung schließen</span>
-                          <span class="card__more-chev" aria-hidden="true"></span>
-                        </summary>
-                        <div class="card__body card__body--full prose">
-                          {rest.map((b) =>
-                            b.type === 'p' ? (
-                              <p>{b.text}</p>
-                            ) : b.type === 'benefit' ? (
-                              <p class="benefit"><strong>{b.label}:</strong> {b.text}</p>
-                            ) : (
-                              <ul>{b.items.map((it) => <li>{it}</li>)}</ul>
-                            ),
-                          )}
-                        </div>
-                      </details>
-                    )}
-
-                    <a class="card__cta" href={target ? target.href : url('/contact')} data-magnetic>
-                      <span data-magnetic-label>
-                        {target ? 'Details & Termin' : 'Termin anfragen'}
-                      </span>
-                      <svg viewBox="0 0 24 12" aria-hidden="true" class="card__arrow">
-                        <path d="M0 6h21M16 1l5 5-5 5" fill="none" stroke="currentColor"
-                              stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                    </a>
-
-                    <p class="card__meta">LUMA · {String(i + 1).padStart(2, '0')}</p>
-                  </div>
-                </article>
+                  <a
+                    class="card__cta gleam"
+                    href={target ? target.href : url('/contact')}
+                    data-magnetic
+                  >
+                    <span data-magnetic-label>
+                      {target ? 'Details & Termin' : 'Termin anfragen'}
+                    </span>
+                    <svg viewBox="0 0 24 12" aria-hidden="true" class="card__arrow">
+                      <path d="M0 6h21M16 1l5 5-5 5" fill="none" stroke="currentColor"
+                            stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
               </li>
             );
           })
@@ -250,11 +250,10 @@ const money = (n: number) => `${n}€`;
 
   /* ======================================================================
      Treatment cards.
-
-     The photograph is not a thumbnail sitting on top of a panel: it is the top
-     of the card, bled to the rounded edge and masked so it dissolves downward
-     into the card's own porcelain. The type then sits inside that fade, which
-     is what stops the card reading as an image box with a caption under it.
+     A card is a lit object: a photograph that dissolves into its own surface,
+     a gradient rim rather than a border, a pointer-tracked pool of warm light,
+     autofocus brackets, and a struck price. The lift on approach is 6px and
+     nothing rotates - the reference builds all treat tilt as noise.
      ====================================================================== */
 
   .cards {
@@ -262,64 +261,66 @@ const money = (n: number) => `${n}€`;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-    gap: clamp(1.25rem, 2.6vw, 2.25rem);
-    perspective: 1600px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19.5rem), 1fr));
+    gap: clamp(1.1rem, 2.2vw, 1.75rem);
   }
 
-  .card { position: relative; min-width: 0; }
-
-  .card__inner {
+  .card {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    max-width: 100%;
-    height: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    /* Opposite corners answer each other so it never reads as a rounded box. */
-    border-radius: clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem)
-                   clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem);
+    border-radius: 22px;
     background:
-      radial-gradient(120% 80% at 15% 100%, var(--wash-gold) 0%, transparent 62%),
-      radial-gradient(110% 70% at 95% 88%, var(--wash-blush) 0%, transparent 60%),
+      radial-gradient(130% 80% at 12% 100%, var(--wash-gold) 0%, transparent 58%),
+      radial-gradient(110% 70% at 96% 90%, var(--wash-blush) 0%, transparent 56%),
       var(--surface-strong);
-    box-shadow: var(--shadow-float), var(--edge-daylight);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgb(43 38 34 / 0.07), inset 0 1px 0 rgb(255 255 255 / 0.75);
+    transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+    will-change: transform;
   }
 
-  .tilt__shadow {
-    border-radius: clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem)
-                   clamp(1.25rem, 2vw, 1.75rem) clamp(2.5rem, 4.5vw, 4rem);
+  @media (hover: hover) and (pointer: fine) {
+    /* Specific enough to beat .motion-ready [data-reveal2][data-state='in'],
+       which sets transform: none and was cancelling the lift. */
+    .card[data-reveal2][data-state='in']:hover,
+    .card:hover { transform: translateY(-6px); box-shadow: 0 26px 60px rgb(43 38 34 / 0.13), inset 0 1px 0 rgb(255 255 255 / 0.85); }
+    .card:hover .card__photo :global(img) { transform: scale(1.05); }
+    .card:hover .card__arrow { transform: translateX(4px); }
   }
 
-  /* --- The photograph, dissolving into the card ------------------------- */
+  /* --- Photograph ------------------------------------------------------- */
 
   .card__photo {
-    position: absolute;
-    inset: 0 0 auto 0;
-    z-index: 0;
+    position: relative;
     display: block;
-    /* Fades to nothing before the type starts, so image and surface meet
-       without an edge anywhere. */
+    z-index: 0;
+    /* The mask and the veil were both eating the photograph, which left the
+       top of the card nearly blank. The mask now holds full opacity most of
+       the way down and only lets go at the very bottom, where the type starts. */
     -webkit-mask-image: linear-gradient(to bottom,
-      #000 0%, #000 42%, rgb(0 0 0 / 0.72) 62%, rgb(0 0 0 / 0.28) 80%, transparent 100%);
+      #000 0%, #000 74%, rgb(0 0 0 / 0.55) 89%, transparent 100%);
     mask-image: linear-gradient(to bottom,
-      #000 0%, #000 42%, rgb(0 0 0 / 0.72) 62%, rgb(0 0 0 / 0.28) 80%, transparent 100%);
+      #000 0%, #000 74%, rgb(0 0 0 / 0.55) 89%, transparent 100%);
   }
 
   .card__photo :global(.media) { border-radius: 0; box-shadow: none; background: none; }
+  .card__photo :global(img) {
+    filter: brightness(1.03) saturate(0.96);
+    transition: transform 0.9s var(--ease);
+  }
 
-  /* A warm veil over the lower half of the photograph so the eyebrow and the
-     numeral keep their contrast wherever the image happens to be dark. */
+  /* Warm veil so the eyebrow and numeral hold whatever the frame does. */
   .card__photo::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom,
-      transparent 0%, transparent 30%,
-      rgb(250 247 242 / 0.35) 58%,
-      rgb(250 247 242 / 0.82) 82%,
+      transparent 0%, transparent 58%,
+      rgb(250 247 242 / 0.28) 78%,
+      rgb(250 247 242 / 0.78) 92%,
       var(--porcelain) 100%);
   }
 
@@ -328,62 +329,72 @@ const money = (n: number) => `${n}€`;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.45;
+    opacity: 0.4;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500' fill='none' stroke='%23b8934e' stroke-width='0.7' opacity='0.3'%3E%3Cpath d='M-30 430 C 90 350, 180 460, 300 330 S 430 280, 470 210'/%3E%3Cpath d='M210 -20 C 260 110, 190 210, 250 320 S 280 430, 240 540'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom;
   }
 
-  .card--signature .card__inner {
+  /* --- Signature tier --------------------------------------------------- */
+
+  .card--signature {
     background:
-      radial-gradient(120% 80% at 15% 100%, var(--wash-gold) 0%, transparent 58%),
-      radial-gradient(110% 70% at 95% 88%, var(--wash-blush) 0%, transparent 56%),
-      rgb(255 255 255 / 0.9);
-    box-shadow: var(--shadow-lift), var(--edge-daylight);
+      radial-gradient(130% 80% at 12% 100%, var(--wash-gold) 0%, transparent 52%),
+      radial-gradient(110% 70% at 96% 90%, var(--wash-blush) 0%, transparent 52%),
+      rgb(255 255 255 / 0.92);
+    box-shadow: 0 6px 40px rgb(184 147 78 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+  .card--signature::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 80px rgb(184 147 78 / 0.09);
   }
 
   .card__ribbon {
     position: absolute;
-    top: 1.15rem;
-    right: -3.1rem;
-    z-index: 4;
+    top: 1rem;
+    right: -3.2rem;
+    z-index: 5;
     width: 10.5rem;
-    padding: 0.36rem 0;
+    padding: 0.34rem 0;
     text-align: center;
     transform: rotate(45deg);
-    background: linear-gradient(100deg, var(--gold) 0%, var(--gold-fill) 45%, var(--gold-spec) 100%);
+    background: linear-gradient(100deg, #8A6A2C, #B8934E 38%, #F0DDB0 52%, #B8934E 66%, #8A6A2C);
     color: var(--ink);
-    font-size: 0.5625rem;
-    font-weight: 500;
-    letter-spacing: 0.24em;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
-    box-shadow: 0 8px 22px rgb(43 38 34 / 0.16);
+    box-shadow: 0 6px 18px rgb(43 38 34 / 0.2), inset 0 1px 0 rgb(255 255 255 / 0.45);
   }
 
-  /* --- Content, sitting inside the fade --------------------------------- */
+  /* --- Content ---------------------------------------------------------- */
 
   .card__content {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     display: flex;
     flex-direction: column;
     flex: 1;
-    /* Pushes the type down into the faded part of the photograph. */
-    padding: clamp(11rem, 22vw, 14.5rem) clamp(1.4rem, 2.4vw, 2rem) clamp(1.5rem, 2.4vw, 2rem);
+    margin-top: -2.1rem;
+    padding: 0 clamp(1.3rem, 2.2vw, 1.7rem) clamp(1.4rem, 2.2vw, 1.75rem);
   }
 
-  .card__head { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .card__head { display: flex; align-items: baseline; gap: 0.7rem; margin-bottom: 0.45rem; }
 
   .card__index {
     font-family: var(--font-display);
-    font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+    font-size: 1.9rem;
     font-weight: 300;
     line-height: 0.85;
     color: transparent;
-    -webkit-text-stroke: 1px rgb(184 147 78 / 0.5);
+    -webkit-text-stroke: 1px rgb(184 147 78 / 0.55);
     letter-spacing: -0.02em;
-    user-select: none;
   }
 
   .card__eyebrow {
@@ -395,35 +406,41 @@ const money = (n: number) => `${n}€`;
     color: var(--gold-text);
   }
 
+  /* German compounds run long. Hyphenation breaks them at syllables instead
+     of shearing "SCHWANGERSCHAFTSMASSAG / E" across a line. */
   .card__name {
-    font-size: clamp(1.15rem, 1.9vw, 1.5rem);
-    line-height: 1.14;
-    letter-spacing: -0.01em;
-    margin: 0;
+    font-size: clamp(1.12rem, 1.75vw, 1.4rem);
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+    margin: 0 0 0.5rem;
+    hyphens: auto;
+    /* Only hyphenate genuinely long compounds. Without this the brand word
+       broke as "GOLD MEDA-LIE", which no one would set by hand. */
+    hyphenate-limit-chars: 12 6 5;
     overflow-wrap: break-word;
-    text-wrap: balance;
-  }
-
-  .card__rule {
-    height: 1px;
-    margin: 0.95rem 0 1.05rem;
-    background: linear-gradient(90deg,
-      rgb(184 147 78 / 0.45) 0%, rgb(184 147 78 / 0.16) 55%, transparent 100%);
+    text-wrap: pretty;
   }
 
   .card__lead {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: 1rem;
-    line-height: 1.35;
+    font-size: 0.98rem;
+    line-height: 1.32;
     color: var(--gold-text);
-    margin: 0 0 1.1rem;
+    margin: 0;
     overflow-wrap: break-word;
   }
 
-  /* --- Rates: duration, leader, figure ---------------------------------- */
+  .card__rule {
+    height: 1px;
+    margin: 1rem 0 0.35rem;
+    background: linear-gradient(90deg,
+      rgb(184 147 78 / 0.5) 0%, rgb(184 147 78 / 0.16) 55%, transparent 100%);
+  }
 
-  .rates { margin: 0 0 1.15rem; display: grid; gap: 0; }
+  /* --- Rates ------------------------------------------------------------ */
+
+  .rates { margin: 0 0 1.05rem; display: grid; }
 
   .rate {
     display: grid;
@@ -451,19 +468,21 @@ const money = (n: number) => `${n}€`;
     background-repeat: repeat-x;
   }
 
-  .rate__amount { margin: 0; display: inline-flex; align-items: baseline; gap: 0.35rem; white-space: nowrap; }
+  .rate__amount { margin: 0; display: inline-flex; align-items: baseline; gap: 0.3rem; white-space: nowrap; }
 
+  /* The currency rides high and small, the way a price is set on a menu. */
   .rate__cur {
     font-family: var(--font-display);
-    font-size: 0.625rem;
+    font-size: 0.58rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--gold-text);
+    transform: translateY(-0.62em);
   }
 
   .rate__num {
     font-family: var(--font-display);
-    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
     font-weight: 300;
     line-height: 1;
     color: var(--ink);
@@ -472,10 +491,24 @@ const money = (n: number) => `${n}€`;
 
   /* --- Body and disclosure ---------------------------------------------- */
 
-  .card__body :global(p) { font-size: 0.875rem; line-height: 1.62; overflow-wrap: break-word; }
+  /* The opening paragraph is clamped so nine cards share a rhythm instead of
+     one long treatment stretching its whole row. Nothing is lost: the full
+     text is one tap away in the disclosure directly beneath. */
+  .card__body :global(p) {
+    font-size: 0.875rem;
+    line-height: 1.62;
+    overflow-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* The expanded copy is never clamped. */
+  .card__body--full :global(p) { display: block; -webkit-line-clamp: none; overflow: visible; }
   .card__body :global(li) { font-size: 0.875rem; }
 
-  .card__more { margin-top: 0.85rem; }
+  .card__more { margin-top: 0.8rem; }
 
   .card__more-toggle {
     display: inline-flex;
@@ -483,9 +516,9 @@ const money = (n: number) => `${n}€`;
     gap: 0.5rem;
     cursor: pointer;
     list-style: none;
-    font-size: 0.625rem;
+    font-size: 0.5875rem;
     font-weight: 500;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold-text);
   }
@@ -501,13 +534,13 @@ const money = (n: number) => `${n}€`;
     border-right: 1px solid currentColor;
     border-bottom: 1px solid currentColor;
     transform: rotate(45deg) translateY(-1px);
-    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.35s var(--ease);
   }
   .card__more[open] .card__more-chev { transform: rotate(-135deg) translateY(-1px); }
 
   .card__body--full { margin-top: 0.9rem; }
 
-  /* --- CTA and meta ------------------------------------------------------ */
+  /* --- CTA -------------------------------------------------------------- */
 
   .card__cta {
     display: flex;
@@ -517,44 +550,35 @@ const money = (n: number) => `${n}€`;
     width: 100%;
     min-height: 46px;
     margin-top: auto;
-    padding: 0.8rem 1.25rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 999px;
-    background: rgb(255 255 255 / 0.6);
-    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.36), 0 6px 20px rgb(43 38 34 / 0.05);
-    font-size: 0.625rem;
+    background: rgb(255 255 255 / 0.66);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.4), 0 6px 20px rgb(43 38 34 / 0.05);
+    font-size: 0.5875rem;
     font-weight: 500;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--ink);
-    transition: box-shadow 0.4s ease, background 0.4s ease;
+    transition: box-shadow 0.5s var(--ease), background 0.5s var(--ease);
   }
 
   .card__arrow {
     width: 20px; height: 10px; flex: none;
     color: var(--gold-text);
-    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.5s var(--ease);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .card__cta:hover {
-      background: rgb(255 255 255 / 0.88);
-      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.62), 0 10px 28px rgb(43 38 34 / 0.09);
+      background: rgb(255 255 255 / 0.9);
+      box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.7), 0 10px 28px rgb(43 38 34 / 0.09);
     }
-    .card__cta:hover .card__arrow { transform: translateX(4px); }
-  }
-
-  .card__meta {
-    margin: 0.9rem 0 0;
-    font-size: 0.5625rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
   }
 
   .close__inner { display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
 
   @media (max-width: 520px) {
-    .card__content { padding-top: clamp(9rem, 42vw, 12rem); }
-    .card__ribbon { right: -3.4rem; width: 10rem; font-size: 0.5rem; }
+    .card { border-radius: 20px; }
+    .card__ribbon { right: -3.4rem; width: 10rem; }
   }
 </style>

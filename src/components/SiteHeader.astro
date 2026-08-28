@@ -141,6 +141,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   /* --- Nav --- */
 
+  /* Mobile-takeover furniture. Hidden until the panel exists. */
+  .nav__num, .nav__meta { display: none; }
+
   .nav__list {
     display: flex;
     align-items: center;
@@ -274,6 +277,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
     .nav__cta { border-bottom: 0 !important; padding-top: 1.5rem; }
     .nav__cta .pill { width: 100%; font-size: 0.75rem; padding-block: 1.05rem; }
+
+    .nav__num { display: inline; }
 
     .nav__meta {
       position: relative;

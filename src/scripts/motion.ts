@@ -601,6 +601,74 @@ function initFloatPausing() {
   onCleanup(() => io.disconnect());
 }
 
+/* ------------------------------------------------------- pointer spotlight */
+
+/**
+ * The card tracks the pointer and pools warm light under it. Two CSS custom
+ * properties, no per-frame JS work beyond writing them, and the whole
+ * appearance stays in the stylesheet.
+ */
+function initSpotlight() {
+  if (!FINE_POINTER || REDUCED) return;
+
+  document.querySelectorAll<HTMLElement>('.spot').forEach((el) => {
+    let raf = 0;
+    let x = 0;
+    let y = 0;
+
+    const write = () => {
+      raf = 0;
+      el.style.setProperty('--mx', `${x}px`);
+      el.style.setProperty('--my', `${y}px`);
+    };
+
+    const move = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      x = e.clientX - r.left;
+      y = e.clientY - r.top;
+      if (!raf) raf = requestAnimationFrame(write);
+    };
+
+    el.addEventListener('pointermove', move, { passive: true });
+    onCleanup(() => {
+      el.removeEventListener('pointermove', move);
+      if (raf) cancelAnimationFrame(raf);
+    });
+  });
+}
+
+/* --------------------------------------------------- CSS-owned reveals */
+
+/**
+ * The stylesheet owns how a reveal looks; this only flips data-state when the
+ * element arrives. Because the resting state in CSS is *visible* and only
+ * .motion-ready hides it, nothing can be stranded invisible by a trigger that
+ * never fires - which is the failure mode of driving opacity from JS.
+ */
+function initStateReveals() {
+  const targets = document.querySelectorAll<HTMLElement>('[data-reveal2], [data-settle]');
+  if (!targets.length) return;
+
+  if (REDUCED) {
+    targets.forEach((el) => (el.dataset.state = 'in'));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        (e.target as HTMLElement).dataset.state = 'in';
+        io.unobserve(e.target);
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+  );
+
+  targets.forEach((t) => io.observe(t));
+  onCleanup(() => io.disconnect());
+}
+
 /* ------------------------------------------------------------- progress */
 
 /**
@@ -682,6 +750,9 @@ function installRevealFailsafe() {
     document.querySelectorAll<HTMLElement>('[data-reveal] .line-inner').forEach((el) => {
       gsap.set(el, { yPercent: 0 });
     });
+    document
+      .querySelectorAll<HTMLElement>('[data-reveal2]:not([data-state])')
+      .forEach((el) => (el.dataset.state = 'in'));
   };
 
   const t = window.setTimeout(showAll, 6000);
@@ -708,6 +779,8 @@ function boot() {
   initMotes();
   initFloatPausing();
   initScrollDrift();
+  initSpotlight();
+  initStateReveals();
   initProgress();
   initChapterCounter();
   installRevealFailsafe();
