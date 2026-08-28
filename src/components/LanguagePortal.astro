@@ -29,7 +29,7 @@ const choices = LOCALES.map((code) => ({
 ---
 
 <div class="portal" data-portal hidden aria-hidden="true">
-  <canvas class="portal__grain" data-portal-grain aria-hidden="true"></canvas>
+  <span class="portal__grain" aria-hidden="true"></span>
 
   <div class="portal__wash" aria-hidden="true">
     <span class="portal__blob portal__blob--a"></span>
@@ -58,11 +58,19 @@ const choices = LOCALES.map((code) => ({
       {
         choices.map((c, i) => (
           <li style={`--i:${i}`}>
-            <a class="portal__tile" href={c.href} data-portal-pick data-locale={c.code} hreflang={c.tag}>
-              <span class="portal__flag" aria-hidden="true">{c.flag}</span>
-              <span class="portal__name">{c.name}</span>
-              <span class="portal__greet" aria-hidden="true">{c.greeting}</span>
-            </a>
+            {c.available ? (
+              <a class="portal__tile" href={c.href} data-portal-pick data-locale={c.code} hreflang={c.tag}>
+                <span class="portal__flag" aria-hidden="true">{c.flag}</span>
+                <span class="portal__name">{c.name}</span>
+                <span class="portal__greet" aria-hidden="true">{c.greeting}</span>
+              </a>
+            ) : (
+              <span class="portal__tile portal__tile--soon" aria-disabled="true">
+                <span class="portal__flag" aria-hidden="true">{c.flag}</span>
+                <span class="portal__name">{c.name}</span>
+                <span class="portal__soon">in Kürze</span>
+              </span>
+            )}
           </li>
         ))
       }
@@ -96,14 +104,33 @@ const choices = LOCALES.map((code) => ({
     to { opacity: 0; transform: scale(1.03); visibility: hidden; }
   }
 
+  /* A canvas of random pixels upscaled 3x reads as a blanket of blocks on a
+     near-white ground - it only works on the dark reference because the blocks
+     disappear into black. This is the same fine feTurbulence tile the rest of
+     the site uses, drifting on the shared ten-step cycle. */
   .portal__grain {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.055;
-    mix-blend-mode: multiply;
+    inset: -6%;
     pointer-events: none;
+    opacity: 0.022;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .portal__grain { animation: grain-shift 8s steps(10) infinite; }
+  }
+
+  /* Locales whose pages are not built yet: shown, so the plan is visible, but
+     never clickable. */
+  .portal__tile--soon { opacity: 0.5; cursor: default; }
+  .portal__tile--soon .portal__name { color: var(--ink-mute); }
+
+  .portal__soon {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.625rem;
+    color: var(--gold-text);
   }
 
   /* --- Wash -------------------------------------------------------------- */
@@ -421,12 +448,19 @@ const choices = LOCALES.map((code) => ({
       // who touches the panel takes control and the countdown stops.
       const msg = portal.querySelector<HTMLElement>('[data-portal-msg]');
       const fill = portal.querySelector<HTMLElement>('[data-portal-fill]');
-      const supported = ['de', 'en', 'th', 'es', 'pt', 'it'];
+
+      // Only locales that are actually built are candidates. Guessing a
+      // language whose pages do not exist would auto-navigate the visitor into
+      // a 404 without them touching anything, which is the worst version of
+      // this bug.
+      const buildable = [...portal.querySelectorAll<HTMLAnchorElement>('[data-portal-pick]')]
+        .map((t) => t.dataset.locale as string);
+
       const guess = (navigator.languages || [navigator.language || 'de'])
         .map((l) => l.slice(0, 2).toLowerCase())
-        .find((l) => supported.includes(l)) || 'de';
+        .find((l) => buildable.includes(l)) || 'de';
 
-      const guessTile = portal.querySelector<HTMLAnchorElement>(`[data-locale="${guess}"]`);
+      const guessTile = portal.querySelector<HTMLAnchorElement>(`[data-portal-pick][data-locale="${guess}"]`);
       const guessName = guessTile?.querySelector('.portal__name')?.textContent ?? 'Deutsch';
 
       if (msg) msg.innerHTML = `Weiter auf <b>${guessName}</b>`;
@@ -463,40 +497,6 @@ const choices = LOCALES.map((code) => ({
         requestAnimationFrame(tick);
       }
 
-      // --- Grain ----------------------------------------------------------
-      // A small canvas scaled up, refreshed every other frame, which is the
-      // cheap way to get film grain that actually moves.
-      const cvs = portal.querySelector<HTMLCanvasElement>('[data-portal-grain]');
-      const ctx = cvs?.getContext('2d', { willReadFrequently: false });
-      if (cvs && ctx && !reduced) {
-        const SCALE = 3;
-        let w = 0;
-        let h = 0;
-        const size = () => {
-          w = cvs.width = Math.ceil(innerWidth / SCALE);
-          h = cvs.height = Math.ceil(innerHeight / SCALE);
-          cvs.style.imageRendering = 'pixelated';
-        };
-        size();
-        addEventListener('resize', size, { passive: true });
-
-        let frame = 0;
-        const grain = () => {
-          if (portal.hidden) return;
-          if (++frame % 2 === 0) {
-            const img = ctx.createImageData(w, h);
-            const d = img.data;
-            for (let i = 0; i < d.length; i += 4) {
-              const v = (Math.random() * 255) | 0;
-              d[i] = d[i + 1] = d[i + 2] = v;
-              d[i + 3] = 255;
-            }
-            ctx.putImageData(img, 0, 0);
-          }
-          requestAnimationFrame(grain);
-        };
-        requestAnimationFrame(grain);
-      }
     }
   }
 </script>

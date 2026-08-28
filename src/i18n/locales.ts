@@ -30,16 +30,28 @@ export interface LocaleMeta {
   prefix: string;
   /** The line the portal shows while that tile is focused. */
   greeting: string;
+  /**
+   * Whether the pages for this locale actually exist yet.
+   *
+   * The portal will not link to a locale that is not built. Offering a tile
+   * that 404s is worse than not offering it, and section 7 is unambiguous that
+   * no path on this site may fail to resolve. Flip to true in the same change
+   * that adds the pages.
+   */
+  available: boolean;
 }
 
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
-  de: { code: 'de', tag: 'de-DE', name: 'Deutsch',    flag: '🇩🇪', prefix: '',    greeting: 'Herzlich willkommen' },
-  en: { code: 'en', tag: 'en',    name: 'English',    flag: '🇬🇧', prefix: '/en', greeting: 'A very warm welcome' },
-  th: { code: 'th', tag: 'th',    name: 'ไทย',        flag: '🇹🇭', prefix: '/th', greeting: 'ยินดีต้อนรับ' },
-  es: { code: 'es', tag: 'es',    name: 'Español',    flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido de corazón' },
-  pt: { code: 'pt', tag: 'pt',    name: 'Português',  flag: '🇵🇹', prefix: '/pt', greeting: 'Seja muito bem-vindo' },
-  it: { code: 'it', tag: 'it',    name: 'Italiano',   flag: '🇮🇹', prefix: '/it', greeting: 'Un caloroso benvenuto' },
+  de: { code: 'de', tag: 'de-DE', name: 'Deutsch',   flag: '🇩🇪', prefix: '',    greeting: 'Herzlich willkommen',  available: true },
+  en: { code: 'en', tag: 'en',    name: 'English',   flag: '🇬🇧', prefix: '/en', greeting: 'A very warm welcome',  available: false },
+  th: { code: 'th', tag: 'th',    name: 'ไทย',       flag: '🇹🇭', prefix: '/th', greeting: 'ยินดีต้อนรับ',          available: false },
+  es: { code: 'es', tag: 'es',    name: 'Español',   flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido de corazón', available: false },
+  pt: { code: 'pt', tag: 'pt',    name: 'Português', flag: '🇵🇹', prefix: '/pt', greeting: 'Seja muito bem-vindo',  available: false },
+  it: { code: 'it', tag: 'it',    name: 'Italiano',  flag: '🇮🇹', prefix: '/it', greeting: 'Un caloroso benvenuto', available: false },
 };
+
+/** Locales whose pages exist. The only ones anything may link to. */
+export const AVAILABLE = LOCALES.filter((l) => LOCALE_META[l].available);
 
 /** Locales other than German, in the order the portal lists them. */
 export const ALTERNATES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
