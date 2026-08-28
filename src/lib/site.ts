@@ -44,7 +44,12 @@ export const BUSINESS = {
   ],
 } as const;
 
-/** Mo-Fr 10:00-18:00, Sa 11:00-16:00, Sunday closed. Must match the profile. */
+/**
+ * Retained for the Google Business Profile, which still carries hours, but no
+ * longer rendered or marked up: the site states "Termine nur nach vorheriger
+ * Absprache" and nothing else. Do not re-introduce it to a page without
+ * re-checking the profile first.
+ */
 export const OPENING_HOURS = [
   { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '10:00', closes: '18:00' },
   { days: ['Saturday'], opens: '11:00', closes: '16:00' },

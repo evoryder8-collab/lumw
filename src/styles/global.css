@@ -14,23 +14,39 @@
 /* --- 9.1 Tokens ---------------------------------------------------------- */
 
 :root {
-  /* Colour. The page is never flat white. */
-  --porcelain: #faf7f2;
-  --porcelain-deep: #f2ede4;
+  /* Colour. Near-white ground with a sunset living on it.
+     The base is lifted almost to white so the pink and orange have somewhere
+     bright to sit; the wash carries the warmth instead of the paper. */
+  --porcelain: #fdfbfa;
+  --porcelain-deep: #f9f5f3;
 
-  /* The wash. Dawn tones under 8% chroma: the moment they read as "colours"
-     the page is broken. */
-  --wash-gold: #f3e7d3;
-  --wash-blush: #f7ece6;
-  --wash-sky: #eef2f4;
+  /* Sunset wash. These are deliberately more saturated than the original
+     dawn tones - the brief is pink and sunset-orange that read as colour,
+     not a cream tint. They stay very light, so ink over them still clears
+     AAA; check:contrast composites them at their real opacities and proves it. */
+  --wash-sunset: #ffd0a3;   /* bright sunset orange */
+  --wash-pink:   #ffd2e0;   /* soft pink */
+  --wash-coral:  #ffc7b4;   /* coral, where the two meet */
+  --wash-rose:   #ffdcea;   /* the palest of them, for the far corners */
 
   /* Text is deep warm ink with two softer greys for hierarchy, never black. */
   --ink: #2b2622;
   --ink-soft: #5c5349;
-  --ink-mute: #6f6558;  /* 4.90:1 worst ground. Was #857a6d at 3.60:1, which
-                           failed AA for the caption and footer sizes it is used at. */
+  /* Deepened again for the sunset wash: two blobs overlapping at peak make a
+     much stronger ground than the old cream tint, and #6f6558 fell to 4.01:1
+     there. 4.60:1 on the worst case, 6.04:1 in the footer. */
+  --ink-mute: #665c50;
 
-  /* Gold is the only accent metal on the entire site.
+  /* Young-leaf green is the action colour: every button, every CTA, every
+     "do this next". Gold is kept for achievement - the medals, the signature
+     treatment, the metal detailing - so the two never compete for the same job.
+     #7FB449 carries ink at 6.08:1; #4E7A2E is the step that can carry words. */
+  --leaf:      #7FB449;   /* button fills. Ink on this is 6.08:1 */
+  --leaf-text: #4E7A2E;   /* green that carries text. 4.91:1 worst ground */
+  --leaf-deep: #456B29;   /* pressed and hover */
+  --leaf-soft: #C8E2A4;   /* tints and glows */
+
+  /* Gold is the achievement metal.
      Section 9.1 names #b8934e "for text and lines", but section 9.5 requires
      automated contrast checks to pass and #b8934e measures 2.68:1 on porcelain
      and 2.46:1 on the footer, which clears neither AA nor AA-large. The two
@@ -38,7 +54,7 @@
      keeps every non-text job it has and a darker step on the same hue carries
      the text. Nothing else in the palette moves. */
   --gold: #b8934e;        /* lines, rules, underlines, markers, focus rings */
-  --gold-text: #7e622e;   /* gold that carries text. 4.90:1 worst ground, AA */
+  --gold-text: #6d5527;   /* gold that carries text. 4.96:1 on the worst wash ground */
   --gold-fill: #c9a962;   /* fills. Ink on this is 6.65:1 */
   --gold-spec: #e8d5a8;   /* specular highlights, reserved. Never text */
 
@@ -93,6 +109,8 @@
   --color-ink-mute: var(--ink-mute);
   --color-gold: var(--gold);
   --color-gold-text: var(--gold-text);
+  --color-leaf: var(--leaf);
+  --color-leaf-text: var(--leaf-text);
   --color-gold-fill: var(--gold-fill);
   --color-gold-spec: var(--gold-spec);
   --font-display: var(--font-display);
@@ -157,82 +175,127 @@ a { color: inherit; text-decoration: none; }
 ::selection { background: var(--gold-spec); color: var(--ink); }
 
 /* --- The aurora wash ----------------------------------------------------- */
-/* The signature background and the heaven-like element itself. Ships static in
-   stage 1; stage 6 adds the 30-50s drift loops and the 120s conic rotation to
-   these same layers, so nothing has to be restructured later. */
+/* The signature background and the heaven-like element itself.
+ *
+ * Four blurred blobs rather than two gradient layers, because gradients painted
+ * onto a pseudo-element can only slide as a block: they never overlap each other
+ * and the field reads as static however long the loop is. Separate blobs, each
+ * on its own duration, drift across one another and the colour genuinely mixes
+ * where they cross - which is the part that makes it look alive.
+ *
+ * Durations are deliberately co-prime-ish (29 / 37 / 43 / 53s) so the four
+ * never resynchronise into a pattern the eye can learn. */
 
 .aurora {
   position: fixed;
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  background: var(--porcelain);
-  /* The blobs are inset -25%, so they must be contained or they widen the
-     document and the whole page picks up a horizontal scrollbar. */
   overflow: hidden;
+  background: var(--porcelain);
 }
 
-.aurora::before,
-.aurora::after {
-  content: '';
+.aurora__blob {
   position: absolute;
-  inset: -25%;
-  background-repeat: no-repeat;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  /* The radial gradient already fades to fully transparent well before its
+     edge, so most of the blur was doing nothing but costing composite time -
+     a 56px blur across four viewport-sized layers put 140ms on the main
+     thread. 18px is enough to kill the last of the banding, and the film
+     grain handles the rest. */
+  filter: blur(24px);
+  /* Promoted to its own compositor layer so the drift is a transform on the
+     GPU rather than a repaint. `contain` is deliberately not used here: on
+     viewport-sized absolutely-positioned layers it made things measurably
+     worse, not better. */
+  backface-visibility: hidden;
 }
 
-.aurora::before {
-  background-image:
-    radial-gradient(46% 38% at 18% 14%, var(--wash-gold) 0%, transparent 68%),
-    radial-gradient(42% 34% at 84% 26%, var(--wash-blush) 0%, transparent 66%);
-  /* Section 9.3: opacity per blob 25 to 40 percent over the porcelain base.
-     Above that the wash starts reading as a colour and gold text loses its
-     contrast floor on the hotspots. */
-  opacity: 0.38;
-  animation: drift-a 42s ease-in-out infinite alternate;
+.aurora__blob--a {
+  width: 62vmax; height: 62vmax;
+  top: -26vmax; left: -18vmax;
+  background: radial-gradient(circle at 50% 50%, var(--wash-sunset) 0%, rgb(255 208 163 / 0) 68%);
+  opacity: 0.62;
 }
 
-.aurora::after {
-  background-image:
-    radial-gradient(52% 40% at 72% 82%, var(--wash-sky) 0%, transparent 68%),
-    radial-gradient(38% 32% at 26% 74%, var(--wash-gold) 0%, transparent 64%);
-  opacity: 0.32;
-  animation: drift-b 34s ease-in-out infinite alternate;
+.aurora__blob--b {
+  width: 56vmax; height: 56vmax;
+  top: -12vmax; right: -20vmax;
+  background: radial-gradient(circle at 50% 50%, var(--wash-pink) 0%, rgb(255 210 224 / 0) 68%);
+  opacity: 0.7;
 }
 
-/* The barely-visible conic rotation at 120s. Its job is to keep the field from
-   ever settling into a pattern the eye can lock onto. */
-.aurora__conic {
-  position: absolute;
-  inset: -40%;
-  opacity: 0.16;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    var(--wash-gold) 70deg,
-    transparent 140deg,
-    var(--wash-blush) 220deg,
-    transparent 300deg
-  );
-  filter: blur(80px);
-  animation: conic-spin 120s linear infinite;
+.aurora__blob--c {
+  width: 58vmax; height: 58vmax;
+  bottom: -30vmax; right: -14vmax;
+  background: radial-gradient(circle at 50% 50%, var(--wash-coral) 0%, rgb(255 199 180 / 0) 66%);
+  opacity: 0.5;
 }
 
-/* Transform only. Nothing here touches layout or paint geometry. */
+.aurora__blob--d {
+  width: 50vmax; height: 50vmax;
+  bottom: -18vmax; left: -12vmax;
+  background: radial-gradient(circle at 50% 50%, var(--wash-rose) 0%, rgb(255 220 234 / 0) 66%);
+  opacity: 0.58;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aurora__blob--a { animation: drift-a 29s ease-in-out infinite alternate; }
+  .aurora__blob--b { animation: drift-b 37s ease-in-out infinite alternate; }
+  .aurora__blob--c { animation: drift-c 43s ease-in-out infinite alternate; }
+  .aurora__blob--d { animation: drift-d 53s ease-in-out infinite alternate; }
+}
+
+/* Transform and opacity only. Nothing here touches layout or paint geometry. */
 @keyframes drift-a {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  50%  { transform: translate3d(3.5%, -2.5%, 0) scale(1.08); }
-  100% { transform: translate3d(-2.5%, 3%, 0) scale(1.04); }
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.62; }
+  50%  { transform: translate3d(16vw, 9vh, 0) scale(1.18); opacity: 0.44; }
+  100% { transform: translate3d(6vw, 20vh, 0) scale(0.94); opacity: 0.68; }
 }
 
 @keyframes drift-b {
-  0%   { transform: translate3d(0, 0, 0) scale(1.05); }
-  50%  { transform: translate3d(-4%, 2%, 0) scale(1); }
-  100% { transform: translate3d(2.5%, -3.5%, 0) scale(1.09); }
+  0%   { transform: translate3d(0, 0, 0) scale(1.05); opacity: 0.7; }
+  50%  { transform: translate3d(-19vw, 14vh, 0) scale(0.88); opacity: 0.5; }
+  100% { transform: translate3d(-7vw, 26vh, 0) scale(1.2); opacity: 0.66; }
 }
 
-@keyframes conic-spin {
-  to { transform: rotate(360deg); }
+@keyframes drift-c {
+  0%   { transform: translate3d(0, 0, 0) scale(0.96); opacity: 0.5; }
+  50%  { transform: translate3d(-14vw, -18vh, 0) scale(1.22); opacity: 0.66; }
+  100% { transform: translate3d(8vw, -8vh, 0) scale(1.02); opacity: 0.46; }
 }
+
+@keyframes drift-d {
+  0%   { transform: translate3d(0, 0, 0) scale(1.1); opacity: 0.58; }
+  50%  { transform: translate3d(20vw, -15vh, 0) scale(0.9); opacity: 0.4; }
+  100% { transform: translate3d(4vw, -25vh, 0) scale(1.14); opacity: 0.6; }
+}
+
+/* The barely-visible conic rotation at 120s. Its job is to keep the field from
+   ever settling into a shape the eye can lock onto. */
+.aurora__conic {
+  position: absolute;
+  inset: -40%;
+  opacity: 0.13;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    var(--wash-sunset) 60deg,
+    transparent 130deg,
+    var(--wash-pink) 210deg,
+    transparent 280deg,
+    var(--wash-coral) 330deg,
+    transparent 360deg
+  );
+  filter: blur(48px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aurora__conic { animation: conic-spin 120s linear infinite; }
+}
+
+@keyframes conic-spin { to { transform: rotate(360deg); } }
 
 /* --- Film grain ---------------------------------------------------------- */
 /* Kills banding in the pale gradients and keeps the wash off plastic. Cheap
@@ -343,7 +406,7 @@ a { color: inherit; text-decoration: none; }
 /* --- The one primary CTA style: gold pill, ink text ---------------------- */
 
 .pill {
-  --pill-bg: var(--gold-fill);
+  --pill-bg: var(--leaf);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -374,7 +437,7 @@ a { color: inherit; text-decoration: none; }
   inset: -60%;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(closest-side, var(--gold-spec) 0%, transparent 72%);
+  background: radial-gradient(closest-side, var(--leaf-soft) 0%, transparent 72%);
   opacity: 0;
   filter: blur(28px);
   transition: opacity 0.5s ease;
@@ -525,7 +588,7 @@ a { color: inherit; text-decoration: none; }
   inset: -70%;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(232 213 168 / 0.55) 0%, transparent 72%);
+  background: radial-gradient(closest-side, rgb(200 226 164 / 0.7) 0%, transparent 72%);
   filter: blur(34px);
   opacity: 0;
   transition: opacity 0.55s ease;
@@ -684,8 +747,7 @@ a { color: inherit; text-decoration: none; }
 /* --- Reduced motion: the full alternate grammar -------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora::before,
-  .aurora::after,
+  .aurora__blob,
   .aurora__conic { animation: none !important; }
   .float { animation: none !important; }
   .halo--breathing::before { animation: none !important; opacity: 0.5; }
@@ -762,13 +824,13 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
   gap: 0.5rem;
   border-radius: 999px;
-  background: var(--gold-fill);
+  background: var(--leaf);
   color: var(--ink);
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  box-shadow: 0 8px 24px rgb(184 147 78 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.45);
+  box-shadow: 0 8px 24px rgb(127 180 73 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.45);
 }
 
 .thumb-bar__icon {
@@ -780,7 +842,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: 50%;
   color: var(--ink);
   background: rgb(255 255 255 / 0.75);
-  box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.32), 0 6px 18px rgb(43 38 34 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.4), 0 6px 18px rgb(43 38 34 / 0.07);
 }
 
 .thumb-bar__icon svg { width: 19px; height: 19px; }
@@ -810,7 +872,7 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   transform: scaleX(0);
   transform-origin: 0 50%;
-  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-fill) 55%, var(--gold-spec) 100%);
+  background: linear-gradient(90deg, var(--leaf-deep) 0%, var(--leaf) 55%, var(--leaf-soft) 100%);
 }
 
 @media (min-width: 901px) { .progress { display: none; } }

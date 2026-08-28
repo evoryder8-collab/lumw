@@ -28,11 +28,10 @@ export const GET: APIRoute = async () => {
 - Website: ${SITE_URL}
 - Termin anfragen: ${SITE_URL}/contact
 
-## Öffnungszeiten
+## Termine
 
-- Montag bis Freitag: 10:00 - 18:00
-- Samstag: 11:00 - 16:00
-- Sonntag: geschlossen
+- Termine nur nach vorheriger Absprache.
+- Anfragen per Telefon, WhatsApp oder E-Mail.
 
 ## Auszeichnungen
 

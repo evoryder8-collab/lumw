@@ -1,0 +1,609 @@
+---
+/**
+ * The location panel.
+ *
+ * Structure follows the HubMak contact map — graded map plate, survey grid, a
+ * drawn approach route, a pin that pulses in rings, and a "Route starten"
+ * button that opens a chooser for Google or Apple Maps — re-lit for the
+ * Morning Light palette: warm porcelain instead of near-black, gold instead of
+ * brass on dark, and a light-mode map tile.
+ *
+ * The embed is click-to-load. CLAUDE.md section 6 requires the site to need no
+ * consent banner, and an iframe that fires on page load hands Google the
+ * visitor's IP before anyone has agreed to anything. Nothing third-party is
+ * requested until the visitor presses "Karte laden".
+ */
+import { BUSINESS } from '../lib/site';
+
+const destination = encodeURIComponent(
+  `${BUSINESS.name}, ${BUSINESS.street}, ${BUSINESS.postalCode} ${BUSINESS.city}, Deutschland`,
+);
+
+const googleDir = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving&dir_action=navigate`;
+const appleDir = `https://maps.apple.com/?daddr=${destination}&dirflg=d`;
+const embedSrc = `https://www.google.com/maps?q=${destination}&z=16&output=embed`;
+const larger = BUSINESS.mapUrl;
+---
+
+<section class="loc" id="standort" aria-labelledby="standort-title" data-reveal2>
+  <div class="loc__frame rim spot">
+    <span class="spot__light" aria-hidden="true"></span>
+
+    <div class="loc__plate">
+      <!-- Nothing third-party loads until this is pressed. -->
+      <iframe
+        class="loc__embed"
+        title="Karte mit dem Standort von LUMA Wellness in Buxtehude"
+        data-src={embedSrc}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        tabindex="-1"
+      ></iframe>
+
+      <span class="loc__tone" aria-hidden="true"></span>
+      <span class="loc__grid" aria-hidden="true"></span>
+
+      <svg class="loc__route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M-8 78 C14 84 20 60 33 63 S49 74 57 52 S73 37 108 29" />
+      </svg>
+
+      <!-- Three rings leaving the pin on staggered delays. -->
+      <span class="loc__pin" aria-hidden="true">
+        <span></span>
+        <svg viewBox="0 0 24 24">
+          <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
+          <circle cx="12" cy="10" r="2.25" />
+        </svg>
+      </span>
+
+      <p class="loc__coords" aria-hidden="true">
+        <span>Buxtehude</span><i></i><span>Niedersachsen</span>
+      </p>
+
+      <button class="loc__load" type="button" data-map-load>
+        <span class="loc__load-inner">
+          <span class="loc__load-title">Karte laden</span>
+          <span class="loc__load-note">
+            Lädt Google Maps. Erst dann werden Daten an Google übertragen.
+          </span>
+        </span>
+      </button>
+    </div>
+
+    <div class="loc__details">
+      <p class="loc__eyebrow"><span aria-hidden="true"></span><b>Studio in Buxtehude</b></p>
+      <h2 id="standort-title" class="loc__title">LUMA Wellness by June Saurin</h2>
+      <address class="loc__address">
+        Hauptstraße 19<br />21614 Buxtehude
+      </address>
+      <p class="loc__hint">
+        Das Studio befindet sich in der Filiale HAUTNAH.
+      </p>
+
+      <div class="loc__actions">
+        <button
+          class="loc__drive gleam"
+          type="button"
+          data-drive
+          aria-expanded="false"
+          aria-controls="route-choice"
+        >
+          <span>Route starten</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h13M14 7l5 5-5 5" fill="none" stroke="currentColor"
+                  stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <a class="loc__view underline-gold" href={larger} target="_blank" rel="noopener noreferrer">
+          Größere Karte öffnen
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chooser. A native dialog would be simpler, but Safari's focus handling on
+     older iOS is unreliable, so this is a plain element with its own trap. -->
+<div class="choice" id="route-choice" role="dialog" aria-modal="true" aria-labelledby="route-choice-title" hidden>
+  <div class="choice__panel rim">
+    <button class="choice__close" type="button" data-choice-close aria-label="Auswahl schließen">
+      <span aria-hidden="true"></span>
+    </button>
+
+    <p class="choice__eyebrow">LUMA Wellness <i></i> Buxtehude</p>
+    <h2 id="route-choice-title" class="choice__title">Womit möchten Sie navigieren?</h2>
+
+    <div class="choice__options">
+      <a class="choice__option" href={googleDir} target="_blank" rel="noopener noreferrer" data-choice-option>
+        <span class="choice__brand" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
+            <circle cx="12" cy="10" r="2.2" />
+          </svg>
+        </span>
+        <strong>Google Maps</strong>
+        <i class="choice__arrow" aria-hidden="true"></i>
+      </a>
+
+      <a class="choice__option" href={appleDir} target="_blank" rel="noopener noreferrer" data-choice-option>
+        <span class="choice__brand" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" />
+            <path d="m14.9 9.1-1.6 4.2-4.2 1.6 1.6-4.2 4.2-1.6Z" />
+          </svg>
+        </span>
+        <strong>Apple Karten</strong>
+        <i class="choice__arrow" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* --- Frame ------------------------------------------------------------ */
+
+  .loc { padding-block: clamp(2rem, 5vw, 3.5rem); }
+
+  .loc__frame {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    border-radius: 26px;
+    background:
+      radial-gradient(120% 90% at 8% 100%, var(--wash-sunset) 0%, transparent 58%),
+      var(--surface-strong);
+    box-shadow: 0 8px 44px rgb(43 38 34 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  }
+
+  /* --- Map plate -------------------------------------------------------- */
+
+  .loc__plate {
+    position: relative;
+    min-height: clamp(19rem, 40vw, 26rem);
+    overflow: hidden;
+    background: var(--porcelain-deep);
+  }
+
+  .loc__embed {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    opacity: 0;
+    transition: opacity 0.9s var(--ease);
+  }
+  .loc__plate[data-loaded] .loc__embed { opacity: 1; }
+
+  /* Grades the tile into the palette instead of leaving Google's own colours
+     sitting inside a warm page. */
+  .loc__tone {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+      radial-gradient(circle at 62% 38%, rgb(232 213 168 / 0.3), transparent 34%),
+      linear-gradient(135deg, rgb(243 231 211 / 0.55), transparent 46%, rgb(247 236 230 / 0.4)),
+      linear-gradient(180deg, rgb(250 247 242 / 0.18), rgb(250 247 242 / 0.1) 45%, rgb(250 247 242 / 0.5) 100%);
+    mix-blend-mode: multiply;
+  }
+  .loc__plate[data-loaded] .loc__tone { mix-blend-mode: soft-light; opacity: 0.9; }
+
+  .loc__grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.4;
+    background-image:
+      linear-gradient(rgb(184 147 78 / 0.16) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(184 147 78 / 0.16) 1px, transparent 1px);
+    background-size: 3.15rem 3.15rem;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 86%);
+    mask-image: linear-gradient(180deg, #000, transparent 86%);
+  }
+
+  .loc__route {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 4;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgb(232 213 168 / 0.85));
+  }
+
+  .loc__route path {
+    fill: none;
+    stroke: rgb(184 147 78 / 0.75);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-dasharray: 2.2 3.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .loc__route path { animation: route-flow 2.6s linear infinite; }
+  }
+  @keyframes route-flow { to { stroke-dashoffset: -32; } }
+
+  /* --- The pin ---------------------------------------------------------- */
+
+  .loc__pin {
+    position: absolute;
+    top: 38%;
+    left: 58%;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+
+  /* Three rings on one animation, offset in time so a wave is always leaving. */
+  .loc__pin::before,
+  .loc__pin::after,
+  .loc__pin > span {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgb(184 147 78 / 0.55);
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .loc__pin::before,
+    .loc__pin::after,
+    .loc__pin > span { animation: pin-wave 3.8s var(--ease) infinite; }
+    .loc__pin::after { animation-delay: 1.25s; }
+    .loc__pin > span { animation-delay: 2.5s; }
+  }
+
+  @keyframes pin-wave {
+    0%   { transform: scale(0.35); opacity: 0; }
+    18%  { opacity: 0.85; }
+    100% { transform: scale(1.75); opacity: 0; }
+  }
+
+  .loc__pin svg {
+    position: relative;
+    z-index: 2;
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: none;
+    stroke: var(--gold-text);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 3px 8px rgb(43 38 34 / 0.28));
+  }
+  /* The dot at the address itself. */
+  .loc__pin svg circle { fill: var(--gold-fill); stroke: none; }
+
+  .loc__coords {
+    position: absolute;
+    top: 1rem;
+    left: 1.1rem;
+    z-index: 5;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .loc__coords i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+
+  /* --- Click-to-load ---------------------------------------------------- */
+
+  .loc__load {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: opacity 0.5s var(--ease);
+  }
+  .loc__plate[data-loaded] .loc__load { opacity: 0; pointer-events: none; }
+
+  .loc__load-inner {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    text-align: center;
+    max-width: 22rem;
+    padding: 1.1rem 1.6rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 34px rgb(43 38 34 / 0.12), inset 0 0 0 1px rgb(184 147 78 / 0.34);
+  }
+
+  .loc__load-title {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .loc__load-note { font-size: 0.75rem; line-height: 1.45; color: var(--ink-soft); }
+
+  /* --- Details ---------------------------------------------------------- */
+
+  .loc__details {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: clamp(1.6rem, 3vw, 2.5rem);
+  }
+
+  .loc__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0 0 0.35rem;
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .loc__eyebrow span {
+    width: 1.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .loc__title { font-size: clamp(1.25rem, 2vw, 1.6rem); line-height: 1.14; margin: 0; }
+
+  .loc__address {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+    font-style: normal;
+    line-height: 1.42;
+    color: var(--ink-soft);
+    margin-top: 0.35rem;
+  }
+
+  .loc__hint { font-size: 0.8125rem; font-style: italic; color: var(--ink-mute); margin: 0.35rem 0 0; }
+
+  .loc__actions { display: grid; gap: 0.85rem; justify-items: start; margin-top: 1.35rem; }
+
+  .loc__drive {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 48px;
+    padding: 0.85rem 1.6rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--leaf);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgb(127 180 73 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.45);
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+  .loc__drive svg { width: 20px; height: 20px; transition: transform 0.5s var(--ease); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .loc__drive:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgb(127 180 73 / 0.4); }
+    .loc__drive:hover svg { transform: translateX(4px); }
+  }
+
+  .loc__view { font-size: var(--step-small); color: var(--ink-soft); }
+
+  /* --- Chooser ---------------------------------------------------------- */
+
+  .choice {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: var(--gutter);
+    background: rgb(43 38 34 / 0.28);
+    backdrop-filter: blur(10px);
+  }
+  .choice[hidden] { display: none; }
+
+  .choice__panel {
+    position: relative;
+    width: min(28rem, 100%);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    border-radius: 24px;
+    background:
+      radial-gradient(120% 80% at 10% 100%, var(--wash-sunset) 0%, transparent 60%),
+      rgb(255 255 255 / 0.96);
+    box-shadow: 0 30px 90px rgb(43 38 34 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .choice__panel { animation: choice-in 0.45s var(--ease) both; }
+  }
+  @keyframes choice-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .choice__close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.7);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.3);
+    cursor: pointer;
+  }
+  .choice__close span,
+  .choice__close span::before {
+    content: '';
+    display: block;
+    width: 13px;
+    height: 1px;
+    background: var(--ink);
+  }
+  .choice__close span { transform: rotate(45deg); }
+  .choice__close span::before { transform: rotate(-90deg); }
+
+  .choice__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.6rem;
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+  .choice__eyebrow i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+
+  .choice__title { font-size: clamp(1.3rem, 4vw, 1.75rem); line-height: 1.14; margin: 0 0 1.5rem; }
+
+  .choice__options { display: grid; gap: 0.75rem; }
+
+  .choice__option {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 60px;
+    padding: 0.9rem 1.15rem;
+    border-radius: 16px;
+    background: rgb(255 255 255 / 0.7);
+    box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.36), 0 6px 18px rgb(43 38 34 / 0.05);
+    font-size: 0.9375rem;
+    color: var(--ink);
+    transition: box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
+  }
+  .choice__option strong { font-weight: 500; }
+
+  .choice__brand {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgb(243 231 211 / 0.8);
+  }
+  .choice__brand svg {
+    width: 19px; height: 19px;
+    fill: none; stroke: var(--leaf-text); stroke-width: 1.5; stroke-linejoin: round;
+  }
+
+  .choice__arrow {
+    width: 8px; height: 8px;
+    border-top: 1px solid var(--leaf-text);
+    border-right: 1px solid var(--leaf-text);
+    transform: rotate(45deg);
+    transition: transform 0.45s var(--ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .choice__option:hover {
+      transform: translateY(-2px);
+      box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.7), 0 12px 28px rgb(43 38 34 / 0.09);
+    }
+    .choice__option:hover .choice__arrow { transform: rotate(45deg) translate(2px, -2px); }
+  }
+
+  /* --- Responsive ------------------------------------------------------- */
+
+  @media (max-width: 900px) {
+    .loc__frame { grid-template-columns: 1fr; }
+    .loc__plate { min-height: 17rem; order: -1; }
+    .loc__actions { justify-items: stretch; }
+    .loc__drive { justify-content: center; }
+  }
+</style>
+
+<script>
+  const plate = document.querySelector<HTMLElement>('.loc__plate');
+  const loadBtn = document.querySelector<HTMLButtonElement>('[data-map-load]');
+  const frame = document.querySelector<HTMLIFrameElement>('.loc__embed');
+
+  // Nothing reaches Google until this runs.
+  if (plate && loadBtn && frame) {
+    loadBtn.addEventListener('click', () => {
+      const src = frame.dataset.src;
+      if (!src) return;
+      frame.src = src;
+      frame.removeAttribute('tabindex');
+      plate.dataset.loaded = 'true';
+    }, { once: true });
+  }
+
+  const drive = document.querySelector<HTMLButtonElement>('[data-drive]');
+  const choice = document.querySelector<HTMLElement>('#route-choice');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-choice-close]');
+  const options = [...document.querySelectorAll<HTMLAnchorElement>('[data-choice-option]')];
+
+  if (drive && choice) {
+    let returnFocus: HTMLElement | null = null;
+
+    const open = () => {
+      returnFocus = document.activeElement as HTMLElement;
+      choice.hidden = false;
+      drive.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => options[0]?.focus());
+    };
+
+    const close = (restore = true) => {
+      if (choice.hidden) return;
+      choice.hidden = true;
+      drive.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      if (restore) returnFocus?.focus();
+    };
+
+    drive.addEventListener('click', open);
+    closeBtn?.addEventListener('click', () => close());
+    choice.addEventListener('click', (e) => { if (e.target === choice) close(); });
+    // Picking an app closes it without stealing focus back from the new tab.
+    options.forEach((o) => o.addEventListener('click', () => close(false)));
+
+    document.addEventListener('keydown', (e) => {
+      if (choice.hidden) return;
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key !== 'Tab') return;
+
+      // Focus stays inside the dialog while it is open.
+      const focusable = [closeBtn, ...options].filter(Boolean) as HTMLElement[];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  }
+</script>

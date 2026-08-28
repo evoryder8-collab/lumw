@@ -261,12 +261,12 @@ const schema = graph([
   <section class="section hours" data-sunbeam>
     <div class="shell hours__inner">
       <div class="hours__col panel float">
-        <p class="eyebrow">Öffnungszeit</p>
-        <dl class="hours__list">
-          <div><dt>Montag-Freitag</dt><dd>10:00 - 18:00</dd></div>
-          <div><dt>Samstag</dt><dd>11:00 - 16:00</dd></div>
-          <div><dt>Sonntag</dt><dd>Geschlossen</dd></div>
-        </dl>
+        <p class="eyebrow">Termine</p>
+        <p class="hours__appointment">Termine nur nach vorheriger Absprache</p>
+        <p class="hours__note">
+          Schreiben Sie mir per WhatsApp oder rufen Sie an, und wir finden einen
+          passenden Termin.
+        </p>
       </div>
 
       <div class="hours__col panel float">
@@ -476,14 +476,12 @@ const schema = graph([
 
   .hours__col { padding: clamp(1.75rem, 3vw, 2.5rem); }
 
-  .hours__list { margin: 0; display: grid; gap: 1rem; }
-  .hours__list > div { display: flex; justify-content: space-between; gap: 1rem; }
-  .hours__list dt { color: var(--ink-soft); font-size: var(--step-small); }
-  .hours__list dd {
-    margin: 0;
+  .hours__appointment {
     font-family: var(--font-display);
-    font-size: 1.05rem;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    line-height: 1.28;
     color: var(--ink);
+    margin-bottom: 0.9rem;
   }
 
   .hours__address {

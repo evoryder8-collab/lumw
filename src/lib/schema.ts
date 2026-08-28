@@ -11,7 +11,7 @@
  * UWG, which means a competitor can send an abmahnung with costs attached.
  */
 
-import { SITE_URL, BUSINESS, OPENING_HOURS, AWARDS } from './site';
+import { SITE_URL, BUSINESS, AWARDS } from './site';
 
 type Node = Record<string, unknown>;
 
@@ -53,12 +53,10 @@ export function businessNode(imageUrls: string[] = []): Node {
       longitude: BUSINESS.geo.lng,
     },
     hasMap: BUSINESS.mapUrl,
-    openingHoursSpecification: OPENING_HOURS.map((h) => ({
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: h.days.map((d) => `https://schema.org/${d}`),
-      opens: h.opens,
-      closes: h.closes,
-    })),
+    /* No openingHoursSpecification: the site states "Termine nur nach
+       vorheriger Absprache" and nothing else, so publishing hours in the
+       markup would contradict the page. Note this drops one of the
+       Business Profile corroboration signals section 4 asks for. */
     areaServed: [
       'Buxtehude', 'Stade', 'Harburg', 'Neu Wulmstorf',
       'Jork', 'Horneburg', 'Apensen', 'Landkreis Stade',

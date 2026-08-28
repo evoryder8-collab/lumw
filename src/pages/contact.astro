@@ -11,6 +11,7 @@
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
+import LocationMap from '../components/LocationMap.astro';
 import { BUSINESS } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
@@ -134,7 +135,7 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
   <section class="section" data-sunbeam>
     <div class="shell info">
       <div class="info__copy">
-        <p class="eyebrow">Relax. Erfrischen. Wiederbeleben.</p>
+        <p class="eyebrow" data-fade>Relax. Erfrischen. Wiederbeleben.</p>
         <h2 data-reveal>Kontakt Info</h2>
 
         <dl class="info__list">
@@ -150,19 +151,15 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
             <dt>Adresse</dt>
             <dd>Hauptstraße 19,<br />21614 Buxtehude</dd>
           </div>
+          <div>
+            <dt>Termine</dt>
+            <dd>Nur nach vorheriger Absprache</dd>
+          </div>
         </dl>
 
         <p class="info__note">
           *Bitte beachten Sie, dass sich mein Studio in der Filiale HAUTNAH befindet, wie auf dem
           Außenbild unten zu sehen ist.
-        </p>
-
-        <!-- Click-to-load, never an embed on page load: an embedded map would
-             drag in a third party and force a TTDSG consent banner. -->
-        <p class="info__map">
-          <a href={BUSINESS.mapUrl} class="underline-gold" rel="noopener" target="_blank">
-            In Google Maps öffnen
-          </a>
         </p>
       </div>
 
@@ -177,6 +174,11 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
       </figure>
     </div>
   </section>
+
+  <div class="shell">
+    <LocationMap />
+  </div>
+
 </Layout>
 
 <style>
