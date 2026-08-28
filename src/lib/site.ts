@@ -70,6 +70,7 @@ export const AWARDS = [
   {
     award: 'Goldmedaille, Universal Massage Championship 2023, Kategorie Wellness & Spa',
     short: 'Gold, Wellness & Spa',
+    metal: 'gold' as const,
     event: 'Universal Massage Championship 2023',
     place: 'Penzberg, Deutschland',
     year: '2023',
@@ -77,6 +78,7 @@ export const AWARDS = [
   {
     award: 'Silbermedaille, Universal Massage Championship 2023, Kategorie Freestyle Eastern',
     short: 'Silber, Freestyle Eastern',
+    metal: 'silver' as const,
     event: 'Universal Massage Championship 2023',
     place: 'Penzberg, Deutschland',
     year: '2023',
@@ -84,6 +86,7 @@ export const AWARDS = [
   {
     award: '3. Platz, Champ of the Champs Award, Universal Massage Championship 2023',
     short: '3. Platz, Champ of Champs',
+    metal: 'bronze' as const,
     event: 'Universal Massage Championship 2023',
     place: 'Penzberg, Deutschland',
     year: '2023',
@@ -91,6 +94,7 @@ export const AWARDS = [
   {
     award: 'Silbermedaille, Schweizer Massage-Meisterschaft Zürich 2023, Kategorie Wellness',
     short: 'Silber, Zürich',
+    metal: 'silver' as const,
     event: 'Schweizer Massage-Meisterschaft',
     place: 'Zürich, Schweiz',
     year: '2023',
@@ -98,6 +102,7 @@ export const AWARDS = [
   {
     award: 'Silbermedaille, Intercontinental Massage Championship Athen 2023',
     short: 'Silber, Athen',
+    metal: 'silver' as const,
     event: 'Intercontinental Massage Championship',
     place: 'Athen, Griechenland',
     year: '2023',

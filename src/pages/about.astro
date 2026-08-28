@@ -9,6 +9,7 @@
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
+import Medal from '../components/Medal.astro';
 import { heroPreload } from '../lib/heroPreload';
 import { AWARDS, url } from '../lib/site';
 import {
@@ -105,6 +106,7 @@ const schema = graph([
             {
               AWARDS.map((a) => (
                 <li class="record__item float">
+                  <Medal metal={a.metal} size={38} label={a.award} />
                   <span class="record__award">{a.short}</span>
                   <span class="record__meta">{a.event} · {a.place}</span>
                 </li>
@@ -259,13 +261,19 @@ const schema = graph([
 
   .record__item {
     display: grid;
-    gap: 0.3rem;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'medal award' 'medal meta';
+    align-items: center;
+    column-gap: 0.95rem;
+    row-gap: 0.2rem;
     padding-block: 1.15rem;
     border-bottom: 1px solid rgb(184 147 78 / 0.16);
   }
   .record__item:last-child { border-bottom: 0; }
 
+  .record__item > :global(.medal) { grid-area: medal; }
   .record__award {
+    grid-area: award;
     font-family: var(--font-display);
     font-size: clamp(1.25rem, 2.4vw, 1.85rem);
     font-weight: 300;
@@ -274,6 +282,7 @@ const schema = graph([
   }
 
   .record__meta {
+    grid-area: meta;
     font-size: 0.875rem;
     color: var(--ink-mute);
     letter-spacing: 0.02em;

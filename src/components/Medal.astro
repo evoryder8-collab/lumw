@@ -1,0 +1,128 @@
+---
+/**
+ * A struck medal.
+ *
+ * Drawn rather than downloaded. Flaticon's free tier needs attribution on a
+ * commercial page and the good sets are licence-gated, so buying into that for
+ * one icon is a liability on a client site; inline SVG has no licence, no extra
+ * request, scales to any size, and can use June's exact golds.
+ *
+ * What makes it read as metal rather than a coloured circle:
+ *   - the ribbon sits behind and is folded, not two flat rectangles
+ *   - the disc has a rim, an inner bevel and a recessed field, so light has
+ *     three surfaces to catch
+ *   - the gradient runs corner to corner with a bright band across it, which is
+ *     how a polished disc actually behaves
+ *   - a specular arc at the top left and a bounce at the bottom right
+ */
+interface Props {
+  metal: 'gold' | 'silver' | 'bronze';
+  size?: number;
+  /** Decorative in a list that already names the award in text. */
+  label?: string;
+}
+
+const { metal, size = 34, label } = Astro.props;
+
+/** Five stops each, so the rim, the field and the highlight differ. */
+const PALETTE = {
+  gold: {
+    rim: '#8a6a2c', dark: '#a8822f', mid: '#d9b45e',
+    light: '#f4e0a8', spec: '#fffaee', ribbon: '#b8934e', ribbonDark: '#8a6a2c',
+  },
+  silver: {
+    rim: '#7c8288', dark: '#9aa1a8', mid: '#c9d0d6',
+    light: '#eef2f5', spec: '#ffffff', ribbon: '#98a0a8', ribbonDark: '#6f767d',
+  },
+  bronze: {
+    rim: '#7a4a25', dark: '#9c5f2e', mid: '#c8894f', light: '#ecc59a',
+    spec: '#fff4e6', ribbon: '#a86a38', ribbonDark: '#7a4a25',
+  },
+}[metal];
+
+/** Unique per instance so gradients never collide across medals on a page. */
+const uid = Math.random().toString(36).slice(2, 8);
+---
+
+<svg
+  class="medal"
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  role={label ? 'img' : 'presentation'}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <defs>
+    <linearGradient id={`face-${uid}`} x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color={PALETTE.light} />
+      <stop offset="0.3" stop-color={PALETTE.mid} />
+      <stop offset="0.46" stop-color={PALETTE.spec} />
+      <stop offset="0.62" stop-color={PALETTE.mid} />
+      <stop offset="1" stop-color={PALETTE.dark} />
+    </linearGradient>
+
+    <linearGradient id={`rim-${uid}`} x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color={PALETTE.mid} />
+      <stop offset="0.5" stop-color={PALETTE.rim} />
+      <stop offset="1" stop-color={PALETTE.dark} />
+    </linearGradient>
+
+    <linearGradient id={`rib-${uid}`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color={PALETTE.ribbon} />
+      <stop offset="1" stop-color={PALETTE.ribbonDark} />
+    </linearGradient>
+  </defs>
+
+  <!-- Ribbon behind the disc: two lengths crossing, the right one folded
+       under so it does not read as a flat V. -->
+  <path d="M15.5 2h7.2l-5.4 15.4-7.1-2.6Z" fill={`url(#rib-${uid})`} />
+  <path d="M32.5 2h-7.2l5.4 15.4 7.1-2.6Z" fill={`url(#rib-${uid})`} opacity="0.82" />
+  <path d="M25.3 2h3.1l-3.8 11-2-1.6Z" fill={PALETTE.ribbonDark} opacity="0.35" />
+
+  <!-- Disc: rim, bevel, then the struck field. -->
+  <circle cx="24" cy="31" r="14.4" fill={`url(#rim-${uid})`} />
+  <circle cx="24" cy="31" r="12.2" fill={`url(#face-${uid})`} />
+  <circle
+    cx="24" cy="31" r="9.4"
+    fill="none"
+    stroke={PALETTE.rim}
+    stroke-width="0.7"
+    opacity="0.42"
+  />
+
+  <!-- Star, cut as a single path so the points stay crisp at 18px. -->
+  <path
+    d="M24 24.4l2.28 4.62 5.1.74-3.69 3.6.87 5.08L24 36.04l-4.56 2.4.87-5.08-3.69-3.6 5.1-.74Z"
+    fill={PALETTE.rim}
+    opacity="0.5"
+  />
+
+  <!-- Specular arc top-left, bounce light bottom-right. -->
+  <path
+    d="M14.6 26.4a11.6 11.6 0 0 1 7.4-6.1"
+    fill="none"
+    stroke={PALETTE.spec}
+    stroke-width="2.2"
+    stroke-linecap="round"
+    opacity="0.75"
+  />
+  <path
+    d="M32.4 37.6a11 11 0 0 0 3.1-5.2"
+    fill="none"
+    stroke={PALETTE.light}
+    stroke-width="1.5"
+    stroke-linecap="round"
+    opacity="0.5"
+  />
+</svg>
+
+<style>
+  .medal {
+    display: block;
+    flex: none;
+    /* The shadow follows the medal's silhouette, ribbon included, rather than
+       a box it does not fill. */
+    filter: drop-shadow(0 2px 3px rgb(43 38 34 / 0.22));
+  }
+</style>
