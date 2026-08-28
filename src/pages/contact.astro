@@ -39,22 +39,81 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
 ---
 
 <Layout {title} {description} {path} schema={schema}>
-  <section class="hero">
-    <div class="shell shell--mid">
-      <p class="eyebrow">LUMA Wellness by June Saurin</p>
-      <h1 data-reveal>Kontakt aufnehmen</h1>
+  {/* The old page was a wall of prose, a form, then a repeat of the same
+      details underneath. The structure here is the order someone actually
+      needs: how to reach June right now, then the studio and how to get to
+      it, then the form for anything that is not urgent. */}
 
-      <div class="prose hero__body" data-fade>
-        <p>
+  <section class="hero">
+    <div class="shell hero__inner">
+      <div class="hero__copy">
+        <p class="eyebrow" data-fade>Kontakt</p>
+        <h1 class="hero__title" data-reveal>Kontakt aufnehmen</h1>
+        <p class="lede hero__lede" data-fade>
           Ich freue mich darauf, Sie persönlich bei LUMA Wellness by June Saurin in Buxtehude
           begrüßen zu dürfen. Vereinbaren Sie jetzt Ihren Massage-Termin und entdecken Sie
           ganzheitliche Anwendungen, die auf Ihr körperliches und seelisches Wohlbefinden
           ausgerichtet sind.
         </p>
+      </div>
+
+      <figure class="hero__figure float float--slow bleed" data-drift>
+        <Photo
+          src={studioExterior}
+          alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
+          widths={[480, 760, 1000]}
+          sizes="(max-width: 900px) 100vw, 44vw"
+          ratio="4 / 3"
+          priority
+        />
+      </figure>
+    </div>
+  </section>
+
+  {/* Three ways to reach her, ranked by how fast they actually work. */}
+  <section class="section--tight">
+    <div class="shell">
+      <ul class="ways">
+        <li class="way rim spot" data-reveal2 style="--reveal-delay:0ms">
+          <span class="spot__light" aria-hidden="true"></span>
+          <a href={`tel:${BUSINESS.phoneE164}`}>
+            <span class="way__rank">Am schnellsten</span>
+            <span class="way__label">Anrufen</span>
+            <span class="way__value">{BUSINESS.phone}</span>
+            <span class="way__note">Termine nur nach vorheriger Absprache</span>
+          </a>
+        </li>
+
+        <li class="way rim spot" data-reveal2 style="--reveal-delay:80ms">
+          <span class="spot__light" aria-hidden="true"></span>
+          <a href={`https://wa.me/${waNumber}`} rel="noopener">
+            <span class="way__rank">Jederzeit</span>
+            <span class="way__label">WhatsApp</span>
+            <span class="way__value">{BUSINESS.whatsapp}</span>
+            <span class="way__note">Antwort schnellstmöglich</span>
+          </a>
+        </li>
+
+        <li class="way rim spot" data-reveal2 style="--reveal-delay:160ms">
+          <span class="spot__light" aria-hidden="true"></span>
+          <a href={`mailto:${BUSINESS.email}`}>
+            <span class="way__rank">Für Ausführliches</span>
+            <span class="way__label">E-Mail</span>
+            <span class="way__value">{BUSINESS.email}</span>
+            <span class="way__note">Für ausführliche Anfragen</span>
+          </a>
+        </li>
+      </ul>
+
+      {/* Paragraphs two and three of the live page, verbatim. The migration
+          rule is that copy is pasted and never paraphrased, and turning these
+          into card captions was doing exactly that. */}
+      <div class="prose ways__prose" data-fade>
         <p>
           Wenn ich gerade mit einer Anwendung beschäftigt bin, kann ich Ihren Anruf möglicherweise
-          nicht sofort entgegennehmen. Senden Sie mir in diesem Fall einfach eine WhatsApp-Nachricht
-          an <a href={`https://wa.me/${waNumber}`} class="underline-gold" rel="noopener">+49 178 8875085</a>,
+          nicht sofort entgegennehmen. Senden Sie mir in diesem Fall einfach eine
+          WhatsApp-Nachricht an
+          <a href={`https://wa.me/${waNumber}`} class="underline-gold" rel="noopener">+49 178 8875085</a>,
           und ich melde mich schnellstmöglich zurück, um einen passenden Termin mit Ihnen zu finden.
         </p>
         <p>
@@ -68,27 +127,21 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
     </div>
   </section>
 
-  <section class="section--tight">
-    <div class="shell contact__grid">
-      <!-- Direct routes first: these work today. -->
-      <div class="channels">
-        <a class="channel panel" data-tilt href={`tel:${BUSINESS.phoneE164}`}>
-          <span class="channel__label">Anrufen</span>
-          <span class="channel__value">{BUSINESS.phone}</span>
-        </a>
-        <a class="channel panel" data-tilt href={`https://wa.me/${waNumber}`} rel="noopener">
-          <span class="channel__label">WhatsApp</span>
-          <span class="channel__value">{BUSINESS.whatsapp}</span>
-        </a>
-        <a class="channel panel" data-tilt href={`mailto:${BUSINESS.email}`}>
-          <span class="channel__label">E-Mail</span>
-          <span class="channel__value">{BUSINESS.email}</span>
-        </a>
+  {/* The studio: where it is, and one press to navigate there. */}
+  <div class="shell">
+    <LocationMap />
+  </div>
+
+  {/* The form comes last, because everything above it is faster. */}
+  <section class="section" data-sunbeam>
+    <div class="shell form__wrap">
+      <div class="form__intro">
+        <p class="eyebrow" data-fade>Relax. Erfrischen. Wiederbeleben.</p>
+        <h2 data-reveal>Oder schreiben Sie mir hier</h2>
+        <p class="form__lede" data-fade>Füllen Sie das untenstehende Formular aus.</p>
       </div>
 
-      <form class="form panel" method="post" action="#" novalidate>
-        <p class="form__intro">Füllen Sie das untenstehende Formular aus.</p>
-
+      <form class="form rim" method="post" action="#" novalidate data-reveal2>
         <div class="form__row">
           <label class="field">
             <span class="field__label">Vorname</span>
@@ -115,8 +168,8 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
           <textarea name="nachricht" rows="5"></textarea>
         </label>
 
-        <!-- Honeypot plus a timing field, so the form stays fast and accessible
-             without a CAPTCHA. Both are read by create-booking in stage 5. -->
+        {/* Honeypot plus a timing field, so the form stays fast and accessible
+            without a CAPTCHA. Both are read by create-booking in stage 5. */}
         <div class="hp" aria-hidden="true">
           <label>Firma<input type="text" name="firma" tabindex="-1" autocomplete="off" /></label>
         </div>
@@ -131,102 +184,118 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
       </form>
     </div>
   </section>
-
-  <section class="section" data-sunbeam>
-    <div class="shell info">
-      <div class="info__copy">
-        <p class="eyebrow" data-fade>Relax. Erfrischen. Wiederbeleben.</p>
-        <h2 data-reveal>Kontakt Info</h2>
-
-        <dl class="info__list">
-          <div>
-            <dt>Tel:</dt>
-            <dd><a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></dd>
-          </div>
-          <div>
-            <dt>Email</dt>
-            <dd><a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></dd>
-          </div>
-          <div>
-            <dt>Adresse</dt>
-            <dd>Hauptstraße 19,<br />21614 Buxtehude</dd>
-          </div>
-          <div>
-            <dt>Termine</dt>
-            <dd>Nur nach vorheriger Absprache</dd>
-          </div>
-        </dl>
-
-        <p class="info__note">
-          *Bitte beachten Sie, dass sich mein Studio in der Filiale HAUTNAH befindet, wie auf dem
-          Außenbild unten zu sehen ist.
-        </p>
-      </div>
-
-      <figure class="info__figure float float--slow" data-drift>
-        <Photo
-          src={studioExterior}
-          alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
-          widths={[520, 800, 1100]}
-          sizes="(max-width: 900px) 92vw, 52vw"
-          ratio="4 / 3"
-        />
-      </figure>
-    </div>
-  </section>
-
-  <div class="shell">
-    <LocationMap />
-  </div>
-
 </Layout>
 
 <style>
   .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem); }
-  .hero__body { margin-top: clamp(1.75rem, 3vw, 2.5rem); max-width: 62ch; }
 
-  .contact__grid {
+  .hero__inner {
     display: grid;
-    grid-template-columns: 0.85fr 1.15fr;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    align-items: start;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
   }
 
-  /* --- Channels --- */
+  .hero__title { font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.02; }
+  .hero__lede { margin-top: clamp(1.25rem, 2.5vw, 1.9rem); max-width: 40ch; }
+  .hero__figure { margin: 0; }
 
-  .channels { display: grid; gap: 0.85rem; }
+  /* --- Ways to reach her ------------------------------------------------- */
+  /* Ranked, not listed. The rank line is the point: it tells someone which one
+     to pick without making them weigh it up. */
 
-  .channel {
+  .ways {
     display: grid;
-    gap: 0.35rem;
-    padding: 1.4rem 1.6rem;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
-  .channel__label {
-    font-size: var(--step-eyebrow);
+  .way {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 20px;
+    background:
+      radial-gradient(130% 90% at 10% 100%, var(--wash-pink) 0%, transparent 62%),
+      var(--surface-strong);
+    box-shadow: 0 4px 26px rgb(43 38 34 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.75);
+    transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+  }
+
+  .way a {
+    display: grid;
+    gap: 0.3rem;
+    padding: clamp(1.35rem, 2.6vw, 1.8rem);
+    min-height: 100%;
+  }
+
+  .way__rank {
+    font-size: 0.5625rem;
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--gold-text);
+    color: var(--leaf-text);
   }
 
-  .channel__value {
+  .way__label {
     font-family: var(--font-display);
-    font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+    font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-top: 0.35rem;
+  }
+
+  .way__value {
+    font-size: var(--step-small);
     color: var(--ink);
     word-break: break-word;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .channel:hover { transform: translateY(-2px); }
+  .way__note {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-mute);
+    margin-top: 0.5rem;
   }
 
-  /* --- Form --- */
+  @media (hover: hover) and (pointer: fine) {
+    .way:hover { transform: translateY(-4px); box-shadow: 0 20px 46px rgb(43 38 34 / 0.1); }
+    .way:hover .way__label { color: var(--leaf-text); }
+  }
 
-  .form { padding: clamp(1.75rem, 3.5vw, 2.75rem); display: grid; gap: 1.15rem; }
+  /* --- Form -------------------------------------------------------------- */
 
-  .form__intro { margin: 0 0 0.4rem; color: var(--ink-soft); font-size: var(--step-small); }
+  .ways__prose {
+    max-width: 62ch;
+    margin: clamp(2rem, 4vw, 3rem) auto 0;
+    text-align: center;
+  }
+  .ways__prose :global(p) { margin-inline: auto; }
+
+  .form__wrap {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .form__intro h2 { margin-bottom: 1.15rem; }
+  .form__lede { color: var(--ink-soft); max-width: 40ch; }
+
+  .form {
+    position: relative;
+    display: grid;
+    gap: 1.15rem;
+    padding: clamp(1.6rem, 3.4vw, 2.6rem);
+    border-radius: 22px;
+    background:
+      radial-gradient(120% 80% at 90% 0%, var(--wash-sunset) 0%, transparent 58%),
+      var(--surface-strong);
+    box-shadow: 0 8px 40px rgb(43 38 34 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  }
 
   .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
 
@@ -243,17 +312,17 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
   .field input,
   .field textarea {
     width: 100%;
-    min-height: 44px;
-    padding: 0.8rem 1rem;
+    min-height: 46px;
+    padding: 0.85rem 1.05rem;
     font-family: var(--font-body);
     font-size: var(--step-small);
     font-weight: 300;
     color: var(--ink);
-    background: rgb(255 255 255 / 0.7);
+    background: rgb(255 255 255 / 0.78);
     border: 0;
     border-radius: var(--radius-interactive);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 1px 0 rgb(43 38 34 / 0.06);
-    transition: box-shadow 0.3s ease;
+    box-shadow: inset 0 0 0 1px rgb(63 118 82 / 0.16);
+    transition: box-shadow 0.4s var(--ease);
   }
 
   .field textarea { resize: vertical; line-height: 1.6; }
@@ -261,7 +330,7 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
   .field input:focus-visible,
   .field textarea:focus-visible {
     outline: none;
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 0 0 2px var(--gold);
+    box-shadow: inset 0 0 0 2px var(--leaf);
   }
 
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -277,46 +346,10 @@ const waNumber = BUSINESS.phoneE164.replace('+', '');
     font-style: italic;
   }
 
-  /* --- Info --- */
-
-  .info {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: clamp(2rem, 5vw, 4rem);
-    align-items: center;
-  }
-
-  .info__copy h2 { margin-bottom: 2rem; }
-
-  .info__list { margin: 0; display: grid; gap: 1.35rem; }
-  .info__list > div { display: grid; gap: 0.3rem; }
-  .info__list dt {
-    font-size: var(--step-eyebrow);
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
-  }
-  .info__list dd {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.1rem, 1.9vw, 1.4rem);
-    line-height: 1.4;
-  }
-
-  .info__note {
-    margin-top: 1.75rem;
-    font-size: 0.875rem;
-    font-style: italic;
-    color: var(--ink-mute);
-    line-height: 1.55;
-  }
-
-  .info__map { margin-top: 1.25rem; font-size: var(--step-small); }
-  .info__figure { margin: 0; }
-
   @media (max-width: 900px) {
-    .contact__grid, .info { grid-template-columns: 1fr; }
+    .hero__inner, .form__wrap { grid-template-columns: 1fr; }
+    .hero__figure { order: -1; margin-inline: calc(var(--gutter) * -1); width: calc(100% + var(--gutter) * 2); }
+    .hero__figure :global(.media) { border-radius: 0 0 var(--radius-media) var(--radius-media); }
   }
 
   @media (max-width: 520px) {

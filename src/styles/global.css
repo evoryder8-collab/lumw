@@ -41,10 +41,11 @@
      "do this next". Gold is kept for achievement - the medals, the signature
      treatment, the metal detailing - so the two never compete for the same job.
      #7FB449 carries ink at 6.08:1; #4E7A2E is the step that can carry words. */
-  --leaf:      #7FB449;   /* button fills. Ink on this is 6.08:1 */
-  --leaf-text: #4E7A2E;   /* green that carries text. 4.91:1 worst ground */
-  --leaf-deep: #456B29;   /* pressed and hover */
-  --leaf-soft: #C8E2A4;   /* tints and glows */
+  --leaf:      #3f7652;   /* her own green, off the live site. White on it: 5.35:1 */
+  --leaf-text: #37684a;   /* green that carries words. 4.55:1 on the worst wash */
+  --leaf-deep: #2f5a40;   /* pressed and hover */
+  --leaf-soft: #97c693;   /* tints and glows, also hers */
+  --on-leaf:   #ffffff;   /* deep green takes white, not ink */
 
   /* Gold is the achievement metal.
      Section 9.1 names #b8934e "for text and lines", but section 9.5 requires
@@ -407,6 +408,7 @@ a { color: inherit; text-decoration: none; }
 
 .pill {
   --pill-bg: var(--leaf);
+  --pill-fg: var(--on-leaf);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -416,7 +418,7 @@ a { color: inherit; text-decoration: none; }
   border: 0;
   border-radius: 999px;
   background: var(--pill-bg);
-  color: var(--ink);
+  color: var(--pill-fg, var(--ink));
   font-family: var(--font-body);
   font-size: var(--step-small);
   font-weight: 500;
@@ -452,6 +454,7 @@ a { color: inherit; text-decoration: none; }
   background: transparent;
   box-shadow: none;
   color: var(--ink);
+  --pill-fg: var(--ink);
   padding-inline: 0;
 }
 
@@ -588,7 +591,7 @@ a { color: inherit; text-decoration: none; }
   inset: -70%;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(200 226 164 / 0.7) 0%, transparent 72%);
+  background: radial-gradient(closest-side, rgb(151 198 147 / 0.75) 0%, transparent 72%);
   filter: blur(34px);
   opacity: 0;
   transition: opacity 0.55s ease;
@@ -825,12 +828,12 @@ a { color: inherit; text-decoration: none; }
   gap: 0.5rem;
   border-radius: 999px;
   background: var(--leaf);
-  color: var(--ink);
+  color: var(--on-leaf);
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  box-shadow: 0 8px 24px rgb(127 180 73 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.45);
+  box-shadow: 0 8px 24px rgb(63 118 82 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.28);
 }
 
 .thumb-bar__icon {
@@ -842,7 +845,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: 50%;
   color: var(--ink);
   background: rgb(255 255 255 / 0.75);
-  box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.4), 0 6px 18px rgb(43 38 34 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(63 118 82 / 0.4), 0 6px 18px rgb(43 38 34 / 0.07);
 }
 
 .thumb-bar__icon svg { width: 19px; height: 19px; }

@@ -176,7 +176,7 @@ for (const [color, label, min, note] of checks) {
 }
 
 // The primary CTA is ink on young-leaf green and must pass comfortably.
-const pill = ratio(hex(T.ink), hex(T.leaf));
+const pill = ratio(hex(token('on-leaf')), hex(T.leaf));
 const pillOk = pill >= AA;
 if (!pillOk) failed++;
 
@@ -199,7 +199,7 @@ for (const r of rows) {
 }
 
 console.log(
-  `  ${pillOk ? `${GREEN}✓${OFF}` : `${RED}✗${OFF}`} ${'CTA, ink on leaf'.padEnd(22)} ` +
+  `  ${pillOk ? `${GREEN}✓${OFF}` : `${RED}✗${OFF}`} ${'CTA, white on green'.padEnd(22)} ` +
   `${pill.toFixed(2).padStart(5)}:1  ${DIM}min ${AA}  the one primary CTA${OFF}`,
 );
 

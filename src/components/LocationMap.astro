@@ -2,18 +2,20 @@
 /**
  * The location panel.
  *
- * Structure follows the HubMak contact map — graded map plate, survey grid, a
- * drawn approach route, a pin that pulses in rings, and a "Route starten"
- * button that opens a chooser for Google or Apple Maps — re-lit for the
- * Morning Light palette: warm porcelain instead of near-black, gold instead of
- * brass on dark, and a light-mode map tile.
+ * The map is real. Street centrelines and building footprints come from
+ * OpenStreetMap, fetched once by `npm run map`, projected and committed as
+ * src/data/map.json, then drawn here as inline SVG. Nothing is requested from
+ * a third party at runtime, so the site still needs no consent banner
+ * (CLAUDE.md section 6) and there is no click-to-load gate to get past.
  *
- * The embed is click-to-load. CLAUDE.md section 6 requires the site to need no
- * consent banner, and an iframe that fires on page load hands Google the
- * visitor's IP before anyone has agreed to anything. Nothing third-party is
- * requested until the visitor presses "Karte laden".
+ * Buildings are extruded: a darker copy offset up and left reads as a wall,
+ * the footprint on top reads as a roof. It is a cheap trick and at this scale
+ * it is convincing.
+ *
+ * Data © OpenStreetMap contributors, ODbL.
  */
 import { BUSINESS } from '../lib/site';
+import mapData from '../data/map.json';
 
 const destination = encodeURIComponent(
   `${BUSINESS.name}, ${BUSINESS.street}, ${BUSINESS.postalCode} ${BUSINESS.city}, Deutschland`,
@@ -21,8 +23,53 @@ const destination = encodeURIComponent(
 
 const googleDir = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving&dir_action=navigate`;
 const appleDir = `https://maps.apple.com/?daddr=${destination}&dirflg=d`;
-const embedSrc = `https://www.google.com/maps?q=${destination}&z=16&output=embed`;
 const larger = BUSINESS.mapUrl;
+
+const pathOf = (pts: number[][], close = false) =>
+  `M${pts.map((p) => p.join(' ')).join('L')}${close ? 'Z' : ''}`;
+
+/** Extrusion offset, in map units. Up and slightly left, so the light reads
+ *  as coming from the top-right corner, matching the shadows on the page. */
+const EX = 4.5;
+const EY = 6;
+
+/**
+ * Everything that shares a style is concatenated into ONE path element.
+ * Drawn one element per way it came to 1115 paths, which the browser has to
+ * lay out and rasterise individually; as eight paths it is the same picture
+ * for a fraction of the DOM and the raster cost.
+ */
+const joinPaths = (list: number[][][], close = false) =>
+  list.map((pts) => pathOf(pts, close)).join(' ');
+
+const roofs = mapData.buildings.map((b) => b.p as number[][]);
+const bases = roofs.map((r) => r.map(([x, y]) => [x + EX, y + EY]));
+
+const buildingWalls = `${joinPaths(bases, true)} ${joinPaths(roofs, true)}`;
+const buildingRoofs = joinPaths(roofs, true);
+
+const byClass = (classes: string[]) =>
+  mapData.roads.filter((r) => classes.includes(r.cls));
+
+/** Roads are grouped by rendered width so each width is a single stroke path. */
+const roadGroups = (() => {
+  const majors = byClass(['motorway', 'trunk', 'primary', 'secondary', 'tertiary']);
+  const minors = byClass(['unclassified', 'residential', 'living_street', 'pedestrian']);
+  const buckets = new Map<number, number[][][]>();
+  for (const r of [...majors, ...minors]) {
+    const w = Math.round(r.w * 2) / 2;
+    if (!buckets.has(w)) buckets.set(w, []);
+    buckets.get(w)!.push(r.p as number[][]);
+  }
+  return [...buckets.entries()].sort((a, b) => b[0] - a[0]).map(([w, list]) => ({
+    w,
+    d: joinPaths(list),
+  }));
+})();
+
+const serviceD = joinPaths(byClass(['service']).map((r) => r.p as number[][]));
+const greenD = joinPaths(mapData.green.map((g) => g.p as number[][]), true);
+const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
 ---
 
 <section class="loc" id="standort" aria-labelledby="standort-title" data-reveal2>
@@ -30,24 +77,70 @@ const larger = BUSINESS.mapUrl;
     <span class="spot__light" aria-hidden="true"></span>
 
     <div class="loc__plate">
-      <!-- Nothing third-party loads until this is pressed. -->
-      <iframe
-        class="loc__embed"
-        title="Karte mit dem Standort von LUMA Wellness in Buxtehude"
-        data-src={embedSrc}
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        tabindex="-1"
-      ></iframe>
+      <svg
+        class="loc__map"
+        viewBox="0 0 1000 1000"
+        preserveAspectRatio="xMidYMid slice"
+        role="img"
+        aria-label="Karte der Straßen rund um die Hauptstraße 19 in Buxtehude"
+      >
+        <defs>
+          <linearGradient id="loc-ground" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fffdfb" />
+            <stop offset="0.55" stop-color="#fdf7f2" />
+            <stop offset="1" stop-color="#fbf0ea" />
+          </linearGradient>
+          <linearGradient id="loc-roof" x1="0" y1="0" x2="0.4" y2="1">
+            <stop offset="0" stop-color="#ffffff" />
+            <stop offset="1" stop-color="#f6ece6" />
+          </linearGradient>
+          {/* Everything fades out before it reaches the frame edge, so the
+              map dissolves into the card instead of ending on a hard line. */}
+          <radialGradient id="loc-fade" cx="0.5" cy="0.5" r="0.62">
+            <stop offset="0.55" stop-color="#fff" stop-opacity="1" />
+            <stop offset="1" stop-color="#fff" stop-opacity="0" />
+          </radialGradient>
+          <mask id="loc-mask">
+            <rect width="1000" height="1000" fill="url(#loc-fade)" />
+          </mask>
+        </defs>
 
-      <span class="loc__tone" aria-hidden="true"></span>
-      <span class="loc__grid" aria-hidden="true"></span>
+        <rect width="1000" height="1000" fill="url(#loc-ground)" />
 
-      <svg class="loc__route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M-8 78 C14 84 20 60 33 63 S49 74 57 52 S73 37 108 29" />
+        <g mask="url(#loc-mask)">
+          {greenD && <path d={greenD} fill="#3f7652" opacity="0.1" />}
+          {waterD && <path d={waterD} fill="#8fb6c9" opacity="0.28" />}
+
+          {/* Street casings first, then the fill, which is what gives a road
+              an edge instead of a flat stroke. */}
+          <g class="loc__roads" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <g stroke="#e8d9cd">
+              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w + 2.8} />)}
+            </g>
+            <g stroke="#ffffff">
+              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w} />)}
+            </g>
+            {serviceD && <path d={serviceD} stroke="#f3e3d8" stroke-width="1.6" />}
+          </g>
+
+          {/* Extruded footprints: wall band under, roof on top. */}
+          <g class="loc__buildings">
+            <path d={buildingWalls} fill="#dcc7b8" fill-rule="evenodd" opacity="0.9" />
+            <path d={buildingRoofs} fill="url(#loc-roof)" stroke="#e0cdbe" stroke-width="0.7" />
+          </g>
+        </g>
+
+        {/* The approach, drawn along Hauptstraße toward the door. */}
+        <path
+          class="loc__approach"
+          d="M96 706 C 232 668 318 596 402 548 S 470 512 500 500"
+          fill="none"
+        />
       </svg>
 
-      <!-- Three rings leaving the pin on staggered delays. -->
+      <span class="loc__tone" aria-hidden="true"></span>
+
+      <!-- Sits at the exact centre, which is the studio's own coordinates. -->
       <span class="loc__pin" aria-hidden="true">
         <span></span>
         <svg viewBox="0 0 24 24">
@@ -56,18 +149,13 @@ const larger = BUSINESS.mapUrl;
         </svg>
       </span>
 
+      <p class="loc__marker" aria-hidden="true">Hauptstraße 19</p>
+
       <p class="loc__coords" aria-hidden="true">
-        <span>Buxtehude</span><i></i><span>Niedersachsen</span>
+        <span>53.4680° N</span><i></i><span>9.6893° E</span>
       </p>
 
-      <button class="loc__load" type="button" data-map-load>
-        <span class="loc__load-inner">
-          <span class="loc__load-title">Karte laden</span>
-          <span class="loc__load-note">
-            Lädt Google Maps. Erst dann werden Daten an Google übertragen.
-          </span>
-        </span>
-      </button>
+      <p class="loc__credit">© OpenStreetMap</p>
     </div>
 
     <div class="loc__details">
@@ -167,70 +255,72 @@ const larger = BUSINESS.mapUrl;
     background: var(--porcelain-deep);
   }
 
-  .loc__embed {
+  .loc__map {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    border: 0;
-    opacity: 0;
-    transition: opacity 0.9s var(--ease);
+    display: block;
   }
-  .loc__plate[data-loaded] .loc__embed { opacity: 1; }
 
-  /* Grades the tile into the palette instead of leaving Google's own colours
-     sitting inside a warm page. */
+  .loc__buildings { filter: drop-shadow(0 1px 1px rgb(122 96 76 / 0.1)); }
+
+  /* The walk-in route, drawn along the street rather than across the frame. */
+  .loc__approach {
+    stroke: var(--leaf-text);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-dasharray: 9 11;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 5px rgb(63 118 82 / 0.35));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .loc__approach { animation: route-flow 2.4s linear infinite; }
+  }
+  @keyframes route-flow { to { stroke-dashoffset: -40; } }
+
+  /* Warms the whole plate into the page palette. */
   .loc__tone {
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 2;
     background:
-      radial-gradient(circle at 62% 38%, rgb(232 213 168 / 0.3), transparent 34%),
-      linear-gradient(135deg, rgb(243 231 211 / 0.55), transparent 46%, rgb(247 236 230 / 0.4)),
-      linear-gradient(180deg, rgb(250 247 242 / 0.18), rgb(250 247 242 / 0.1) 45%, rgb(250 247 242 / 0.5) 100%);
-    mix-blend-mode: multiply;
+      radial-gradient(circle at 50% 50%, transparent 34%, rgb(255 208 163 / 0.16) 78%, rgb(255 210 224 / 0.26) 100%),
+      linear-gradient(160deg, transparent 40%, rgb(255 199 180 / 0.14));
   }
-  .loc__plate[data-loaded] .loc__tone { mix-blend-mode: soft-light; opacity: 0.9; }
 
-  .loc__grid {
+  .loc__marker {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 3;
-    opacity: 0.4;
-    background-image:
-      linear-gradient(rgb(184 147 78 / 0.16) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(184 147 78 / 0.16) 1px, transparent 1px);
-    background-size: 3.15rem 3.15rem;
-    -webkit-mask-image: linear-gradient(180deg, #000, transparent 86%);
-    mask-image: linear-gradient(180deg, #000, transparent 86%);
+    top: calc(50% + 1.9rem);
+    left: 50%;
+    translate: -50% 0;
+    z-index: 6;
+    margin: 0;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    background: rgb(255 255 255 / 0.9);
+    box-shadow: 0 4px 14px rgb(43 38 34 / 0.14), inset 0 0 0 1px rgb(63 118 82 / 0.24);
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
-  .loc__route {
+  .loc__credit {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    z-index: 4;
-    pointer-events: none;
-    filter: drop-shadow(0 0 6px rgb(232 213 168 / 0.85));
+    right: 0.7rem;
+    bottom: 0.55rem;
+    z-index: 6;
+    margin: 0;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    opacity: 0.75;
   }
-
-  .loc__route path {
-    fill: none;
-    stroke: rgb(184 147 78 / 0.75);
-    stroke-width: 1.4;
-    stroke-linecap: round;
-    stroke-dasharray: 2.2 3.2;
-    vector-effect: non-scaling-stroke;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .loc__route path { animation: route-flow 2.6s linear infinite; }
-  }
-  @keyframes route-flow { to { stroke-dashoffset: -32; } }
 
   /* --- The pin ---------------------------------------------------------- */
 
@@ -304,47 +394,6 @@ const larger = BUSINESS.mapUrl;
   }
   .loc__coords i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 
-  /* --- Click-to-load ---------------------------------------------------- */
-
-  .loc__load {
-    position: absolute;
-    inset: 0;
-    z-index: 6;
-    display: grid;
-    place-items: center;
-    padding: 1.5rem;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
-    transition: opacity 0.5s var(--ease);
-  }
-  .loc__plate[data-loaded] .loc__load { opacity: 0; pointer-events: none; }
-
-  .loc__load-inner {
-    display: grid;
-    gap: 0.5rem;
-    justify-items: center;
-    text-align: center;
-    max-width: 22rem;
-    padding: 1.1rem 1.6rem;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.82);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 34px rgb(43 38 34 / 0.12), inset 0 0 0 1px rgb(184 147 78 / 0.34);
-  }
-
-  .loc__load-title {
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink);
-  }
-
-  .loc__load-note { font-size: 0.75rem; line-height: 1.45; color: var(--ink-soft); }
-
   /* --- Details ---------------------------------------------------------- */
 
   .loc__details {
@@ -398,20 +447,20 @@ const larger = BUSINESS.mapUrl;
     border: 0;
     border-radius: 999px;
     background: var(--leaf);
-    color: var(--ink);
+    color: var(--on-leaf);
     font-family: var(--font-body);
     font-size: 0.6875rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgb(127 180 73 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.45);
+    box-shadow: 0 8px 24px rgb(63 118 82 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.24);
     transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
   }
   .loc__drive svg { width: 20px; height: 20px; transition: transform 0.5s var(--ease); }
 
   @media (hover: hover) and (pointer: fine) {
-    .loc__drive:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgb(127 180 73 / 0.4); }
+    .loc__drive:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgb(63 118 82 / 0.42); }
     .loc__drive:hover svg { transform: translateX(4px); }
   }
 
@@ -501,7 +550,7 @@ const larger = BUSINESS.mapUrl;
     padding: 0.9rem 1.15rem;
     border-radius: 16px;
     background: rgb(255 255 255 / 0.7);
-    box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.36), 0 6px 18px rgb(43 38 34 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(63 118 82 / 0.34), 0 6px 18px rgb(43 38 34 / 0.05);
     font-size: 0.9375rem;
     color: var(--ink);
     transition: box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
@@ -532,7 +581,7 @@ const larger = BUSINESS.mapUrl;
   @media (hover: hover) and (pointer: fine) {
     .choice__option:hover {
       transform: translateY(-2px);
-      box-shadow: inset 0 0 0 1px rgb(127 180 73 / 0.7), 0 12px 28px rgb(43 38 34 / 0.09);
+      box-shadow: inset 0 0 0 1px rgb(63 118 82 / 0.6), 0 12px 28px rgb(43 38 34 / 0.09);
     }
     .choice__option:hover .choice__arrow { transform: rotate(45deg) translate(2px, -2px); }
   }
@@ -548,20 +597,8 @@ const larger = BUSINESS.mapUrl;
 </style>
 
 <script>
-  const plate = document.querySelector<HTMLElement>('.loc__plate');
-  const loadBtn = document.querySelector<HTMLButtonElement>('[data-map-load]');
-  const frame = document.querySelector<HTMLIFrameElement>('.loc__embed');
-
-  // Nothing reaches Google until this runs.
-  if (plate && loadBtn && frame) {
-    loadBtn.addEventListener('click', () => {
-      const src = frame.dataset.src;
-      if (!src) return;
-      frame.src = src;
-      frame.removeAttribute('tabindex');
-      plate.dataset.loaded = 'true';
-    }, { once: true });
-  }
+  // No click-to-load gate any more: the map is inline SVG from committed
+  // OpenStreetMap data, so nothing third-party is ever requested.
 
   const drive = document.querySelector<HTMLButtonElement>('[data-drive]');
   const choice = document.querySelector<HTMLElement>('#route-choice');

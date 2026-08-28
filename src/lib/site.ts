@@ -36,7 +36,11 @@ export const BUSINESS = {
   email: 'june@luma-wellness.com',
   priceRange: '€€',
   // Studio sits inside the HAUTNAH branch, which the copy points out on two pages.
-  geo: { lat: 53.4761, lng: 9.6994 },
+  /* Geocoded via Nominatim from "hautnah, 19 Hauptstraße, 21614 Buxtehude",
+     which is the branch the studio sits inside. The previous pair was roughly
+     a kilometre out, which put the geo node in the wrong place for local
+     search. Verify against the Business Profile before changing. */
+  geo: { lat: 53.4679964, lng: 9.6892602 },
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=LUMA+Wellness+Hauptstra%C3%9Fe+19+21614+Buxtehude',
   sameAs: [
     'https://www.facebook.com/lumawellnessbuxtehude',
