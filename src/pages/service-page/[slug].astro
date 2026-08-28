@@ -16,7 +16,7 @@ import Layout from '../../layouts/Layout.astro';
 import Photo from '../../components/Photo.astro';
 import { imageByName, socialImageUrl } from '../../lib/images';
 import { heroPreload } from '../../lib/heroPreload';
-import { BUSINESS, url } from '../../lib/site';
+import { BUSINESS, url, whatsappForService } from '../../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
 } from '../../lib/schema';
@@ -105,8 +105,12 @@ const schema = graph([
             <a href={url('/contact')} class="pill sheen halo" data-magnetic>
               <span data-magnetic-label>Termin anfragen</span>
             </a>
-            <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold hero__ghost">
-              {BUSINESS.phone}
+            <a
+              href={whatsappForService(service.familyName, service.durationMin)}
+              class="underline-gold hero__ghost"
+              rel="noopener"
+            >
+              Per WhatsApp anfragen
             </a>
           </div>
         </div>

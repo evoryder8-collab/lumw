@@ -1,0 +1,502 @@
+---
+/**
+ * The language portal.
+ *
+ * Same grammar as the iConstantine gate — a staged sequence that assembles
+ * itself rather than appearing all at once: grain, then the mark, then the
+ * wordmark letter by letter, then a rule drawing itself open, then the prompt,
+ * then the tiles, then a progress bar that continues to the visitor's own
+ * language if they do nothing. Re-lit for the sunset stage: near-white ground,
+ * gold rule, green action.
+ *
+ * It is an overlay rather than a page at the root, because `/` has to keep
+ * serving the German home page byte-identically (CLAUDE.md section 7). Crawlers
+ * and anyone arriving from a search result get the real page; this sits on top
+ * for a first-time human visitor and never for a returning one.
+ *
+ * It renders hidden and is revealed by script, so with JavaScript off nobody is
+ * ever trapped behind a door that cannot open.
+ */
+import { LOCALES, LOCALE_META, ROUTES } from '../i18n/locales';
+
+const WORDMARK = 'LUMA'.split('');
+
+/** Home path per locale, which is where a choice sends you. */
+const choices = LOCALES.map((code) => ({
+  ...LOCALE_META[code],
+  href: ROUTES.home[code],
+}));
+---
+
+<div class="portal" data-portal hidden aria-hidden="true">
+  <canvas class="portal__grain" data-portal-grain aria-hidden="true"></canvas>
+
+  <div class="portal__wash" aria-hidden="true">
+    <span class="portal__blob portal__blob--a"></span>
+    <span class="portal__blob portal__blob--b"></span>
+    <span class="portal__blob portal__blob--c"></span>
+  </div>
+
+  <div class="portal__stage" role="dialog" aria-modal="true" aria-label="Sprache wählen">
+    <span class="portal__mark" aria-hidden="true">
+      <svg viewBox="0 0 64 64">
+        <path d="M32 8c0 9-14 14-14 27a14 14 0 0 0 28 0C46 22 32 17 32 8Z" />
+        <circle cx="32" cy="36" r="6" />
+      </svg>
+    </span>
+
+    <p class="portal__wordmark" aria-label="LUMA Wellness">
+      {WORDMARK.map((ch, i) => <span style={`--i:${i}`}>{ch}</span>)}
+    </p>
+    <p class="portal__sub">Wellness by June Saurin</p>
+
+    <span class="portal__rule" aria-hidden="true"></span>
+
+    <p class="portal__choose">Choose your language</p>
+
+    <ul class="portal__grid">
+      {
+        choices.map((c, i) => (
+          <li style={`--i:${i}`}>
+            <a class="portal__tile" href={c.href} data-portal-pick data-locale={c.code} hreflang={c.tag}>
+              <span class="portal__flag" aria-hidden="true">{c.flag}</span>
+              <span class="portal__name">{c.name}</span>
+              <span class="portal__greet" aria-hidden="true">{c.greeting}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="portal__note">Termine nur nach vorheriger Absprache</p>
+  </div>
+
+  <div class="portal__auto" aria-hidden="true">
+    <p class="portal__auto-msg" data-portal-msg></p>
+    <div class="portal__track"><span class="portal__fill" data-portal-fill></span></div>
+  </div>
+</div>
+
+<style>
+  .portal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    padding: clamp(1.5rem, 4vw, 3rem) var(--gutter);
+    background: #fdfbfa;
+    overflow: hidden;
+  }
+  .portal[hidden] { display: none; }
+
+  /* Leaves on the way out rather than blinking off. */
+  .portal.is-leaving { animation: portal-out 0.75s var(--ease) forwards; }
+  @keyframes portal-out {
+    to { opacity: 0; transform: scale(1.03); visibility: hidden; }
+  }
+
+  .portal__grain {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.055;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  /* --- Wash -------------------------------------------------------------- */
+
+  .portal__wash { position: absolute; inset: 0; pointer-events: none; }
+
+  .portal__blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(26px);
+    backface-visibility: hidden;
+  }
+  .portal__blob--a {
+    width: 70vmax; height: 70vmax; top: -28vmax; left: -20vmax;
+    background: radial-gradient(circle, var(--wash-sunset) 0%, rgb(255 208 163 / 0) 68%);
+    opacity: 0.6;
+    animation: p-drift-a 31s ease-in-out infinite alternate;
+  }
+  .portal__blob--b {
+    width: 62vmax; height: 62vmax; top: -14vmax; right: -22vmax;
+    background: radial-gradient(circle, var(--wash-pink) 0%, rgb(255 210 224 / 0) 68%);
+    opacity: 0.68;
+    animation: p-drift-b 41s ease-in-out infinite alternate;
+  }
+  .portal__blob--c {
+    width: 58vmax; height: 58vmax; bottom: -26vmax; left: 12vmax;
+    background: radial-gradient(circle, var(--wash-coral) 0%, rgb(255 199 180 / 0) 66%);
+    opacity: 0.5;
+    animation: p-drift-c 47s ease-in-out infinite alternate;
+  }
+
+  @keyframes p-drift-a { to { transform: translate3d(14vw, 16vh, 0) scale(1.14); } }
+  @keyframes p-drift-b { to { transform: translate3d(-16vw, 20vh, 0) scale(0.9); } }
+  @keyframes p-drift-c { to { transform: translate3d(12vw, -18vh, 0) scale(1.16); } }
+
+  /* --- Stage ------------------------------------------------------------- */
+  /* Every element enters on its own delay, so the panel assembles rather than
+     arriving. The timings mirror the reference: mark, wordmark, rule, prompt,
+     tiles, each a beat after the last. */
+
+  .portal__stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 46rem;
+    width: 100%;
+  }
+
+  .portal__mark {
+    display: grid;
+    place-items: center;
+    width: clamp(3.4rem, 8vw, 4.6rem);
+    height: clamp(3.4rem, 8vw, 4.6rem);
+    opacity: 0;
+    animation: p-in 0.9s var(--ease) 0.15s forwards;
+  }
+  .portal__mark svg {
+    width: 100%; height: 100%;
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 2.4;
+    stroke-linejoin: round;
+  }
+  .portal__mark svg circle { fill: var(--gold-fill); stroke: none; }
+
+  .portal__wordmark {
+    display: flex;
+    gap: 0.14em;
+    margin: 1.1rem 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .portal__wordmark span {
+    display: inline-block;
+    opacity: 0;
+    animation: p-letter 0.75s var(--ease) forwards;
+    animation-delay: calc(0.55s + var(--i) * 0.09s);
+  }
+
+  .portal__sub {
+    max-width: none;
+    margin: 0;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    opacity: 0;
+    animation: p-in 0.7s var(--ease) 1.05s forwards;
+  }
+
+  /* Draws itself open from the centre. */
+  .portal__rule {
+    height: 1px;
+    width: 0;
+    max-width: 22rem;
+    margin: clamp(1.5rem, 3.5vw, 2.25rem) 0 clamp(1.1rem, 2.5vw, 1.6rem);
+    background: linear-gradient(90deg, transparent, rgb(184 147 78 / 0.7), transparent);
+    animation: p-rule 1s var(--ease) 1.25s forwards;
+  }
+
+  .portal__choose {
+    max-width: none;
+    margin: 0 0 clamp(1.25rem, 3vw, 1.9rem);
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    opacity: 0;
+    animation: p-in 0.7s var(--ease) 1.55s forwards;
+  }
+
+  /* --- Tiles ------------------------------------------------------------- */
+
+  .portal__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.55rem, 1.4vw, 0.85rem);
+    width: 100%;
+    max-width: 34rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .portal__grid li {
+    opacity: 0;
+    animation: p-in 0.65s var(--ease) forwards;
+    animation-delay: calc(1.75s + var(--i) * 0.07s);
+  }
+
+  .portal__tile {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.22rem;
+    padding: clamp(0.8rem, 2vw, 1.05rem) 0.5rem;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.62);
+    box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.16), 0 3px 14px rgb(43 38 34 / 0.05);
+    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease),
+                background 0.45s var(--ease);
+  }
+
+  .portal__flag { font-size: clamp(1.35rem, 4vw, 1.7rem); line-height: 1; }
+
+  .portal__name {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+
+  /* The greeting only surfaces on the tile you are actually considering. */
+  .portal__greet {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.625rem;
+    line-height: 1.2;
+    color: var(--gold-text);
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 0.4s var(--ease), max-height 0.4s var(--ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .portal__tile:hover {
+      transform: translateY(-4px);
+      background: rgb(255 255 255 / 0.92);
+      box-shadow: inset 0 0 0 1px rgb(63 118 82 / 0.4), 0 12px 30px rgb(43 38 34 / 0.11);
+    }
+    .portal__tile:hover .portal__greet { opacity: 1; max-height: 2.4em; }
+  }
+  .portal__tile:focus-visible { outline: 2px solid var(--leaf); outline-offset: 3px; }
+  .portal__tile:focus-visible .portal__greet { opacity: 1; max-height: 2.4em; }
+
+  .portal__note {
+    max-width: none;
+    margin: clamp(1.5rem, 3.5vw, 2.25rem) 0 0;
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    opacity: 0;
+    animation: p-in 0.7s var(--ease) 2.3s forwards;
+  }
+
+  /* --- Auto-continue ----------------------------------------------------- */
+
+  .portal__auto {
+    position: absolute;
+    bottom: clamp(1.25rem, 4vh, 2.25rem);
+    left: 0;
+    right: 0;
+    z-index: 2;
+    text-align: center;
+    padding-inline: var(--gutter);
+    padding-bottom: env(safe-area-inset-bottom);
+    opacity: 0;
+    animation: p-in 0.6s var(--ease) 2.6s forwards;
+    pointer-events: none;
+  }
+
+  /* The global `p` rule caps paragraphs at 68ch for readability, which left
+     this one as a 343px box parked at the left with its text centred inside
+     it. Anything that is a full-width label rather than prose has to opt out. */
+  .portal__auto-msg {
+    max-width: none;
+    margin: 0 auto 0.5rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .portal__auto-msg b { color: var(--gold-text); font-weight: 500; }
+
+  .portal__track {
+    width: min(15rem, 60vw);
+    height: 1.5px;
+    margin: 0 auto;
+    border-radius: 2px;
+    background: rgb(43 38 34 / 0.08);
+    overflow: hidden;
+  }
+
+  .portal__fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--leaf-deep), var(--leaf));
+  }
+
+  /* --- Keyframes --------------------------------------------------------- */
+
+  @keyframes p-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes p-letter {
+    from { opacity: 0; transform: translateY(0.5em) rotate(4deg); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes p-rule { to { width: 100%; } }
+
+  @media (max-width: 520px) {
+    .portal__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 22rem; }
+  }
+
+  /* Reduced motion: everything is simply present. No assembly, no drift, no
+     auto-continue countdown running under the visitor. */
+  @media (prefers-reduced-motion: reduce) {
+    .portal__mark, .portal__sub, .portal__choose, .portal__note,
+    .portal__grid li, .portal__auto, .portal__wordmark span {
+      opacity: 1 !important;
+      animation: none !important;
+      transform: none !important;
+    }
+    .portal__rule { width: 100%; animation: none; }
+    .portal__blob { animation: none; }
+    .portal.is-leaving { animation: none; display: none; }
+  }
+</style>
+
+<script>
+  const KEY = 'luma:locale';
+  const portal = document.querySelector<HTMLElement>('[data-portal]');
+
+  if (portal) {
+    const alreadyChosen = (() => {
+      try { return !!localStorage.getItem(KEY); } catch { return false; }
+    })();
+
+    // A visitor who has been here before, or who landed on a locale page from
+    // search, is never shown the door again.
+    const onLocalePath = /^\/(en|th|es|pt|it)(\/|$)/.test(location.pathname);
+
+    if (!alreadyChosen && !onLocalePath) {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      portal.hidden = false;
+      portal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      const remember = (code: string) => {
+        try { localStorage.setItem(KEY, code); } catch { /* private mode */ }
+      };
+
+      const dismiss = () => {
+        document.body.style.overflow = '';
+        if (reduced) { portal.hidden = true; return; }
+        portal.classList.add('is-leaving');
+        portal.addEventListener('animationend', () => { portal.hidden = true; }, { once: true });
+      };
+
+      portal.querySelectorAll<HTMLAnchorElement>('[data-portal-pick]').forEach((tile) => {
+        tile.addEventListener('click', () => {
+          remember(tile.dataset.locale || 'de');
+          // German is this very page: close rather than navigate.
+          if (tile.dataset.locale === 'de') { event?.preventDefault(); dismiss(); }
+        });
+      });
+
+      // --- Auto-continue -------------------------------------------------
+      // Guess from the browser, show what will happen, and let it run. Anyone
+      // who touches the panel takes control and the countdown stops.
+      const msg = portal.querySelector<HTMLElement>('[data-portal-msg]');
+      const fill = portal.querySelector<HTMLElement>('[data-portal-fill]');
+      const supported = ['de', 'en', 'th', 'es', 'pt', 'it'];
+      const guess = (navigator.languages || [navigator.language || 'de'])
+        .map((l) => l.slice(0, 2).toLowerCase())
+        .find((l) => supported.includes(l)) || 'de';
+
+      const guessTile = portal.querySelector<HTMLAnchorElement>(`[data-locale="${guess}"]`);
+      const guessName = guessTile?.querySelector('.portal__name')?.textContent ?? 'Deutsch';
+
+      if (msg) msg.innerHTML = `Weiter auf <b>${guessName}</b>`;
+
+      let cancelled = reduced;
+      const stop = () => {
+        cancelled = true;
+        if (fill) fill.style.width = '0%';
+        if (msg) msg.textContent = '';
+      };
+      ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((e) =>
+        portal.addEventListener(e, stop, { once: true, passive: true }),
+      );
+
+      if (!reduced) {
+        const START = 3200;
+        const RUN = 4200;
+        const t0 = performance.now();
+        const tick = (now: number) => {
+          if (cancelled) return;
+          const elapsed = now - t0 - START;
+          if (elapsed >= 0 && fill) {
+            const p = Math.min(1, elapsed / RUN);
+            fill.style.width = `${p * 100}%`;
+            if (p >= 1) {
+              remember(guess);
+              if (guess === 'de') dismiss();
+              else location.href = guessTile?.getAttribute('href') || '/';
+              return;
+            }
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+
+      // --- Grain ----------------------------------------------------------
+      // A small canvas scaled up, refreshed every other frame, which is the
+      // cheap way to get film grain that actually moves.
+      const cvs = portal.querySelector<HTMLCanvasElement>('[data-portal-grain]');
+      const ctx = cvs?.getContext('2d', { willReadFrequently: false });
+      if (cvs && ctx && !reduced) {
+        const SCALE = 3;
+        let w = 0;
+        let h = 0;
+        const size = () => {
+          w = cvs.width = Math.ceil(innerWidth / SCALE);
+          h = cvs.height = Math.ceil(innerHeight / SCALE);
+          cvs.style.imageRendering = 'pixelated';
+        };
+        size();
+        addEventListener('resize', size, { passive: true });
+
+        let frame = 0;
+        const grain = () => {
+          if (portal.hidden) return;
+          if (++frame % 2 === 0) {
+            const img = ctx.createImageData(w, h);
+            const d = img.data;
+            for (let i = 0; i < d.length; i += 4) {
+              const v = (Math.random() * 255) | 0;
+              d[i] = d[i + 1] = d[i + 2] = v;
+              d[i + 3] = 255;
+            }
+            ctx.putImageData(img, 0, 0);
+          }
+          requestAnimationFrame(grain);
+        };
+        requestAnimationFrame(grain);
+      }
+    }
+  }
+</script>

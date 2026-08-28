@@ -81,6 +81,45 @@ const EXCLUDED = {
 
 const isLogo = (name) => name.startsWith('logo-');
 
+/**
+ * Cutouts whose own crop edge shows through.
+ *
+ * The storefront is a soft-edged cutout everywhere except the bottom, where the
+ * pavement was cropped straight across and the baked vignette does not reach far
+ * enough to hide it. A CSS mask cannot fix that without eating the building too,
+ * so the fade is composited into the asset's alpha here: an ellipse for the
+ * sides and a stronger vertical ramp for the foreground.
+ */
+const SOFTEN_EDGES = new Set(['studio-exterior-hautnah.webp']);
+
+async function softenEdges(buf) {
+  const { width, height } = await sharp(buf).metadata();
+  const ramp = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+       <defs>
+         <radialGradient id="e" cx="50%" cy="42%" r="72%">
+           <stop offset="34%" stop-color="#fff" stop-opacity="1"/>
+           <stop offset="62%" stop-color="#fff" stop-opacity="0.85"/>
+           <stop offset="84%" stop-color="#fff" stop-opacity="0"/>
+         </radialGradient>
+         <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
+           <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+           <stop offset="58%" stop-color="#fff" stop-opacity="1"/>
+           <stop offset="76%" stop-color="#fff" stop-opacity="0.55"/>
+           <stop offset="92%" stop-color="#fff" stop-opacity="0"/>
+         </linearGradient>
+       </defs>
+       <rect width="100%" height="100%" fill="url(#e)"/>
+       <rect width="100%" height="100%" fill="url(#v)" style="mix-blend-mode:multiply"/>
+     </svg>`,
+  );
+  // dest-in multiplies the existing alpha by the ramp's alpha.
+  return sharp(buf)
+    .ensureAlpha()
+    .composite([{ input: ramp, blend: 'dest-in' }])
+    .toBuffer();
+}
+
 fs.mkdirSync(OUT, { recursive: true });
 
 let lifted = 0;
@@ -125,7 +164,12 @@ for (const [dest, source, shows] of MAP) {
     }
   }
 
-  await pipe.webp({ quality: 84, effort: 5 }).toFile(path.join(OUT, dest));
+  let outBuf = await pipe.webp({ quality: 84, effort: 5 }).toBuffer();
+  if (SOFTEN_EDGES.has(dest)) {
+    outBuf = await sharp(await softenEdges(outBuf)).webp({ quality: 84, effort: 5 }).toBuffer();
+    note += '  edges softened';
+  }
+  fs.writeFileSync(path.join(OUT, dest), outBuf);
   const kb = (fs.statSync(path.join(OUT, dest)).size / 1024).toFixed(0);
   console.log(`${dest.padEnd(34)} ${kb.padStart(4)}KB${note}`);
 }

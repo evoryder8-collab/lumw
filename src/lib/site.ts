@@ -104,6 +104,33 @@ export const AWARDS = [
   },
 ] as const;
 
+/**
+ * WhatsApp deep links, with the message already typed.
+ *
+ * wa.me accepts a ?text= parameter and WhatsApp drops it straight into the
+ * compose field. Someone arriving from a service page should not have to
+ * explain which treatment they were looking at - the message already says it,
+ * and all they do is press send. Kept in German, in June's voice, and phrased
+ * as an opening rather than a completed request so it never puts words in the
+ * visitor's mouth about dates or times.
+ */
+export const WA_DEFAULT =
+  'Hallo June, ich würde gerne einen Termin bei LUMA Wellness vereinbaren.';
+
+export function whatsappUrl(message: string = WA_DEFAULT): string {
+  const n = BUSINESS.phoneE164.replace('+', '');
+  return `https://wa.me/${n}?text=${encodeURIComponent(message)}`;
+}
+
+/** Message for a specific treatment, so the enquiry arrives already framed. */
+export function whatsappForService(name: string, durationMin?: number): string {
+  const clean = name.replace(/^\d+\s*min\.?\s*/i, '').trim();
+  const dur = durationMin ? ` (${durationMin} Min.)` : '';
+  return whatsappUrl(
+    `Hallo June, ich interessiere mich für die ${clean}${dur} und würde gerne einen Termin vereinbaren.`,
+  );
+}
+
 /** Navigation. "UBER MICH" has no umlaut on the live site and stays that way
  *  at cutover: it is inconsistency 7 on the fix-later list, not a typo to fix
  *  in this release. */

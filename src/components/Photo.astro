@@ -97,10 +97,26 @@ const {
     overflow: visible;
   }
 
+  /* An ellipse, not a circle, and sized farthest-side.
+     The img box is 3:2, so a circle's radius is set by the corners: it reaches
+     transparency at the left and right edges but is still ~90% opaque top and
+     bottom, which left the pavement ending in a hard horizontal line while the
+     sides faded away. farthest-side gives one radius per axis, so the falloff
+     lands on all four edges. The centre sits high so more of the fade is spent
+     on the foreground pavement, which is the part with the crop edge in it. */
   .media--orb :global(img) {
     object-fit: contain;
-    -webkit-mask-image: radial-gradient(circle at 50% 48%, #000 52%, rgb(0 0 0 / 0.55) 68%, transparent 82%);
-    mask-image: radial-gradient(circle at 50% 48%, #000 52%, rgb(0 0 0 / 0.55) 68%, transparent 82%);
+    /* Gentle now: the asset carries its own baked falloff (see
+       scripts/prepare-assets.mjs), so this only rounds the silhouette rather
+       than fading the picture a second time. */
+    --orb-mask: radial-gradient(
+      ellipse farthest-side at 50% 44%,
+      #000 62%,
+      rgb(0 0 0 / 0.6) 82%,
+      transparent 98%
+    );
+    -webkit-mask-image: var(--orb-mask);
+    mask-image: var(--orb-mask);
     filter: drop-shadow(0 26px 46px rgb(43 38 34 / 0.16)) drop-shadow(0 4px 10px rgb(43 38 34 / 0.08));
   }
 
