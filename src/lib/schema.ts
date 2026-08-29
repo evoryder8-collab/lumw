@@ -28,7 +28,48 @@ export const ID = {
 const abs = (path: string) => `${SITE_URL}${path === '/' ? '/' : path}`;
 
 /** The studio. Hours, NAP and service names must match the Business Profile. */
-export function businessNode(imageUrls: string[] = []): Node {
+/**
+ * What the business actually sells, on the business node itself.
+ *
+ * The Service nodes live on the prices page and describe one treatment each.
+ * This is the other half: a catalogue hung off the business so the offering is
+ * legible from the home page and from the entity Google holds for LUMA, not
+ * only from the one page that happens to list prices. For a local service
+ * business that catalogue is the substance of the entity.
+ *
+ * Prices are the real ones, taken from the same content the pages render, so
+ * this cannot drift into advertising a price the site does not show.
+ */
+export interface CatalogItem {
+  name: string;
+  description?: string;
+  fromEur: number;
+  url?: string;
+}
+
+export function offerCatalogNode(items: CatalogItem[]) {
+  return {
+    '@type': 'OfferCatalog',
+    name: 'Massage- und Wellnessangebote',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'Offer',
+      position: i + 1,
+      priceCurrency: 'EUR',
+      price: it.fromEur,
+      availability: 'https://schema.org/InStock',
+      ...(it.url ? { url: it.url } : {}),
+      itemOffered: {
+        '@type': 'Service',
+        name: it.name,
+        serviceType: 'Massage',
+        ...(it.description ? { description: it.description } : {}),
+        provider: { '@id': ID.business },
+      },
+    })),
+  };
+}
+
+export function businessNode(imageUrls: string[] = [], catalog?: CatalogItem[]): Node {
   return {
     '@type': 'HealthAndBeautyBusiness',
     '@id': ID.business,
@@ -66,6 +107,7 @@ export function businessNode(imageUrls: string[] = []): Node {
     founder: { '@id': ID.june },
     employee: { '@id': ID.june },
     knowsLanguage: ['de', 'en', 'th'],
+    ...(catalog?.length ? { hasOfferCatalog: offerCatalogNode(catalog) } : {}),
   };
 }
 

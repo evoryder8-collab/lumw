@@ -9,10 +9,16 @@ import type { ImageMetadata } from 'astro';
  */
 export async function heroPreload(
   src: ImageMetadata,
-  widths: number[],
+  askedWidths: number[],
   sizes: string,
   quality = 62,
 ) {
+  // Clamped the same way Photo.astro clamps, and for the same reason: asking
+  // for more pixels than the file has produces a softer image in a larger
+  // download. It matters twice over here, because a preload that names a width
+  // the <picture> will not offer is a second download of the same photograph.
+  const widths = [...new Set(askedWidths.map((w) => Math.min(w, src.width)))].sort((a, b) => a - b);
+
   const built = await Promise.all(
     widths.map((w) => getImage({ src, width: w, format: 'avif', quality })),
   );

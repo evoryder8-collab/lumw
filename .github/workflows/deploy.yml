@@ -22,6 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The sitemap dates each URL from the last commit that touched its
+          # sources. A shallow checkout only knows the newest commit, so every
+          # page would claim to have changed today - which is the untrustworthy
+          # lastmod this replaced.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:

@@ -33,10 +33,25 @@ interface Props {
 }
 
 const {
-  src, alt, widths, sizes, ratio,
+  src, alt, widths: askedWidths, sizes, ratio,
   priority = false, dissolve = true, quality = 62,
   class: className = '', variant = 'frame',
 } = Astro.props;
+
+/**
+ * Never ask for more pixels than the photograph has.
+ *
+ * Astro will happily upscale, and the result is a soft image in a bigger file -
+ * worse on both counts. treatment-cupping is 303px wide and was being requested
+ * at 900, a 3x enlargement on the two Schroepfkopf pages. Clamping here fixes
+ * that everywhere at once and keeps callers free to state the widths the layout
+ * actually wants.
+ *
+ * The source width is kept as a candidate so the largest variant is still the
+ * sharpest the file can produce, and duplicates are dropped so a small image
+ * does not emit the same width three times.
+ */
+const widths = [...new Set(askedWidths.map((w) => Math.min(w, src.width)))].sort((a, b) => a - b);
 ---
 
 <div

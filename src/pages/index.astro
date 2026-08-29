@@ -6,12 +6,13 @@
  * chapters, June, testimonial, booking, closing loop. Motion arrives in stage 6
  * on this same structure.
  */
+import { getCollection } from 'astro:content';
 import Photo from '../components/Photo.astro';
 import { heroPreload } from '../lib/heroPreload';
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import AwardStrip from '../components/AwardStrip.astro';
-import { BUSINESS, url } from '../lib/site';
+import { BUSINESS, url, treatmentName } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode,
 } from '../lib/schema';
@@ -78,12 +79,29 @@ const preloadImage = await heroPreload(junePortrait, [480, 720, 900, 1100], hero
 
 const ogImage = await socialImageUrl(junePortrait, Astro.site);
 
+/**
+ * The catalogue on the business node.
+ *
+ * Read from the treatments collection rather than the six curated chapters
+ * above, because the catalogue should describe everything June sells, not the
+ * subset this page chose to illustrate. Same source the prices page renders
+ * from, so a price can never be advertised here that the site does not show.
+ * "From" is the cheapest duration, which is how a price list reads.
+ */
+const catalog = (await getCollection('treatments'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((t) => ({
+    name: treatmentName(t.data.name),
+    fromEur: Math.min(...t.data.prices.map((pr) => pr.priceEur)),
+    url: new URL(url('/meineangebote-preise'), Astro.site).href,
+  }));
+
 const schema = graph([
   businessNode([
     await socialImageUrl(junePortrait, Astro.site),
     await socialImageUrl(studioWorking, Astro.site),
     await socialImageUrl(studioExterior, Astro.site),
-  ]),
+  ], catalog),
   personNode(await socialImageUrl(junePortrait, Astro.site)),
   websiteNode(),
   webPageNode({ title, description, path, imageUrl: await socialImageUrl(junePortrait, Astro.site) }),

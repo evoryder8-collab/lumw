@@ -10,7 +10,7 @@
  * price exactly as it appears in the copy.
  */
 import { getCollection } from 'astro:content';
-import { url } from '../lib/site';
+import { url, treatmentName } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
@@ -90,7 +90,7 @@ const schema = graph([
   ...treatments.map((t) =>
     serviceNode({
       family: t.data.id,
-      name: t.data.name.replace(/^\|\s*/, '').trim(),
+      name: treatmentName(t.data.name),
       description: t.data.body.find((b) => b.type === 'p')?.text ?? t.data.name,
       offers: t.data.prices.map((p) => ({ durationMin: p.durationMin, priceEur: p.priceEur })),
       url: `https://www.luma-wellness.com${path}`,
@@ -166,7 +166,7 @@ const money = (n: number) => `${n}€`;
                   </header>
 
                   <h2 class:list={['card__name', isSignature && 'gilt gilt-live']}>
-                    {t.data.name.replace(/^\|\s*/, '')}
+                    {treatmentName(t.data.name)}
                   </h2>
 
                   <p class="card__lead">{leadFor(t.data.id)}</p>

@@ -145,3 +145,16 @@ export const NAV = [
   { label: 'FAQ', href: '/massage-buxtehude-faq' },
   { label: 'KONTAKT', href: '/contact' },
 ] as const;
+
+/**
+ * A treatment's name as a human should read it.
+ *
+ * Eight of the nine names arrived from the Wix scrape with a leading "| ",
+ * which was a layout separator in the old page rather than part of the name.
+ * It is not content: dropping it changes no keyword and loses no word that
+ * meant anything. It was already being stripped at two render sites, so this
+ * exists to stop a third copy of the regex drifting from the other two - the
+ * structured data on the home page was advertising treatments called
+ * "| STARK BALL MASSAGE".
+ */
+export const treatmentName = (raw: string): string => raw.replace(/^\|\s*/, '').trim();

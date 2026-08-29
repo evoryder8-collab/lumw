@@ -40,6 +40,18 @@ export default defineConfig({
   // The live Wix URLs carry no trailing slash and neither do our canonicals.
   trailingSlash: 'ignore',
 
+  /**
+   * Navigations were a cold fetch every time. ClientRouter swaps the document
+   * without a full reload, but it still had to go and get it on click, so every
+   * move between pages paid the round trip in full.
+   *
+   * Hover rather than viewport: this is a small site and most of it is reachable
+   * from any page, so prefetching everything in view would pull most of the site
+   * down on a phone for the sake of the one page that gets opened. Hovering, or
+   * touching on a touchscreen, is the first honest signal of intent.
+   */
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
+
   compressHTML: true,
   vite: { plugins: [tailwindcss()] },
 
