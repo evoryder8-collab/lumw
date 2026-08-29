@@ -20,12 +20,18 @@ import {
 import junePortrait from '../assets/june-portrait.webp';
 import studioWorking from '../assets/studio-june-working.webp';
 import studioExterior from '../assets/studio-exterior-hautnah.webp';
-import imgAroma from '../assets/treatment-back-warm.webp';
-import imgGold from '../assets/award-competition-gold.webp';
-import imgThai from '../assets/award-competition-stretch.webp';
-import imgPregnancy from '../assets/treatment-pregnancy.webp';
-import imgStark from '../assets/june-with-nadine-stark.webp';
-import imgFacial from '../assets/treatment-facial.webp';
+/* The chapters run full-bleed at 100vw by 100svh, which is where the baked
+   vignettes on these files hurt most: a transparent edge over a viewport-sized
+   element lets the page through, so the photograph stops short of the edges it
+   is meant to own. june-with-nadine-stark, at a mean alpha of 0.146, was a
+   small blob adrift in a whole screen. These are the opaque 16:9 crops from
+   scripts/normalize-cards.mjs. */
+import imgAroma from '../assets/chapter/treatment-back-warm.webp';
+import imgGold from '../assets/chapter/award-competition-gold.webp';
+import imgThai from '../assets/chapter/award-competition-stretch.webp';
+import imgPregnancy from '../assets/chapter/treatment-pregnancy.webp';
+import imgStark from '../assets/chapter/june-with-nadine-stark.webp';
+import imgFacial from '../assets/chapter/treatment-facial.webp';
 
 const title =
   'Massage Buxtehude – LUMA Wellness by June Saurin | Goldprämierte Massagen & Wellness';
