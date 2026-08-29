@@ -19,12 +19,18 @@ interface Props {
   path: string;
   ogImage?: string;
   ogType?: 'website' | 'article' | 'profile';
+  /**
+   * Keep this page out of the index even in a production build. For pages that
+   * are never a destination - the 404 - where a soft 404 that Google indexes
+   * would be worse than the hard one it replaces.
+   */
+  noindex?: boolean;
 }
 
-const { title, description, path, ogImage, ogType = 'website' } = Astro.props;
+const { title, description, path, ogImage, ogType = 'website', noindex = false } = Astro.props;
 
 const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
-const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true';
+const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true' && !noindex;
 const image = ogImage ? new URL(ogImage, SITE_URL).href : undefined;
 ---
 

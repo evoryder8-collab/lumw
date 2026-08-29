@@ -27,9 +27,11 @@ interface Props {
   schema?: unknown;
   /** srcset + sizes for the LCP image, so it starts downloading immediately. */
   preloadImage?: { srcset: string; sizes: string; type?: string };
+  /** Never index this page, whatever PUBLIC_INDEXABLE says. */
+  noindex?: boolean;
 }
 
-const { title, description, path, ogImage, ogType, schema, preloadImage } = Astro.props;
+const { title, description, path, ogImage, ogType, schema, preloadImage, noindex } = Astro.props;
 
 const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -87,7 +89,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
         browser without support already does. */}
     <ClientRouter fallback="none" />
 
-    <Meta {title} {description} {path} {ogImage} {ogType} />
+    <Meta {title} {description} {path} {ogImage} {ogType} {noindex} />
     {schema && <JsonLd data={schema} />}
   </head>
 

@@ -140,7 +140,11 @@ const money = (n: number) => `${n}€`;
                   >
                     <Photo
                       src={image}
-                      alt=""
+                      {/* The content carries real alt text for every treatment
+                          and this was throwing all nine away. They are distinct
+                          photographs of distinct treatments, not decoration the
+                          heading already covers. */}
+                      alt={t.data.imageAlt ?? treatmentName(t.data.name)}
                       widths={[420, 640, 860]}
                       sizes="(max-width: 640px) 100vw, (max-width: 1100px) 46vw, 31vw"
                       {/* 7:6, matching scripts/normalize-cards.mjs. Tall enough

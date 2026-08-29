@@ -1,0 +1,101 @@
+---
+/**
+ * The page GitHub Pages serves for anything that does not resolve.
+ *
+ * Without this file, a mistyped URL on June's own domain returns GitHub's
+ * generic error page - unbranded, in English, and looking for all the world
+ * like the site is broken. Pages picks up dist/404.html automatically, so this
+ * only needs to exist.
+ *
+ * It is noindex on purpose. A soft 404 that Google indexes is worse than the
+ * hard one it replaces, and this page must never compete with a real URL.
+ *
+ * The links out are the four pages someone is most likely to have been looking
+ * for, which also stops this being a dead end for a crawler that lands here
+ * following a stale link.
+ */
+import Layout from '../layouts/Layout.astro';
+import { url, BUSINESS, whatsappUrl } from '../lib/site';
+
+const title = 'Seite nicht gefunden | LUMA Wellness by June Saurin';
+const description =
+  'Diese Seite existiert nicht mehr. Hier finden Sie die Massageangebote, Preise und Kontaktmöglichkeiten von LUMA Wellness in Buxtehude.';
+const path = '/404';
+
+const wege = [
+  { href: url('/meineangebote-preise'), label: 'Angebote & Preise', hint: 'Alle Massagen mit Preisen' },
+  { href: url('/'), label: 'Startseite', hint: 'Zurück zum Anfang' },
+  { href: url('/about'), label: 'Über mich', hint: 'June Saurin' },
+  { href: url('/contact'), label: 'Kontakt', hint: 'Termin anfragen' },
+];
+---
+
+<Layout {title} {description} {path} noindex>
+  <section class="section notfound">
+    <div class="shell notfound__inner">
+      <p class="eyebrow" data-fade>Fehler 404</p>
+      <h1 data-reveal>Diese Seite gibt es nicht</h1>
+      <p class="lede" data-fade>
+        Vielleicht hat sich die Adresse geändert, oder der Link ist alt. Alles,
+        was Sie suchen, ist von hier aus einen Klick entfernt.
+      </p>
+
+      <ul class="notfound__links">
+        {
+          wege.map((w, i) => (
+            <li data-reveal2 style={`--reveal-delay:${i * 70}ms`}>
+              <a href={w.href} class="notfound__link panel">
+                <span class="notfound__label">{w.label}</span>
+                <span class="notfound__hint">{w.hint}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="notfound__foot">
+        Lieber direkt fragen?
+        <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a>
+        oder <a href={whatsappUrl()} rel="noopener" class="underline-gold">WhatsApp</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notfound { padding-block: clamp(4rem, 14vw, 9rem); }
+  .notfound__inner { display: grid; justify-items: center; text-align: center; gap: 1.1rem; }
+
+  .notfound__links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.9rem;
+    width: min(100%, 44rem);
+    margin: 2.2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notfound__link {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.15rem 1.3rem;
+    border-radius: var(--radius-media);
+    text-align: left;
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+
+  .notfound__label {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .notfound__hint { font-size: 0.8125rem; color: var(--ink-mute); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .notfound__link:hover { transform: translateY(-3px); box-shadow: var(--shadow-float); }
+  }
+
+  .notfound__foot { margin-top: 2rem; font-size: 0.9375rem; color: var(--ink-soft); }
+</style>

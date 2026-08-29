@@ -57,13 +57,20 @@ function htmlFiles(dir) {
  * redirect and not the document - which reported every aliased page as having
  * no JSON-LD at all.
  */
+/**
+ * The 404 is noindex and is not an entity. Structured data describes a thing
+ * Google might hold a record for, and "the page you asked for is not here" is
+ * not one, so requiring a graph on it would mean inventing one.
+ */
+const isErrorPage = (file) => path.basename(file) === '404.html';
+
 const isAlias = (file) => {
   if (path.basename(file) !== 'index.html') return false;
   const flat = `${path.dirname(file)}.html`;
   return fs.existsSync(flat);
 };
 
-const files = htmlFiles(DIST).filter((f) => !isAlias(f));
+const files = htmlFiles(DIST).filter((f) => !isAlias(f) && !isErrorPage(f));
 const failures = [];
 const warnings = [];
 let pagesChecked = 0;
