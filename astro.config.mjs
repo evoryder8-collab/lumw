@@ -18,21 +18,24 @@ export default defineConfig({
   site: SITE,
   base: BASE,
 
-  // CLAUDE.md section 7 requires /path/index.html for every route, so that is
-  // what ships.
+  // Section 7 asks for two things: that every path stays byte-identical, which
+  // it calls the highest priority in the project, and that Astro emit
+  // /path/index.html. On GitHub Pages those two are in conflict, and the first
+  // one wins.
   //
-  // Be aware of what this costs on GitHub Pages specifically. Pages 301s
-  // /about to /about/, while the live Wix site does the exact opposite: it
-  // serves /about at 200 and 301s /about/ back to /about. So every one of the
-  // 25 indexed URLs would start redirecting, in the opposite direction, to a
-  // form Google has never seen.
+  // With the directory layout Pages 301s /about to /about/, while the live Wix
+  // site does the exact opposite: it serves /about at 200 and 301s /about/ back
+  // to /about. Every one of the 25 indexed URLs would have started redirecting,
+  // in the opposite direction, to a form Google has never seen. It also left
+  // /about/ answering 200 while its own canonical pointed at /about, a URL that
+  // redirected straight back to it.
   //
-  // Switching to format: 'file' emits about.html, which Pages serves at /about
-  // with no redirect at all - byte-identical to live. It is a one-word change
-  // and check:urls reports which behaviour is currently built. This is a
-  // cutover decision, not a build decision, and it is flagged rather than made
-  // here because section 7 names the directory layout explicitly.
-  build: { format: 'directory', inlineStylesheets: 'always' },
+  // format: 'file' emits about.html, which Pages serves at /about with no
+  // redirect: the indexed URL and the canonical finally agree, and the path is
+  // byte-identical to live. The index.html mechanism assumed a server that
+  // serves /path/index.html at /path without redirecting, which is what most
+  // hosts do and Pages does not.
+  build: { format: 'file', inlineStylesheets: 'always' },
 
   // The live Wix URLs carry no trailing slash and neither do our canonicals.
   trailingSlash: 'ignore',

@@ -31,19 +31,38 @@ if (!fs.existsSync(DIST)) {
   process.exit(1);
 }
 
-/** Every directory that actually exists in dist/, as emitted, unmodified. */
-function walk(dir, base = '') {
+/**
+ * Every route dist/ actually serves, as the URL a browser would ask for, with
+ * the bytes exactly as they were written to disk.
+ *
+ * Both layouts are read, because the two emit the same URL differently:
+ * `about/index.html` and `about.html` both answer at /about. The check is about
+ * which URLs resolve, not which files exist, so it should not care which one
+ * the build chose.
+ */
+function walkRoutes(dir, base = '') {
   const out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (!e.isDirectory()) continue;
-    const rel = `${base}/${e.name}`;
-    out.push(rel);
-    out.push(...walk(path.join(dir, e.name), rel));
+    if (e.isDirectory()) {
+      out.push(...walkRoutes(path.join(dir, e.name), `${base}/${e.name}`));
+    } else if (e.name === 'index.html') {
+      out.push(base === '' ? '/' : base);
+    } else if (e.name.endsWith('.html')) {
+      out.push(`${base}/${e.name.slice(0, -'.html'.length)}`);
+    }
   }
   return out;
 }
-const actualDirList = walk(DIST);
-const actualDirs = new Set(actualDirList);
+const actualRouteList = walkRoutes(DIST);
+const actualRoutes = new Set(actualRouteList);
+
+/** Where a given URL's HTML lives, whichever layout produced it. */
+function fileFor(p) {
+  if (p === '/') return path.join(DIST, 'index.html');
+  const asDirectory = path.join(DIST, p.slice(1), 'index.html');
+  if (fs.existsSync(asDirectory)) return asDirectory;
+  return path.join(DIST, `${p.slice(1)}.html`);
+}
 
 const failures = [];
 const warnings = [];
@@ -51,8 +70,7 @@ let ok = 0;
 
 for (const p of expected.paths) {
   const nfc = p.normalize('NFC');
-  const rel = p === '/' ? 'index.html' : path.join(p.slice(1), 'index.html');
-  const file = path.join(DIST, rel);
+  const file = fileFor(p);
 
   // 1. The file has to be there at all.
   if (!fs.existsSync(file)) {
@@ -64,7 +82,7 @@ for (const p of expected.paths) {
   //    thing section 7 says must never happen.
   const size = fs.statSync(file).size;
   if (size < 500) {
-    failures.push({ p, why: `index.html is only ${size} bytes, looks empty` });
+    failures.push({ p, why: `${path.relative(DIST, file)} is only ${size} bytes, looks empty` });
     continue;
   }
 
@@ -76,8 +94,8 @@ for (const p of expected.paths) {
     failures.push({ p, why: 'expected path in source is not NFC' });
     continue;
   }
-  if (/[^\x00-\x7F]/.test(p) && !actualDirs.has(nfc)) {
-    const decomposed = actualDirList.find((d) => d.normalize('NFC') === nfc);
+  if (/[^\x00-\x7F]/.test(p) && !actualRoutes.has(nfc)) {
+    const decomposed = actualRouteList.find((d) => d.normalize('NFC') === nfc);
     failures.push({
       p,
       why: decomposed
@@ -109,7 +127,7 @@ for (const p of expected.paths) {
 }
 
 // Anything under /service-page/ that is not on the list is a page we invented.
-const strayServicePages = [...actualDirs].filter(
+const strayServicePages = [...actualRoutes].filter(
   (d) => d.startsWith('/service-page/') && d.split('/').length === 3 && !expected.paths.includes(d),
 );
 
