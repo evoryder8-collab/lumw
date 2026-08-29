@@ -11,11 +11,12 @@
     "check:urls": "node scripts/check-urls.mjs",
     "check:jsonld": "node scripts/check-jsonld.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "verify": "npm run build && npm run check:jsonld && npm run check:contrast",
+    "verify": "npm run build && npm run check:titles && npm run check:jsonld && npm run check:contrast",
     "assets": "node scripts/prepare-assets.mjs",
     "map": "node scripts/fetch-map.mjs",
     "cards": "node scripts/normalize-cards.mjs",
-    "aliases": "node scripts/trailing-slash-aliases.mjs"
+    "aliases": "node scripts/trailing-slash-aliases.mjs",
+    "check:titles": "node scripts/check-titles.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1",

@@ -50,6 +50,12 @@ jobs:
           # Set this to '/' in the same release that points DNS at the domain.
           PUBLIC_BASE: '/lumw'
 
+      # Section 7's other guard: the title is one of the few things Google uses
+      # to identify a page, and this rebuild changes host, markup and rendering
+      # already. A drifted title must not reach the cutover unnoticed.
+      - name: Check titles and descriptions against the live site
+        run: npm run check:titles
+
       - name: Validate JSON-LD on every page
         run: npm run check:jsonld
 
