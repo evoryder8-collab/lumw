@@ -46,6 +46,36 @@ const familyOffers = all
   .filter((s) => s.family === service.family)
   .sort((a, b) => a.durationMin - b.durationMin);
 
+/**
+ * Three treatments from other families.
+ *
+ * The siblings block above only ever reaches other durations of the same
+ * massage, which left the eighteen service pages as seven islands: nothing
+ * linked across families, so a crawler arriving on one could not walk to any
+ * other treatment without going back out to the prices page, and four
+ * single-duration pages had no outbound service link at all.
+ *
+ * Picked by rotating from this service's own position through the family list,
+ * so the choice is stable between builds and the links spread evenly instead of
+ * every page pointing at whichever family happens to sort first. Three, not
+ * seventeen: a page that links to everything is a link list, not a
+ * recommendation.
+ */
+const otherFamilies = [...new Set(all.map((s) => s.family))].filter((f) => f !== service.family);
+const startAt = [...new Set(all.map((s) => s.family))].indexOf(service.family);
+
+const related = otherFamilies
+  .map((_, i) => otherFamilies[(startAt + i) % otherFamilies.length])
+  .slice(0, 3)
+  .map((family) => {
+    const inFamily = all
+      .filter((s) => s.family === family)
+      .sort((a, b) => a.durationMin - b.durationMin);
+    // The shortest is the cheapest way in, which is the honest thing to lead on.
+    return inFamily[0];
+  })
+  .filter(Boolean);
+
 const imageUrl = image ? await socialImageUrl(image, Astro.site) : undefined;
 
 const heroSizes = '(max-width: 900px) 88vw, 42vw';
@@ -160,6 +190,28 @@ const schema = graph([
       )
     }
 
+    {
+      related.length > 0 && (
+        <section class="section--tight">
+          <div class="shell shell--mid">
+            <h2 class="siblings__title">Weitere Massagen bei LUMA Wellness</h2>
+            <ul class="related">
+              {related.map((s) => (
+                <li>
+                  <a href={url(`/service-page/${s.slug}`)} class="related__link panel float">
+                    <span class="related__name">{s.familyName}</span>
+                    <span class="related__meta">
+                      ab {s.durationMin} Minuten · {s.priceEur}€
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
     <section class="section close">
       <div class="shell shell--narrow close__inner">
         <p class="eyebrow">Termine nur nach vorheriger Absprache</p>
@@ -246,6 +298,43 @@ const schema = graph([
   .desc :global(p) { font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.65; }
 
   /* --- Siblings --- */
+
+  .related {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .related__link {
+    display: grid;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1.15rem 1.3rem;
+    border-radius: var(--radius-media);
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+
+  .related__name {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    font-weight: 400;
+    line-height: 1.18;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .related__meta {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .related__link:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
+  }
 
   .siblings__title {
     font-size: clamp(1.1rem, 2vw, 1.4rem);
