@@ -48,7 +48,22 @@ function htmlFiles(dir) {
   return out;
 }
 
-const files = htmlFiles(DIST);
+/**
+ * The trailing-slash aliases are not pages.
+ *
+ * Under the flat layout, about.html is the page and about/index.html is the
+ * alias that sends /about/ back to it. The alias carries a canonical and
+ * nothing else by design, so checking it for structured data is checking the
+ * redirect and not the document - which reported every aliased page as having
+ * no JSON-LD at all.
+ */
+const isAlias = (file) => {
+  if (path.basename(file) !== 'index.html') return false;
+  const flat = `${path.dirname(file)}.html`;
+  return fs.existsSync(flat);
+};
+
+const files = htmlFiles(DIST).filter((f) => !isAlias(f));
 const failures = [];
 const warnings = [];
 let pagesChecked = 0;

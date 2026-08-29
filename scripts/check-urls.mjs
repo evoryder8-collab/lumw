@@ -56,12 +56,19 @@ function walkRoutes(dir, base = '') {
 const actualRouteList = walkRoutes(DIST);
 const actualRoutes = new Set(actualRouteList);
 
-/** Where a given URL's HTML lives, whichever layout produced it. */
+/**
+ * Where a given URL's HTML lives, whichever layout produced it.
+ *
+ * The flat file wins when both exist. Under the flat layout /about is served by
+ * about.html, and about/index.html is only the trailing-slash alias pointing
+ * back at it - checking the alias would be checking the redirect instead of the
+ * page.
+ */
 function fileFor(p) {
   if (p === '/') return path.join(DIST, 'index.html');
-  const asDirectory = path.join(DIST, p.slice(1), 'index.html');
-  if (fs.existsSync(asDirectory)) return asDirectory;
-  return path.join(DIST, `${p.slice(1)}.html`);
+  const asFlatFile = path.join(DIST, `${p.slice(1)}.html`);
+  if (fs.existsSync(asFlatFile)) return asFlatFile;
+  return path.join(DIST, p.slice(1), 'index.html');
 }
 
 const failures = [];

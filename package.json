@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && npm run check:urls",
+    "build": "astro build && npm run aliases && npm run check:urls",
     "preview": "astro preview",
     "astro": "astro",
     "check:urls": "node scripts/check-urls.mjs",
@@ -14,7 +14,8 @@
     "verify": "npm run build && npm run check:jsonld && npm run check:contrast",
     "assets": "node scripts/prepare-assets.mjs",
     "map": "node scripts/fetch-map.mjs",
-    "cards": "node scripts/normalize-cards.mjs"
+    "cards": "node scripts/normalize-cards.mjs",
+    "aliases": "node scripts/trailing-slash-aliases.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1",
