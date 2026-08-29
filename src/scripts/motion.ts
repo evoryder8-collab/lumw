@@ -67,6 +67,58 @@ function initScroll() {
   });
 }
 
+/* -------------------------------------------------------- scroll velocity */
+
+/**
+ * Let the page feel the speed it is being scrolled at.
+ *
+ * Everything else in this file responds to scroll *position*: where you are
+ * decides what has revealed. Nothing responded to how fast you were moving, so
+ * a flick and a crawl produced identical frames and the page felt like it was
+ * being stepped through rather than moved.
+ *
+ * Lenis already computes velocity, so this costs one custom property write per
+ * frame and no measurement. The value is normalised, clamped and eased back to
+ * rest, and the CSS that consumes it stays deliberately quiet - a fraction of a
+ * degree of skew and a percent of stretch on photographs only. Past about a
+ * degree this stops reading as momentum and starts reading as a broken
+ * transform, which is the failure mode of every site that overdoes it.
+ */
+function initScrollVelocity() {
+  if (REDUCED || !lenis) return;
+
+  const root = document.documentElement;
+  let smoothed = 0;
+
+  // Lenis hands the callback its own instance, not an event object, and reads
+  // velocity off it. Destructuring a { velocity } argument happens to work for
+  // that reason, but it describes an event shape Lenis does not have.
+  const onScroll = (instance: { velocity: number }) => {
+    // Pixels per frame. Normalising against a brisk flick keeps the property in
+    // roughly -1..1 whatever the device's scroll granularity is.
+    const target = Math.max(-1, Math.min(1, instance.velocity / 55));
+
+    // Rise quickly, fall slowly: the page should answer a flick at once and
+    // then settle, rather than snapping flat the moment the finger lifts.
+    const k = Math.abs(target) > Math.abs(smoothed) ? 0.28 : 0.08;
+    smoothed += (target - smoothed) * k;
+
+    if (Math.abs(smoothed) < 0.001) smoothed = 0;
+    root.style.setProperty('--scroll-v', smoothed.toFixed(3));
+  };
+
+  // on() returns its own unsubscribe, which cannot go stale the way passing the
+  // handler back to off() can.
+  const unsubscribe = lenis.on('scroll', onScroll);
+  root.classList.add('has-scroll-velocity');
+
+  onCleanup(() => {
+    unsubscribe();
+    root.classList.remove('has-scroll-velocity');
+    root.style.removeProperty('--scroll-v');
+  });
+}
+
 /* ----------------------------------------------------------- line reveals */
 
 function initReveals() {
@@ -769,6 +821,7 @@ function boot() {
   document.documentElement.classList.add('motion-ready');
 
   initScroll();
+  initScrollVelocity(); // after initScroll: it needs the Lenis instance
   initReveals();
   initChapters();
   initTilt();

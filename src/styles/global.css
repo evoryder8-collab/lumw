@@ -781,8 +781,11 @@ a { color: inherit; text-decoration: none; }
     max-width: none;
   }
 
-  /* Bleeding media keeps a radius only where it is not touching an edge. */
-  .bleed :global(.media),
+  /* Bleeding media keeps a radius only where it is not touching an edge.
+     No :global() here: that is Astro scoped-style syntax, and in a plain
+     stylesheet it is an invalid selector. One invalid selector invalidates the
+     whole comma-separated group, so this rule was being dropped and bled media
+     kept a full radius against the edge of the phone. */
   .bleed .media {
     border-radius: 0 0 var(--radius-media) var(--radius-media);
   }
@@ -1166,4 +1169,42 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 520px) {
   .notice { font-size: 0.5625rem; letter-spacing: 0.16em; }
+}
+
+/* ----------------------------------------------------------- scroll speed */
+
+/**
+ * The page answers how fast it is being scrolled, not only how far.
+ *
+ * --scroll-v runs about -1 to 1 and is written by motion.ts once per frame
+ * while Lenis is running. It is only ever consumed here, and only by
+ * photographs: a fraction of a degree of skew and about a percent of vertical
+ * stretch, in the direction of travel. The intent is momentum you feel rather
+ * than an effect you notice - past a degree or so it stops reading as weight
+ * and starts reading as a broken transform.
+ *
+ * Gated on .has-scroll-velocity, which is only added when Lenis is actually
+ * driving the page. Under reduced motion Lenis never starts, the class is never
+ * added, and none of this applies.
+ */
+.has-scroll-velocity .media--dissolve img,
+.has-scroll-velocity .chapter__media img,
+.has-scroll-velocity .card__photo img {
+  transform: skewY(calc(var(--scroll-v, 0) * 0.35deg))
+             scaleY(calc(1 + var(--scroll-v, 0) * 0.012));
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* The counter is the one piece of type that joins in: it is a readout of
+   movement, so it should look like it is moving. */
+.has-scroll-velocity .chapter-counter {
+  transform: translateY(calc(var(--scroll-v, 0) * -6px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-scroll-velocity .media--dissolve img,
+  .has-scroll-velocity .chapter__media img,
+  .has-scroll-velocity .card__photo img,
+  .has-scroll-velocity .chapter-counter { transform: none; }
 }
