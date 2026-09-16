@@ -26,7 +26,7 @@ const photos = await Promise.all([winner, cup, dark, waterPortrait, water, athen
 ---
 <section class="section photo-gallery" aria-labelledby="gallery-title">
   <div class="shell photo-gallery__heading"><div><p class="eyebrow">{wording.eyebrow}</p><h2 id="gallery-title">{wording.title}</h2></div><span class="gallery-edition" aria-hidden="true">LUMA / 01–{String(photos.length).padStart(2, '0')}</span></div>
-  <div class="shell photo-gallery__track">
+  <div class="shell photo-gallery__track" data-gallery-track>
     {photos.map((photo, i) => <figure class="photo-gallery__item">
       <a href={photo.large} data-gallery-open data-caption={photo.caption} aria-label={`${wording.open}: ${photo.caption}`}>
         <Photo src={photo.src} alt={`June Saurin · ${photo.caption}`} widths={[360,540,720]} sizes="(max-width: 760px) 78vw, (max-width: 1100px) 43vw, 23vw" ratio="2 / 3" dissolve={false} />

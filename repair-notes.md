@@ -9,6 +9,23 @@ Format: **what** · *how it was found* · why · guard.
 
 ## September interaction refinements
 
+**Enabling sound could leave a blocked video paused.** The sound control used
+to change only `muted`. It now calls `play()` in the same user gesture and
+restores a positive volume. A denied autoplay has a localized Play with sound
+control, and an explicit No remains respected. Browser coverage includes
+audible consent, a paused zero-volume player, and denial of both autoplay
+attempts followed by a successful tap.
+
+**Gallery scrolling needed the same hint as reviews.** Both now share a small
+once-only scroll preview. It runs only when there is horizontal overflow,
+yields to visitor input, and skips reduced motion. Tests observe actual
+horizontal movement and the return to the first photograph on mobile.
+
+**The prose archive omitted service metadata.** A fresh crawl before cutover
+found all 18 service descriptions differed from live Wix. They are restored
+from the 16 September archive and all 25 original titles and descriptions are
+now checked. The checker decodes and NFC-normalizes umlaut filenames.
+
 **The first treatment photo was lazy despite being visible at page entry.**
 CI mobile Lighthouse identified the first Aroma-Luxus card as the largest
 contentful element. Its median paint arrived at 2.541 seconds, just beyond the

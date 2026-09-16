@@ -181,6 +181,27 @@ try {
   assert.deepEqual(axeResults.filter((r) => r.violations.length).map((r) => ({ route: r.route, violations: r.violations.map((v) => v.id) })), []);
   report.push('32 responsive page checks at 360, 390, 768 and 1440 pixels; eight axe WCAG audits');
 
+  const galleryContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await galleryContext.addInitScript(savedWelcome);
+  const galleryPage = await galleryContext.newPage(); track(galleryPage);
+  for (const route of ['/', '/en']) {
+    await galleryPage.goto(preview.url(route));
+    const galleryTrack = galleryPage.locator('[data-gallery-track]');
+    await galleryTrack.evaluate((track) => {
+      window.galleryScrollSamples = [];
+      track.addEventListener('scroll', () => window.galleryScrollSamples.push(track.scrollLeft));
+    });
+    await galleryTrack.scrollIntoViewIfNeeded();
+    await galleryPage.waitForFunction(() => document.querySelector('[data-gallery-track]').dataset.nudge === 'done');
+    assert.ok((await galleryPage.evaluate(() => window.galleryScrollSamples)).some((x) => x > 20 && x <= 49));
+    assert.ok(await galleryTrack.evaluate((track) => track.scrollLeft < 2));
+    await galleryPage.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await galleryTrack.scrollIntoViewIfNeeded();
+    assert.equal(await galleryTrack.getAttribute('data-nudge'), 'done', 'Gallery hint repeated');
+  }
+  await galleryContext.close();
+  report.push('German and English homepage galleries hint sideways once on mobile, then return to the first photograph');
+
   const reduced = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const reducedPage = await reduced.newPage(); track(reducedPage);
   const motionRequests = [];
@@ -192,6 +213,9 @@ try {
   await reducedPage.locator('[data-reviews-track]').scrollIntoViewIfNeeded();
   assert.equal(await reducedPage.locator('[data-reviews-track]').evaluate((track) => track.scrollLeft), 0);
   assert.equal(await reducedPage.locator('[data-reviews-track]').getAttribute('data-nudge'), null);
+  await reducedPage.locator('[data-gallery-track]').scrollIntoViewIfNeeded();
+  assert.equal(await reducedPage.locator('[data-gallery-track]').getAttribute('data-nudge'), null);
+  assert.equal(await reducedPage.locator('[data-gallery-track]').evaluate((track) => track.scrollLeft), 0);
   await reducedPage.goto(preview.url('/meineangebote-preise'));
   await reducedPage.locator('[data-price-counter]').first().scrollIntoViewIfNeeded();
   assert.equal(await reducedPage.locator('.is-price-complete').count(), 0);
@@ -229,8 +253,9 @@ try {
       assert.equal(await bio.locator('[data-bio-action="instagram"]').getAttribute('href'), 'https://www.instagram.com/lumawellnessbyjune');
       assert.equal(await bio.locator('[data-bio-action="facebook"]').getAttribute('href'), 'https://www.facebook.com/lumawellnessbyjunesaurin');
       if (policy === 'user-gesture-required') {
+        await bio.locator('[data-bio-film]').evaluate((v) => { v.pause(); v.volume = 0; });
         await bio.locator('[data-intro-sound]').click();
-        assert.equal(await bio.locator('[data-bio-film]').evaluate((v) => v.muted), false);
+        await bio.waitForFunction(() => { const v = document.querySelector('[data-bio-film]'); return !v.paused && !v.muted && v.volume > 0; });
       }
       const vcard = await (await fetch(preview.url('/june-saurin.vcf'))).text();
       assert.ok(vcard.includes('FN:June Saurin\r\n') && vcard.includes('TEL;TYPE=CELL:+491788875085'));
@@ -257,6 +282,21 @@ try {
     } finally { await autoplayBrowser.close(); }
   }
   report.push('Link-in-bio: audible autoplay and muted fallback, sound toggle, contact actions, vCard, scroll reveals, Maps/Apple directions and navigation cleanup');
+
+  const blockedContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await blockedContext.addInitScript(() => {
+    const realPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      if (!navigator.userActivation.isActive) return Promise.reject(new DOMException('Simulated in-app autoplay restriction', 'NotAllowedError'));
+      return realPlay.call(this);
+    };
+  });
+  const blockedPage = await blockedContext.newPage(); track(blockedPage);
+  await blockedPage.goto(preview.url('/linkinbio'));
+  await blockedPage.getByRole('button', { name: 'Mit Ton abspielen', exact: true }).click();
+  await blockedPage.waitForFunction(() => { const v = document.querySelector('[data-bio-film]'); return !v.paused && !v.muted && v.currentTime > 0.1; });
+  await blockedContext.close();
+  report.push('When both autoplay attempts are denied, the visible Play with sound tap starts real audible playback');
 
   for (const motion of ['no-preference', 'reduce']) {
   const invitationContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: motion });

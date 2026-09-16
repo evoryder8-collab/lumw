@@ -1,6 +1,5 @@
 {
   "_comment": "The 18 live Wix Bookings entries behind /service-page/. Names, taglines, descriptions, durations and prices are verbatim from the live site. Four entries have a name that disagrees with the configured duration (items 1, 17, 18) or a price that disagrees with the Angebote page (Thai). Those are known live inconsistencies listed in CLAUDE.md section 7 and are deliberately NOT fixed at cutover. seoTitle follows the Wix Bookings default pattern and is the one field here not captured in the copy export - verify against the live site before DNS cutover.",
-
   "services": [
     {
       "id": "60min-signature-luma-gold-medalie",
@@ -15,7 +14,7 @@
       "image": "award-competition-gold.webp",
       "imageAlt": "June Saurin bei der Universal Massage Championship, wo die Gold-Medalie Technik ausgezeichnet wurde",
       "seoTitle": "60min. SIGNATURE - LUMA GOLD MEDALIE | LUMA Wellness",
-      "seoDescription": "Einzigartige Mischung von ausgezeichnete Massagetechniken. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Die LUMA-Gold-Medalie-Massage ist eine einzigartige Mischung von Massagetechniken, die im Jahr 2023 internationale Anerkennung und Goldauszeichnungen erhalten hat. Diese charakteristische Sitzung beginnt mit der Anwendung von aus Granit hergestellten Balance-Steinen, bekannt als \"The Balance-Stone\". Diese Steine sind dafür bekannt, dass sie die Wärme speichern und nicht porös sind. Dadurch sind sie hygienischer und können tiefer in die Muskeln eindringen, um ein besseres therapeutisches Ergebnis zu erzielen. Es folgt eine klassische Massage, um Muskelverspannungen zu lösen und die Entspannung zu fördern. Die Sitzung umfasst dann die Schröpftherapie, eine traditionelle Technik, die die Durchblutung anregt, den Selbstheilungsprozess des Körpers anregt und Giftstoffe ausleitet. Das Erlebnis endet mit einer Aromatherapie-Massage, bei der ätherische Öle verwendet werden, um Ihre Stimmung zu verbessern und die Entspannung weiter zu fördern.",
       "sortOrder": 1
     },
     {
@@ -31,7 +30,7 @@
       "image": "treatment-back-warm.webp",
       "imageAlt": "Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude",
       "seoTitle": "60min. LUMA Aroma-Luxus Massage | LUMA Wellness",
-      "seoDescription": "Unser Klassiker. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion.",
       "sortOrder": 2
     },
     {
@@ -47,7 +46,7 @@
       "image": "treatment-back-warm.webp",
       "imageAlt": "Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude",
       "seoTitle": "90min. LUMA Aroma-Luxus Massage | LUMA Wellness",
-      "seoDescription": "Unser Klassiker. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion.",
       "sortOrder": 3
     },
     {
@@ -63,7 +62,7 @@
       "image": "treatment-back-warm.webp",
       "imageAlt": "Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude",
       "seoTitle": "120min. LUMA Aroma-Luxus Massage | LUMA Wellness",
-      "seoDescription": "Unser Klassiker. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion.",
       "sortOrder": 4
     },
     {
@@ -79,7 +78,7 @@
       "image": "treatment-bamboo.webp",
       "imageAlt": "June Saurin bei der Bambus-Massage mit speziellen Bambus-Werkzeugen",
       "seoTitle": "60min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
-      "seoDescription": "Balance-Stone & Bambus Massage. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert.",
       "sortOrder": 5
     },
     {
@@ -95,7 +94,7 @@
       "image": "treatment-bamboo.webp",
       "imageAlt": "June Saurin bei der Bambus-Massage mit speziellen Bambus-Werkzeugen",
       "seoTitle": "90min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
-      "seoDescription": "Balance-Stone & Bambus Massage. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert.",
       "sortOrder": 6
     },
     {
@@ -111,7 +110,7 @@
       "image": "treatment-bamboo.webp",
       "imageAlt": "June Saurin bei der Bambus-Massage mit speziellen Bambus-Werkzeugen",
       "seoTitle": "120min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
-      "seoDescription": "Balance-Stone & Bambus Massage. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert.",
       "sortOrder": 7
     },
     {
@@ -127,7 +126,7 @@
       "image": "award-competition-stretch.webp",
       "imageAlt": "June Saurin bei einer thailändischen Dehnungstechnik im internationalen Wettbewerb",
       "seoTitle": "60min. LUMA-THAI MASSAGE | LUMA Wellness",
-      "seoDescription": "LUMA THAI MASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:",
       "sortOrder": 8
     },
     {
@@ -143,7 +142,7 @@
       "image": "award-competition-stretch.webp",
       "imageAlt": "June Saurin bei einer thailändischen Dehnungstechnik im internationalen Wettbewerb",
       "seoTitle": "90min. LUMA-THAI MASSAGE | LUMA Wellness",
-      "seoDescription": "LUMA THAI MASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:",
       "sortOrder": 9
     },
     {
@@ -159,7 +158,7 @@
       "image": "award-competition-stretch.webp",
       "imageAlt": "June Saurin bei einer thailändischen Dehnungstechnik im internationalen Wettbewerb",
       "seoTitle": "120min. LUMA-THAI MASSAGE | LUMA Wellness",
-      "seoDescription": "LUMA THAI MASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:",
       "sortOrder": 10
     },
     {
@@ -175,7 +174,7 @@
       "image": "treatment-pregnancy.webp",
       "imageAlt": "Sanfte Schwangerschaftsmassage für werdende Mütter bei LUMA Wellness in Buxtehude",
       "seoTitle": "60min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
-      "seoDescription": "SCHWANGERSCHAFTSMASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit.",
       "sortOrder": 11
     },
     {
@@ -191,7 +190,7 @@
       "image": "treatment-pregnancy.webp",
       "imageAlt": "Sanfte Schwangerschaftsmassage für werdende Mütter bei LUMA Wellness in Buxtehude",
       "seoTitle": "90min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
-      "seoDescription": "SCHWANGERSCHAFTSMASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit.",
       "sortOrder": 12
     },
     {
@@ -207,7 +206,7 @@
       "image": "treatment-pregnancy.webp",
       "imageAlt": "Sanfte Schwangerschaftsmassage für werdende Mütter bei LUMA Wellness in Buxtehude",
       "seoTitle": "120min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
-      "seoDescription": "SCHWANGERSCHAFTSMASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit.",
       "sortOrder": 13
     },
     {
@@ -223,7 +222,7 @@
       "image": "treatment-cupping.webp",
       "imageAlt": "Schröpfkopf-Massage zur Anregung der Durchblutung bei LUMA Wellness in Buxtehude",
       "seoTitle": "90min. LUMA SCHRÖPFKOPF MASSAGE | LUMA Wellness",
-      "seoDescription": "Die Schröpfmassage, eine uralte Form der alternativen Medizin. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Tauchen Sie ein in die revitalisierende Erfahrung der \"LUMA SCHRÖPFKOPF MASSAGE\". Diese von mir entwickelte Behandlung nutzt die uralte Technik des Schröpfens, um Giftstoffe auszusaugen und die Heilung anzuregen. Es ist eine Reise der Verjüngung und Entspannung, bei der Sie sich erfrischt und revitalisiert fühlen.",
       "sortOrder": 14
     },
     {
@@ -239,7 +238,7 @@
       "image": "treatment-cupping.webp",
       "imageAlt": "Schröpfkopf-Massage zur Anregung der Durchblutung bei LUMA Wellness in Buxtehude",
       "seoTitle": "120min. LUMA SCHRÖPFKOPF MASSAGE | LUMA Wellness",
-      "seoDescription": "Die Schröpfmassage, eine uralte Form der alternativen Medizin. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Tauchen Sie ein in die revitalisierende Erfahrung der \"LUMA SCHRÖPFKOPF MASSAGE\". Diese von mir entwickelte Behandlung nutzt die uralte Technik des Schröpfens, um Giftstoffe auszusaugen und die Heilung anzuregen. Es ist eine Reise der Verjüngung und Entspannung, bei der Sie sich erfrischt und revitalisiert fühlen.",
       "sortOrder": 15
     },
     {
@@ -255,7 +254,7 @@
       "image": "treatment-facial.webp",
       "imageAlt": "Gesichts- und Kopfmassage inklusive Gua Sha bei LUMA Wellness in Buxtehude",
       "seoTitle": "60min. LUMA GESICHTS UND KOPF MASSAGE | LUMA Wellness",
-      "seoDescription": "GESICHTS UND KOPF MASSAGE INCL. GUA SHA. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Erleben Sie die belebende Wirkung meiner charakteristischen Gesichts- und Kopfmassage, die durch die uralte Technik des Gua Sha ergänzt wird. Diese Behandlung ist eine Reise der Entspannung und Verjüngung, die Ihren Teint erfrischt, die Durchblutung anregt und Verspannungen verschwinden lässt. Spüren Sie die sanfte Pflege meiner Hände und das wohltuende Kratzen des Gua Sha-Werkzeugs und fühlen Sie sich revitalisiert und strahlend. Lassen Sie sich noch heute vom LUMA-Unterschied überzeugen!",
       "sortOrder": 16
     },
     {
@@ -271,7 +270,7 @@
       "image": "treatment-back-neck.webp",
       "imageAlt": "Schulter-, Nacken- und Rückenmassage gegen Verspannungen bei LUMA Wellness in Buxtehude",
       "seoTitle": "30min. LUMA SCHULTER-NACKEN-RÜCKEN | LUMA Wellness",
-      "seoDescription": "SCHULTER-NACKEN-RÜCKEN MASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Diese Behandlung zielt auf Verspannungen in diesen Schlüsselbereichen ab und sorgt für Linderung und Entspannung. Spüren Sie, wie der Stress unter meinen geschickten Händen dahinschmilzt und Sie sich erfrischt und verjüngt fühlen.",
       "sortOrder": 17
     },
     {
@@ -287,7 +286,7 @@
       "image": "treatment-foot.webp",
       "imageAlt": "Fußmassage an den wichtigsten Druckpunkten bei LUMA Wellness in Buxtehude",
       "seoTitle": "30min. LUMA FUß MASSAGE | LUMA Wellness",
-      "seoDescription": "FUß MASSAGE. Jetzt Termin bei LUMA Wellness in Buxtehude buchen.",
+      "seoDescription": "Die \"LUMA-FUß MASSAGE\" ist eine besondere Behandlung, bei der Spannungen an den wichtigsten Druckpunkten der Fuße gekonnt gelöst werden. Durch meine fachkundigen Techniken wird das Gleichgewicht wiederhergestellt und der Körper mit Energie versorgt. Sie erleben eine wohltuende Berührung und fühlen sich erfrischt und revitalisiert. Der LUMA-Unterschied wird in jeder Sitzung spürbar.",
       "sortOrder": 18
     }
   ]

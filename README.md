@@ -1,8 +1,11 @@
 # LUMA Wellness
 
 Astro 5 and Tailwind 4. Static output deployed to GitHub Pages. `main` publishes
-[staging](https://evoryder8-collab.github.io/lumw/). The production domain remains
-on Wix until the owner completes the cutover procedure in `CLAUDE.md`.
+the environment selected by the repository variable `LUMA_DEPLOYMENT`.
+Unset means [staging](https://evoryder8-collab.github.io/lumw/), with `/lumw`
+asset paths and noindex. `production` means root paths and indexing enabled
+for `https://www.luma-wellness.com`. The owner authorized cutover on
+16 September 2026. DNS and registrar-transfer evidence is kept in `docs/cutover.md`.
 
 ## Verify before every commit
 
@@ -13,9 +16,22 @@ npm run check:browser
 npm run check:performance
 ```
 
+Before a production release, also run:
+
+```sh
+PUBLIC_BASE=/ PUBLIC_INDEXABLE=true npm run verify
+LUMA_BROWSER_CHANNEL=bundled npm run check:browser
+```
+
+The two build variables must always agree. After switching `LUMA_DEPLOYMENT`,
+dispatch the workflow to publish that environment; changing a variable alone
+does not deploy. Configure the custom domain in GitHub Pages before changing
+DNS. The Pages workflow ignores the repository's CNAME file, so the Pages
+setting is required separately.
+
 `verify` builds 51 pages and checks the original 25 URLs, German titles,
 descriptions, H1s and paragraphs, JSON-LD, text contrast, six-language links,
-sitemaps, assets, noindex, visible punctuation and compressed JavaScript size.
+sitemaps, assets, the selected indexing policy, visible punctuation and compressed JavaScript size.
 
 `check:browser` starts its own preview and checks real visitor journeys, video
 playback, price animation, gallery controls, the enquiry composer, keyboard
@@ -75,6 +91,7 @@ Google Maps / Apple Maps chooser and no-JavaScript directions links.
 | `src/i18n/` | Five translated core-page sets and route correspondence |
 | `src/data/expected-urls.json` | Original 25 migration paths |
 | `src/data/migration-content-baseline.json` | German H1 and paragraph regression baseline |
+| `src/data/wix-seo-baseline.json` | Fresh 25-page Wix metadata archive for cutover |
 | `src/data/google-reviews.json` | Verified review excerpts and source links |
 | `src/styles/liquid-glass.css` | Shared materials and composition |
 | `src/scripts/experience.ts` | Interaction setup and navigation cleanup |
@@ -93,6 +110,7 @@ Astro emits flat files, so `/about` resolves at 200 on GitHub Pages. Small
 NFC-normalized. Internal links and media honor `/lumw`; canonicals retain
 `https://www.luma-wellness.com`.
 
-Staging is always `noindex, nofollow`. Do not change DNS, the indexing flag or
-production canonicals as part of ordinary staging design work. Pricing
+Staging is always `noindex, nofollow`; production is `index, follow`. Do not
+change DNS, the deployment environment or production canonicals as part of
+ordinary design work. Pricing
 conflicts and the remaining production gates are recorded in `roadmap.md`.

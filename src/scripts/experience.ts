@@ -2,6 +2,7 @@
 import { mountWelcome } from './welcome';
 import { mountPrices } from './prices';
 import { mountReviews } from './reviews';
+import { mountScrollHint } from './scroll-hint';
 import { mountBio } from './bio';
 import { mountLocation } from './location';
 import { mountInvitation } from './invitation';
@@ -18,6 +19,7 @@ function bootExperience() {
   const disposeWelcome = mountWelcome(signal);
   const disposePrices = mountPrices();
   mountReviews(signal);
+  document.querySelectorAll<HTMLElement>('[data-gallery-track]').forEach((track) => mountScrollHint(track, signal));
   mountBio(signal);
   mountLocation(signal);
   mountInvitation(signal);

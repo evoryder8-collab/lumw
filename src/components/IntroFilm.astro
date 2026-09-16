@@ -13,6 +13,7 @@ const words = {
   th: ['ต้องการเปิดเสียงบนเว็บไซต์ไหมคะ?', 'เปิดเสียง - แนะนำ', 'ไม่เปิดเสียง', 'ยินดีต้อนรับสู่ LUMA', 'เล่นวิดีโอแนะนำ', 'เปิดเสียง', 'ปิดเสียง', 'วิดีโอ · 00:35'],
 }[locale];
 const poster = await getImage({src: posterSource, width: 1440, format: 'webp', quality: 82});
+const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Reproducir con sonido', pt: 'Reproduzir com som', it: 'Riproduci con audio', th: 'เล่นพร้อมเสียง' }[locale];
 ---
 <section class="intro-film" aria-label={words[3]}>
   <div class="intro-film__frame liquid-glass" tabindex="-1" data-intro-frame>
@@ -21,8 +22,8 @@ const poster = await getImage({src: posterSource, width: 1440, format: 'webp', q
         <source src={url('/media/june-intro.mp4')} type="video/mp4" />
         <a href={url('/media/june-intro.mp4')}>{words[4]}</a>
       </video>
-      <button class="intro-film__play" data-intro-play type="button" hidden>
-        <span aria-hidden="true">▷</span><span>{words[4]}</span>
+      <button class="intro-film__play" data-intro-play data-label-play={words[4]} data-label-sound={playWithSound} type="button" hidden>
+        <span aria-hidden="true">▷</span><span data-intro-play-label>{words[4]}</span>
       </button>
       <button class="intro-film__sound" data-intro-sound type="button" data-label-on={words[5]} data-label-off={words[6]} aria-label={words[5]} hidden>
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z" stroke-linejoin="round" /><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke-linecap="round" /><path class="sound-slash" d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>

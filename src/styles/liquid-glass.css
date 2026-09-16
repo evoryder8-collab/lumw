@@ -592,7 +592,7 @@ html { scroll-behavior: auto; }
 .review-stars svg { fill: currentColor; }
 .reviews__count { display: block; font-size: 0.7rem; margin-top: 0.45rem; color: #4d5b45; }
 .reviews__track { display: flex; gap: 24px; overflow-x: auto; padding: 3rem max(var(--gutter), calc((100vw - 1328px) / 2)) 2.5rem; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin; scrollbar-color: #8a9b7a #dde4d6; }
-.reviews__track.is-nudging { scroll-snap-type: none; }
+.reviews__track.is-nudging, .photo-gallery__track.is-nudging { scroll-snap-type: none; scroll-behavior: auto; }
 .review-card { position: relative; isolation: isolate; display: flex; flex-direction: column; flex: 0 0 clamp(380px, 36vw, 480px); min-width: 0; padding: 2rem; border-radius: 26px; border: 1px solid #ffffffdc; background: linear-gradient(138deg, #ffffffe0, #f7f7e9a8); box-shadow: 0 14px 28px #20391815, inset 0 1px 1px #fff, inset 0 -1px 1px #ffffffd9; scroll-snap-align: start; transform: perspective(1000px) rotateX(var(--review-rx, 0deg)) rotateY(var(--review-ry, 0deg)); transition: transform 300ms ease, box-shadow 350ms ease; }
 .review-card::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse at var(--review-light-x, 20%) var(--review-light-y, 0%), #fffef4b0, transparent 65%); }
 .review-card__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }

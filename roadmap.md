@@ -45,6 +45,7 @@ animated prices, Google reviews and a native Instagram landing page.
   and a dated rating snapshot. No invented testimonials or review schema.
 - [x] A gentle, once-only horizontal review nudge previews scrolling on entry.
   Visitor input cancels it immediately; reduced motion leaves the cards still.
+- [x] The mobile photo gallery uses the same once-only horizontal hint.
 - [x] Redesigned treatment cards, a signature treatment, a useful index,
   clear prices and accessible full descriptions.
 - [x] Matching About, FAQ, Contact, service-detail and translated pages.
@@ -73,7 +74,7 @@ animated prices, Google reviews and a native Instagram landing page.
 
 ## Phase 4: reproducible evidence and release
 
-The release pipeline builds the actual `/lumw` artifact, runs browser journeys,
+The release pipeline builds the selected staging or production artifact, runs browser journeys,
 checks accessibility, measures mobile performance and keeps its reports.
 
 - Browser coverage: all 51 canonical URLs; eight representative pages at
@@ -96,8 +97,9 @@ checks accessibility, measures mobile performance and keeps its reports.
    tests. The enquiry composer is the usable contact path in this release.
 2. Native review of translations and owner review of legal identity, Impressum,
    privacy processors and archived medical claims before domain cutover.
-3. Fresh Wix archive comparison, owner-led DNS/Search Console cutover and a Wix
-   rollback window. Keep the existing German URLs unchanged.
+3. The owner authorized domain cutover and the Wix to Infomaniak transfer on
+   16 September 2026. The fresh 25-page metadata archive is checked in. Follow
+   `docs/cutover.md` for DNS, HTTPS, Search Console and rollback status.
 4. Recheck the dated Google review snapshot periodically against its source.
    A live feed requires an explicitly selected provider or Google API project.
 5. Verify the link-in-bio experience in the owner's actual Instagram app before

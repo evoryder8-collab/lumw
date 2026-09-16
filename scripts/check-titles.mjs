@@ -13,9 +13,8 @@
  * post-cutover exercise, so this fails the build until the archive is updated to
  * match, which makes the change conscious rather than accidental.
  *
- * Only the seven main pages carry SEO title lines in the archive. The eighteen
- * service pages are listed there by URL alone and their titles come from
- * services.json, so they are out of scope here.
+ * The original prose archive covers seven main pages. A fresh, dated Wix crawl
+ * adds the metadata for all 25 original URLs, including eighteen services.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -47,12 +46,14 @@ for (const line of md) {
   if (d) current.description = d[1];
 }
 
-/** Only entries that actually declare a title are checked. */
-const checkable = expected.filter((e) => e.title);
+// The original prose export omitted service-page metadata. Compare every
+// original destination against the fresh, dated Wix crawl as well.
+const liveArchive = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/wix-seo-baseline.json'), 'utf8'));
+const checkable = [...expected.filter((e) => e.title), ...liveArchive.pages];
 
 /** dist file for a live URL, flat layout first. */
 function fileFor(urlStr) {
-  const p = new URL(urlStr).pathname.replace(/\/$/, '');
+  const p = decodeURI(new URL(urlStr).pathname).normalize('NFC').replace(/\/$/, '');
   if (p === '') return path.join(DIST, 'index.html');
   const flat = path.join(DIST, `${p.slice(1)}.html`);
   return fs.existsSync(flat) ? flat : path.join(DIST, p.slice(1), 'index.html');

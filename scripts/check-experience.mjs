@@ -13,6 +13,7 @@ const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 const normalize = (text) => text.normalize('NFC').replace(/\s+/g, ' ').trim();
 const canonicalHost = 'https://www.luma-wellness.com';
+const indexable = process.env.PUBLIC_INDEXABLE === 'true';
 const baseline = JSON.parse(fs.readFileSync('src/data/migration-content-baseline.json', 'utf8'));
 
 for (const file of files.filter((file) => file.endsWith('.html'))) {
@@ -31,7 +32,9 @@ for (const [route, { document }] of documents) {
   check(document.querySelectorAll('h1').length === 1, `${route}: expected one H1`);
   check(!!document.querySelector('meta[name="description"]')?.getAttribute('content'), `${route}: missing description`);
   const robots = document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
-  check(robots.includes(process.env.PUBLIC_INDEXABLE === 'true' ? 'index, follow' : 'noindex'), `${route}: wrong robots policy`);
+  const robotDirectives = robots.split(',').map((value) => value.trim());
+  check(robotDirectives.includes(indexable ? 'index' : 'noindex') && robotDirectives.includes(indexable ? 'follow' : 'nofollow'), `${route}: wrong robots policy`);
+  check(document.querySelector('meta[name="google-site-verification"]')?.getAttribute('content') === 'OSbPqjHPC8B-5LSnAuVPZw-8I2HVK0zDGEjJE7L0VBk', `${route}: existing Google ownership verification is missing`);
   if (baseline.pages[route]) {
     const original = baseline.pages[route];
     check(normalize(document.querySelector('h1').textContent) === original.h1, `${route}: German H1 changed`);
@@ -98,6 +101,14 @@ for (const locale of ['de','en','th','es','pt','it']) {
   check(urls.length === (locale === 'de' ? 26 : 5), `${locale}: incorrect sitemap coverage`);
   for (const route of urls) check(documents.has(route), `${locale}: sitemap lists a missing page ${route}`);
 }
+const robotsFile = fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8');
+if (indexable) {
+  check(/^Allow: \/$/m.test(robotsFile), 'Production robots.txt must allow crawling');
+  check(!/^Disallow: \/$/m.test(robotsFile), 'Production robots.txt blocks crawling');
+  check(robotsFile.includes(`Sitemap: ${canonicalHost}/sitemap.xml`), 'Production robots.txt must advertise the canonical sitemap');
+} else {
+  check(/^Disallow: \/$/m.test(robotsFile), 'Staging robots.txt must block crawling');
+}
 assert.equal(failures.length, 0, `Experience checks failed:\n${failures.join('\n')}`);
-console.log(`✓ 51 pages: content retention, locale links, hreflang, assets, sitemaps, noindex, video loading, and no em dashes`);
+console.log(`✓ 51 pages: content retention, locale links, hreflang, assets, sitemaps, ${indexable ? 'production indexing' : 'staging noindex'}, ownership verification, video loading, and no em dashes`);
 console.log(`✓ JavaScript: ${(total / 1024).toFixed(1)} KiB gzip / 100 KiB budget`);

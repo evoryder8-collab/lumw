@@ -29,13 +29,17 @@ export function mountWelcome(signal: AbortSignal) {
   const unlock = () => { document.body.style.overflow = previousOverflow; };
   const setSound = (enabled: boolean) => {
     write('luma-sound', enabled ? 'yes' : 'no');
-    films.forEach((film) => { film.muted = !enabled; });
+    films.forEach((film) => { film.muted = !enabled; if (enabled && film.volume === 0) film.volume = 1; });
   };
   films.forEach((film) => { film.muted = read('luma-sound') !== 'yes'; });
 
   const syncPlayer = () => {
     if (!intro) return;
-    if (play) play.hidden = !intro.paused;
+    if (play) {
+      play.hidden = !intro.paused;
+      const label = read('luma-sound') === 'no' ? play.dataset.labelPlay! : play.dataset.labelSound!;
+      play.querySelector('[data-intro-play-label]')!.textContent = label;
+    }
     if (toggle) {
       toggle.hidden = false;
       const audible = !intro.muted && intro.volume > 0;
@@ -103,8 +107,18 @@ export function mountWelcome(signal: AbortSignal) {
   sound?.querySelector('[data-sound-yes]')?.addEventListener('click', () => finish(true), { signal });
   sound?.querySelector('[data-sound-no]')?.addEventListener('click', () => finish(false), { signal });
   sound?.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); }, { signal });
-  play?.addEventListener('click', playIntro, { signal });
-  toggle?.addEventListener('click', () => { if (intro) setSound(intro.muted || intro.volume === 0); if (intro && intro.volume === 0) intro.volume = 1; syncPlayer(); }, { signal });
+  play?.addEventListener('click', () => {
+    if (read('luma-sound') !== 'no') setSound(true);
+    playIntro();
+  }, { signal });
+  toggle?.addEventListener('click', () => {
+    if (!intro) return;
+    const enable = intro.muted || intro.volume === 0;
+    setSound(enable);
+    // A sound tap is also a playback gesture when autoplay was blocked or paused.
+    if (enable) playIntro();
+    syncPlayer();
+  }, { signal });
   ['play', 'pause', 'ended', 'volumechange'].forEach((event) => intro?.addEventListener(event, syncPlayer, { signal }));
   films.forEach((film) => film.addEventListener('play', () => films.forEach((other) => { if (other !== film) other.pause(); }), { signal }));
   syncPlayer();

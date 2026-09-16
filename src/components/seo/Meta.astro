@@ -41,6 +41,8 @@ const alternates = key ? alternatesFor(key) : [];
 
 <title>{title}</title>
 <meta name="description" content={description} />
+<!-- Preserve the existing Wix property's ownership verification at cutover. -->
+<meta name="google-site-verification" content="OSbPqjHPC8B-5LSnAuVPZw-8I2HVK0zDGEjJE7L0VBk" />
 <link rel="canonical" href={canonical} />
 {alternates.map((a) => <link rel="alternate" hreflang={a.tag} href={`${SITE_URL}${a.path}`} />)}
 {alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={`${SITE_URL}${alternates[0].path}`} />}
