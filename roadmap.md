@@ -7,10 +7,11 @@ animated prices, Google reviews and a native Instagram landing page.
 
 ## Release principles
 
-- Preserve all 25 original German URLs, metadata, H1s and substantive paragraphs.
+- Preserve all 25 original German URLs, metadata and substantive paragraphs.
+  The owner requested the international-awards homepage H1 on 16 September 2026.
 - Never invent reviews, prices, awards or appointment availability.
 - No em dashes in visible or accessible text.
-- Real flags, fine linework achievement seals, locally hosted media and fonts.
+- Real flags, realistic gold, silver and bronze medal artwork, locally hosted media and fonts.
 - Native touch scrolling, keyboard controls and a complete reduced-motion view.
 - Staging remains noindex. Run `npm run verify` before every commit.
 
@@ -32,19 +33,24 @@ animated prices, Google reviews and a native Instagram landing page.
   starts the introduction with sound; No starts muted, except under reduced
   motion. A visible play control handles browsers that decline playback.
 - [x] The supplied introduction at the top of every homepage in a glass frame.
-- [x] A photographic winner hero, oversized editorial type, sculpted navigation,
-  a mobile action bar and a redesigned footer.
-- [x] Refined laurel seals in the rolling awards banner.
+- [x] A floating circular winner portrait, an international-awards headline,
+  oversized editorial type, sculpted navigation and a redesigned footer.
+- [x] A larger forest-green awards ribbon with generated gold, silver and bronze
+  placement medals. The archived award record remains the source of truth.
 
 ## Phase 2: depth throughout the website
 
 - [x] Editorial treatment stories, a dark portrait feature, eight supplied
-  gallery photographs, full-frame viewing and four additional original films, including a featured About film.
+  gallery photographs, full-frame viewing and five additional original films.
+  The supplied 2026 awards film leads the homepage collection and joins the
+  passion film on About. The new Penzberg group photograph illustrates the
+  championship story on all six About pages.
 - [x] Three verified Google Maps review excerpts in horizontal glass cards.
   Author attribution, individual source links, an explicit Maps icon and label,
   and a dated rating snapshot. No invented testimonials or review schema.
 - [x] A gentle, once-only horizontal review nudge previews scrolling on entry.
   Visitor input cancels it immediately; reduced motion leaves the cards still.
+  Horizontal film collections use the same hint.
 - [x] The mobile photo gallery uses the same once-only horizontal hint.
 - [x] Redesigned treatment cards, a signature treatment, a useful index,
   clear prices and accessible full descriptions.
@@ -71,13 +77,18 @@ animated prices, Google reviews and a native Instagram landing page.
   rejected. A previous No is respected. It stays inline in its glass card.
   Reduced motion leaves the film paused. No language or sound gate on this page.
 - [x] Instagram and Facebook destinations match the current public TapLink.
+- [x] A persistent round Instagram, Facebook and WhatsApp dock uses vivid brand
+  colors, frosted surfaces, glints and tap feedback. It clears open menus and
+  dialogs. Native link buttons share those richer colors.
+- [x] A clearer local street map identifies Hauptstraße 19, nearby streets,
+  north and the studio, with explicit Google Maps access and the route chooser.
 
 ## Phase 4: reproducible evidence and release
 
 The release pipeline builds the selected staging or production artifact, runs browser journeys,
 checks accessibility, measures mobile performance and keeps its reports.
 
-- Browser coverage: all 51 canonical URLs; eight representative pages at
+- Browser coverage: all 51 canonical URLs; twelve representative pages at
   360, 390, 768 and 1440 pixels; keyboard, history, reduced motion and no JS.
 - Playback coverage: language then sound, audible Yes, muted No, navigation
   cleanup, and both allowed and blocked autoplay policies on `/linkinbio`.
@@ -87,7 +98,8 @@ checks accessibility, measures mobile performance and keeps its reports.
   retained as a stretch target, not reported as an achieved result.
 - JavaScript: below 100 KiB gzip overall and 60 KiB for the deferred motion layer.
 - Release sequence: verify, commit, push main, require successful CI deployment,
-  then inspect actual staging URLs and media. Do not change DNS.
+  then inspect the production URLs and media. Follow the authorized DNS
+  migration in `docs/cutover.md`.
 
 ## Phase 5: production decisions and later growth
 

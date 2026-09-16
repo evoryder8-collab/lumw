@@ -15,6 +15,8 @@ const normalize = (text) => text.normalize('NFC').replace(/\s+/g, ' ').trim();
 const canonicalHost = 'https://www.luma-wellness.com';
 const indexable = process.env.PUBLIC_INDEXABLE === 'true';
 const baseline = JSON.parse(fs.readFileSync('src/data/migration-content-baseline.json', 'utf8'));
+// Explicit owner request, 16 September 2026. Keep the original crawl intact.
+const approvedHeadings = { '/': 'International ausgezeichnete Massage' };
 
 for (const file of files.filter((file) => file.endsWith('.html'))) {
   const { document } = parseHTML(fs.readFileSync(file, 'utf8'));
@@ -37,7 +39,7 @@ for (const [route, { document }] of documents) {
   check(document.querySelector('meta[name="google-site-verification"]')?.getAttribute('content') === 'OSbPqjHPC8B-5LSnAuVPZw-8I2HVK0zDGEjJE7L0VBk', `${route}: existing Google ownership verification is missing`);
   if (baseline.pages[route]) {
     const original = baseline.pages[route];
-    check(normalize(document.querySelector('h1').textContent) === original.h1, `${route}: German H1 changed`);
+    check(normalize(document.querySelector('h1').textContent) === (approvedHeadings[route] ?? original.h1), `${route}: German H1 changed`);
     const body = normalize(document.querySelector('main').textContent);
     for (const paragraph of original.paragraphs) check(body.includes(paragraph), `${route}: lost migration paragraph: ${paragraph.slice(0, 85)}`);
   }

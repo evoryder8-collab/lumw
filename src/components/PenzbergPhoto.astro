@@ -1,0 +1,28 @@
+---
+import Photo from './Photo.astro';
+import photograph from '../assets/about/june-penzberg-championship.webp';
+import type { Locale } from '../i18n/locales';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const copy = {
+  de: ['Ein Moment, der bleibt.', 'June Saurin feiert mit den Teilnehmerinnen und Teilnehmern der Universal Massage Championship in Penzberg.'],
+  en: ['A moment to remember.', 'June Saurin celebrates with fellow competitors at the Universal Massage Championship in Penzberg.'],
+  es: ['Un momento para recordar.', 'June Saurin celebra con los participantes del Universal Massage Championship en Penzberg.'],
+  pt: ['Um momento para recordar.', 'June Saurin celebra com os participantes do Universal Massage Championship em Penzberg.'],
+  it: ['Un momento da ricordare.', 'June Saurin festeggia con i partecipanti alla Universal Massage Championship di Penzberg.'],
+  th: ['ช่วงเวลาแห่งความทรงจำ', 'จูน เซาริน ร่วมฉลองกับผู้เข้าแข่งขัน Universal Massage Championship ที่เพนซ์แบร์ก'],
+}[locale];
+---
+<figure class="penzberg" data-fade>
+  <Photo src={photograph} alt={copy[1]} widths={[600, 1000, 1400, 1972]}
+    sizes="(max-width: 760px) 92vw, (max-width: 1400px) 88vw, 1240px" dissolve={false} quality={76} />
+  <figcaption><span class="penzberg__edition">PENZBERG · 2023</span><strong>{copy[0]}</strong><span>Universal Massage Championship</span></figcaption>
+</figure>
+<style>
+  .penzberg { margin: 2.75rem auto 0; max-width: 1240px; border-radius: 28px; padding: 8px; background: linear-gradient(140deg, #5c6545, #1a3429 48%, #254937); box-shadow: 0 22px 55px #223a2924, inset 0 1px 0 #f9e7b759; }
+  .penzberg :global(.media) { border-radius: 21px; box-shadow: none; }
+  .penzberg figcaption { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem 2rem; padding: 1.6rem 1.3rem 1.25rem; align-items: end; }
+  .penzberg__edition { grid-column: 1 / -1; font-size: 0.62rem; letter-spacing: 0.2em; color: #e5d4a1; }
+  .penzberg strong { color: #f8f2e3; font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 400; line-height: 1.2; }
+  .penzberg figcaption > :last-child { font-size: 0.72rem; color: #d8dfcf; }
+  @media (max-width: 760px) { .penzberg { padding: 5px; border-radius: 20px; } .penzberg :global(.media) { border-radius: 15px; } .penzberg figcaption { grid-template-columns: 1fr; padding: 1.3rem 0.85rem 1rem; } }
+</style>

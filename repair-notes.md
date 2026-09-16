@@ -374,3 +374,33 @@ position before the motion layer measures the new page. A document-wide smooth
 scroll was still travelling when those measurements ran, leaving Back at the
 top. Document scroll restoration is now immediate; desktop wheel motion remains
 with Lenis. The browser test saves a nonzero position and checks Back returns.
+
+
+## Awards and social polish, 16 September 2026
+
+**The owner explicitly changed the homepage emphasis.** The headline now says
+“International ausgezeichnete Massage”, with equivalent translated headings.
+The archived crawl remains untouched; one documented H1 exception keeps the
+content check meaningful. Existing title, description and substantive German
+paragraphs are preserved.
+
+**Line drawings did not communicate medal metal.** The shared medal component
+now serves small WebP versions of generated transparent gold, silver and bronze
+artwork. The larger ribbon shows the existing event and placement text. Exact
+prompts and original paths are in `docs/medal-artwork.md`.
+
+**The new awards film needed a compatible delivery encode.** Its HEVC original
+is retained outside the repository; the site uses a 720p H.264/AAC fast-start
+version. It is first on Home and present on About. The full Penzberg group
+photograph sits alongside the championship story without cropping people out.
+
+**A hidden parent did not hide the booking button.** The button's explicit
+`visibility: visible` overrode the inherited hidden visibility when the mobile
+menu opened. The social dock now leaves layout with `display: none` while a
+menu or dialog is open. Browser checks exercise it after scrolling.
+
+**Scroll snapping prevented the film hint from moving.** Film tracks now use
+the shared `is-nudging` state to temporarily suspend snapping. The mobile tests
+observe actual horizontal movement and its return to zero for photos and films.
+The film rail also starts flush at zero: a 3px inset had let native snapping
+look like prior visitor input and suppress the hint.

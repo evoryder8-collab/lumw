@@ -5,6 +5,7 @@ import IntroFilm from '../components/IntroFilm.astro';
 import JuneFeature from '../components/JuneFeature.astro';
 import PhotoGallery from '../components/PhotoGallery.astro';
 import FilmSection from '../components/FilmSection.astro';
+import PenzbergPhoto from '../components/PenzbergPhoto.astro';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
 import Photo from '../components/Photo.astro';
@@ -71,7 +72,7 @@ const schema = graph([
     <section class="section--tight"><div class="shell localized-about"><Photo src={portrait} alt="June Saurin" widths={[480,720,1000]} sizes="(max-width:760px) 90vw, 42vw" ratio="4 / 5" dissolve={false} priority /><div class="prose">{t.about.map((p) => <p>{p}</p>)}<p class="eyebrow">{u.awards}</p><ol class="localized-awards">{AWARDS.map((award) => <li><Medal metal={award.metal} size={40} /><span>{award.event}<small>{award.year} · {award.metal === 'gold' ? u.gold : award.metal === 'silver' ? 'II' : 'III'}</small></span></li>)}</ol></div></div></section><PhotoGallery {locale} />
   </>}
 
-  {pageKey === 'about' && <FilmSection {locale} featured />}
+  {pageKey === 'about' && <><section class="section--tight"><div class="shell"><PenzbergPhoto {locale} /></div></section><FilmSection {locale} featured /></>}
 
   {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item) => {
     const text = t.treatments[item.id as keyof typeof t.treatments];

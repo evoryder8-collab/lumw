@@ -12,7 +12,7 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import MotionIsland from '../components/motion/MotionIsland.astro';
-import ThumbBar from '../components/ThumbBar.astro';
+import SocialDock from '../components/SocialDock.astro';
 import LanguagePortal from '../components/LanguagePortal.astro';
 import JuneInvitation from '../components/JuneInvitation.astro';
 import { ClientRouter } from 'astro:transitions';
@@ -132,7 +132,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     {!compact && <SiteFooter {locale} {path} />}
 
-    {!compact && <ThumbBar {locale} />}
+    {!compact && <SocialDock {locale} />}
     {page === 'home' && <JuneInvitation {locale} />}
     {!compact && <MotionIsland />}
     <script>import '../scripts/experience';</script>

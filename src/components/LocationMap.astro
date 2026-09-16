@@ -70,6 +70,15 @@ const roadGroups = (() => {
 const serviceD = joinPaths(byClass(['service']).map((r) => r.p as number[][]));
 const greenD = joinPaths(mapData.green.map((g) => g.p as number[][]), true);
 const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
+const mainStreetD = joinPaths(mapData.roads.filter((road) => road.n === 'Hauptstraße').map((road) => road.p as number[][]));
+// Labels follow the surveyed streets in the committed map geometry.
+const streetLabels = [
+  { text: 'Stader Straße', x: 299, y: 303, angle: -23 },
+  { text: 'Lutherallee', x: 307, y: 552, angle: -69 },
+  { text: 'Martinstraße', x: 713, y: 548, angle: 23 },
+  { text: 'Hauptstraße', x: 515, y: 677, angle: 68 },
+  { text: 'Schulstraße', x: 357, y: 753, angle: -1 },
+];
 ---
 
 <section class="loc" id="standort" aria-labelledby="standort-title" data-reveal2>
@@ -86,13 +95,13 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
       >
         <defs>
           <linearGradient id="loc-ground" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#fffdfb" />
-            <stop offset="0.55" stop-color="#fdf7f2" />
-            <stop offset="1" stop-color="#fbf0ea" />
+            <stop offset="0" stop-color="#e8f0e8" />
+            <stop offset="0.55" stop-color="#eef1e6" />
+            <stop offset="1" stop-color="#e4ebde" />
           </linearGradient>
           <linearGradient id="loc-roof" x1="0" y1="0" x2="0.4" y2="1">
             <stop offset="0" stop-color="#ffffff" />
-            <stop offset="1" stop-color="#f6ece6" />
+            <stop offset="1" stop-color="#e4e5d8" />
           </linearGradient>
           {/* Everything fades out before it reaches the frame edge, so the
               map dissolves into the card instead of ending on a hard line. */}
@@ -108,34 +117,37 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
         <rect width="1000" height="1000" fill="url(#loc-ground)" />
 
         <g mask="url(#loc-mask)">
-          {greenD && <path d={greenD} fill="#3f7652" opacity="0.1" />}
-          {waterD && <path d={waterD} fill="#8fb6c9" opacity="0.28" />}
+          {greenD && <path d={greenD} fill="#85af88" opacity="0.38" />}
+          {waterD && <path d={waterD} fill="#82b9cc" opacity="0.7" />}
 
           {/* Street casings first, then the fill, which is what gives a road
               an edge instead of a flat stroke. */}
           <g class="loc__roads" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <g stroke="#e8d9cd">
-              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w + 2.8} />)}
+            <g stroke="#b4b9a9">
+              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w * 2 + 3} />)}
             </g>
             <g stroke="#ffffff">
-              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w} />)}
+              {roadGroups.map((g) => <path d={g.d} stroke-width={g.w * 2} />)}
             </g>
-            {serviceD && <path d={serviceD} stroke="#f3e3d8" stroke-width="1.6" />}
+            {serviceD && <path d={serviceD} stroke="#c6cbbb" stroke-width="2" />}
           </g>
 
           {/* Extruded footprints: wall band under, roof on top. */}
           <g class="loc__buildings">
-            <path d={buildingWalls} fill="#dcc7b8" fill-rule="evenodd" opacity="0.9" />
-            <path d={buildingRoofs} fill="url(#loc-roof)" stroke="#e0cdbe" stroke-width="0.7" />
+            <path d={buildingWalls} fill="#b2bba9" fill-rule="evenodd" opacity="0.9" />
+            <path d={buildingRoofs} fill="url(#loc-roof)" stroke="#aeb5a5" stroke-width="0.9" />
           </g>
         </g>
 
-        {/* The approach, drawn along Hauptstraße toward the door. */}
+        {/* Highlight the actual Hauptstraße geometry, with the studio pin at its coordinates. */}
         <path
           class="loc__approach"
-          d="M96 706 C 232 668 318 596 402 548 S 470 512 500 500"
+          d={mainStreetD}
           fill="none"
         />
+        <g class="loc__street-labels" aria-hidden="true">
+          {streetLabels.map((label) => <text x={label.x} y={label.y} transform={`rotate(${label.angle} ${label.x} ${label.y})`} text-anchor="middle">{label.text}</text>)}
+        </g>
       </svg>
 
       <span class="loc__tone" aria-hidden="true"></span>
@@ -149,13 +161,15 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
         </svg>
       </span>
 
-      <p class="loc__marker" aria-hidden="true">Hauptstraße 19</p>
+      <p class="loc__marker" aria-hidden="true"><strong>LUMA Wellness</strong><span>Hauptstraße 19 · HAUTNAH</span></p>
+
+      <span class="loc__compass" aria-hidden="true">N<svg viewBox="0 0 20 24"><path d="m10 2 6 17-6-4-6 4Z" /></svg></span>
 
       <p class="loc__coords" aria-hidden="true">
         <span>53.4680° N</span><i></i><span>9.6893° E</span>
       </p>
 
-      <p class="loc__credit">© OpenStreetMap</p>
+      <a class="loc__credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a>
     </div>
 
     <div class="loc__details">
@@ -187,7 +201,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
         <noscript><a href={googleDir} target="_blank" rel="noopener noreferrer">Google Maps</a> · <a href={appleDir} target="_blank" rel="noopener noreferrer">Apple Karten</a></noscript>
 
         <a class="loc__view underline-gold" href={larger} target="_blank" rel="noopener noreferrer">
-          Größere Karte öffnen
+          <img src={url('/brand/google-maps.png')} alt="" width="22" height="22" loading="lazy" /> Auf Google Maps öffnen
         </a>
       </div>
     </div>
@@ -243,6 +257,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
       var(--surface-strong);
     box-shadow: 0 8px 44px rgb(43 38 34 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.8);
   }
+  .loc__frame::after { content: ''; position: absolute; inset: 0; z-index: 7; pointer-events: none; border-radius: inherit; background: linear-gradient(112deg, transparent 25%, #ffffef16 40%, #ffffef60 48%, #ffffef0d 57%, transparent 70%); transform: translateX(-125%); }
 
   /* --- Map plate -------------------------------------------------------- */
 
@@ -265,18 +280,22 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
 
   /* The walk-in route, drawn along the street rather than across the frame. */
   .loc__approach {
-    stroke: var(--leaf-text);
-    stroke-width: 3.2;
+    stroke: #8a7242;
+    stroke-width: 5;
     stroke-linecap: round;
     stroke-dasharray: 9 11;
-    opacity: 0.85;
-    filter: drop-shadow(0 0 5px rgb(63 118 82 / 0.35));
+    opacity: 0.95;
+    filter: drop-shadow(0 0 3px #fff9d5);
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .loc__approach { animation: route-flow 2.4s linear infinite; }
+    .loc__frame::after { animation: map-glint 12s ease-in-out infinite; }
   }
   @keyframes route-flow { to { stroke-dashoffset: -40; } }
+  @keyframes map-glint { 0%, 65% { transform: translateX(-125%); } 87%, 100% { transform: translateX(125%); } }
+  .loc__street-labels { fill: #3b5144; font: 500 24px var(--font-body); paint-order: stroke fill; stroke: #f3f5e9; stroke-width: 6px; stroke-linejoin: round; letter-spacing: 0.6px; }
+  :global(body[data-ambient-sleep]) .loc__frame::after, :global(.is-offscreen) .loc__frame::after { animation-play-state: paused; }
 
   /* Warms the whole plate into the page palette. */
   .loc__tone {
@@ -284,9 +303,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     inset: 0;
     pointer-events: none;
     z-index: 2;
-    background:
-      radial-gradient(circle at 50% 50%, transparent 34%, rgb(255 208 163 / 0.16) 78%, rgb(255 210 224 / 0.26) 100%),
-      linear-gradient(160deg, transparent 40%, rgb(255 199 180 / 0.14));
+    background: radial-gradient(ellipse at 50% 50%, transparent 60%, #e4eddd33);
   }
 
   .loc__marker {
@@ -296,28 +313,31 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     translate: -50% 0;
     z-index: 6;
     margin: 0;
-    padding: 0.3rem 0.7rem;
-    border-radius: 999px;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid #b1b9a3;
+    border-radius: 12px;
     white-space: nowrap;
-    background: rgb(255 255 255 / 0.9);
+    background: #fffef6f5;
     box-shadow: 0 4px 14px rgb(43 38 34 / 0.14), inset 0 0 0 1px rgb(63 118 82 / 0.24);
-    font-size: 0.5625rem;
+    font-size: 0.66rem;
     font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    letter-spacing: 0.025em;
     color: var(--ink);
   }
+  .loc__marker strong { display: block; font-size: 0.8rem; color: #19392f; font-weight: 600; }
+  .loc__marker span { display: block; margin-top: 0.12rem; }
+  .loc__compass { position: absolute; right: 1rem; top: 1rem; display: grid; place-items: center; gap: 3px; padding: 0.5rem 0.7rem; border: 1px solid #b6c3ac; border-radius: 20px; background: #fffff5ba; color: #385442; font-size: 0.6rem; }
+  .loc__compass svg { width: 14px; height: 17px; fill: #385442; }
 
   .loc__credit {
     position: absolute;
-    right: 0.7rem;
-    bottom: 0.55rem;
+    right: 0.6rem;
+    bottom: 0.2rem;
     z-index: 6;
     margin: 0;
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    color: var(--ink-mute);
-    opacity: 0.75;
+    font-size: 0.63rem;
+    padding: 0.5rem;
+    color: #44563f;
   }
 
   /* --- The pin ---------------------------------------------------------- */
@@ -329,8 +349,12 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     z-index: 5;
     display: grid;
     place-items: center;
-    width: 3.4rem;
-    height: 3.4rem;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid #ddcea6;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #46694a, #193d2d);
+    box-shadow: 0 6px 20px #2447354a, inset 0 1px 1px #f2e4bd88;
     translate: -50% -50%;
     pointer-events: none;
   }
@@ -367,13 +391,13 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     width: 1.75rem;
     height: 1.75rem;
     fill: none;
-    stroke: var(--gold-text);
+    stroke: #fff4d7;
     stroke-width: 1.5;
     stroke-linejoin: round;
     filter: drop-shadow(0 3px 8px rgb(43 38 34 / 0.28));
   }
   /* The dot at the address itself. */
-  .loc__pin svg circle { fill: var(--gold-fill); stroke: none; }
+  .loc__pin svg circle { fill: #ebdba7; stroke: none; }
 
   .loc__coords {
     position: absolute;
@@ -384,11 +408,15 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     font-weight: 500;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--gold-text);
+    color: #3e573e;
+    border: 1px solid #c2cbb9;
+    border-radius: 99px;
+    padding: 0.45rem 0.7rem;
+    background: #fffff1cc;
   }
   .loc__coords i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 
@@ -463,7 +491,8 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     .loc__drive:hover svg { transform: translateX(4px); }
   }
 
-  .loc__view { font-size: var(--step-small); color: var(--ink-soft); }
+  .loc__view { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; font-size: var(--step-small); color: var(--ink-soft); }
+  .loc__view img { object-fit: contain; }
 
   /* --- Chooser ---------------------------------------------------------- */
 

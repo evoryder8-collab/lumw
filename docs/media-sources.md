@@ -16,6 +16,7 @@ for delivery. No generated portraits or invented awards are used.
 | `IMG_0602.JPG` | `june-athens-2023.webp`, gallery |
 | `baeeb3de-b0a5-4c5f-9c9f-459eb3171b42.JPG` | `june-massage-in-practice.webp`, gallery |
 | `IMG_1109.jpg` | `june-swiss-championship.webp`, gallery |
+| `caa97595-1fc7-4e33-85e7-87101c66e8e8 2.JPG` | `about/june-penzberg-championship.webp`, full group photograph alongside the Penzberg story on About pages |
 | `3C35946F-8F87-47C1-BA03-AD1A1E635A74.JPG` | `june-welcome-portrait.webp`, circular portrait in the delayed homepage invitation |
 
 These assets are under `src/assets`. Astro creates responsive AVIF and WebP
@@ -28,6 +29,7 @@ to that original file.
 
 | Original | Public derivative | Encoding |
 |---|---|---|
+| `June Awarded rev2 2026.mp4` | `public/media/june-awarded-2026.mp4` | 33.15 seconds, 720×1280 H.264, AAC, fast start; first film on Home and featured on About |
 | `VIDEO 4 WEB & YOUT.MOV` | `public/media/june-intro.mp4` | 34.5 seconds, 1920×1080 H.264, AAC, fast start |
 | `6b17a993-3d4d-4b7a-b4a9-d43e309d5a7b.mov` | `public/media/june-in-motion.mp4` | 13.9 seconds, original 480×848 H.264 remux, fast start |
 | `IMG_4046.mp4` | `public/media/june-passion.mp4` | 33.2 seconds, 720×1280 H.264, AAC, fast start |
@@ -104,3 +106,10 @@ The supplied Swiss certificate photograph reads “Free Style Massage (Eastern
 Inspired)”. The archived German About copy and historical award data instead
 say Wellness for that event. The migration copy is preserved in this redesign;
 June should confirm the category before an editorial correction and cutover.
+
+## Medal artwork
+
+The gold, silver and bronze placement illustrations are generated metal assets,
+not championship logos. The award text and event names continue to use the
+existing award record. Original PNGs, exact prompts and delivery details are
+documented in [medal-artwork.md](medal-artwork.md).

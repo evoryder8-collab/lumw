@@ -19,8 +19,8 @@ const u = labels(locale);
   <div class="hero-orbit" aria-hidden="true"></div>
   <div class="hero-editorial">
     <div class="hero-edition"><span class="edition-rule"></span><span>LUMA WELLNESS</span><span>BUXTEHUDE</span></div>
-    <p class="hero-kicker">{locale === 'de' ? 'Weltweit ausgezeichnete Massage' : u.awards}</p>
-    <h1 class="hero-headline">{locale === 'de' ? <><span>Beste</span>{' '}<span class="hero-headline__accent">Massage</span>{' '}<span class="hero-headline__place">in Buxtehude</span></> : heading}</h1>
+    <p class="hero-kicker">{locale === 'de' ? 'Von June Saurin. Für Ihr Wohlbefinden.' : u.awards}</p>
+    <h1 class:list={['hero-headline', locale === 'de' && 'hero-headline--awarded']}>{locale === 'de' ? <><span class="hero-headline__international">International</span>{' '}<span class="hero-headline__accent">ausgezeichnete</span>{' '}<span>Massage</span></> : heading}</h1>
     <p class="hero-description">{lead}</p>
     <div class="hero-links">
       <a href={url(routePath('contact', locale))} class="pill pill--light sheen" data-magnetic><span data-magnetic-label>{u.book}</span><Icon size={20} /></a>

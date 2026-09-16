@@ -11,6 +11,7 @@ import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import Medal from '../components/Medal.astro';
 import FilmSection from '../components/FilmSection.astro';
+import PenzbergPhoto from '../components/PenzbergPhoto.astro';
 import { heroPreload } from '../lib/heroPreload';
 import { AWARDS, url } from '../lib/site';
 import {
@@ -146,6 +147,12 @@ const schema = graph([
           als einer Medaille und bewies erneut ihr Elite-Niveau.
         </p>
       </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="shell">
+      <PenzbergPhoto />
     </div>
   </section>
 

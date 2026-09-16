@@ -19,7 +19,7 @@ function bootExperience() {
   const disposeWelcome = mountWelcome(signal);
   const disposePrices = mountPrices();
   mountReviews(signal);
-  document.querySelectorAll<HTMLElement>('[data-gallery-track]').forEach((track) => mountScrollHint(track, signal));
+  document.querySelectorAll<HTMLElement>('[data-gallery-track], [data-film-track]').forEach((track) => mountScrollHint(track, signal));
   mountBio(signal);
   mountLocation(signal);
   mountInvitation(signal);
@@ -128,10 +128,14 @@ function bootExperience() {
       }, { signal, passive: true });
       card.addEventListener('pointerleave', () => { card.style.setProperty('--image-x', '0px'); card.style.setProperty('--image-y', '0px'); }, { signal });
     });
-    const ambient = document.querySelectorAll<HTMLElement>('.hero-winner, .winner-caption, .way, .strip');
-    const observer = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => target.classList.toggle('is-offscreen', !isIntersecting)));
-    ambient.forEach((el) => observer.observe(el)); observers.push(observer);
   }
+  // Ambient movement pauses on phones too, and while the tab is in the background.
+  const ambient = document.querySelectorAll<HTMLElement>('.hero-winner, .winner-caption, .way, .strip, .loc');
+  const ambientObserver = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => target.classList.toggle('is-offscreen', !isIntersecting)));
+  ambient.forEach((el) => ambientObserver.observe(el)); observers.push(ambientObserver);
+  const syncAmbient = () => document.body.toggleAttribute('data-ambient-sleep', document.hidden);
+  document.addEventListener('visibilitychange', syncAmbient, { signal });
+  syncAmbient();
   cleanup = () => {
     disposeWelcome();
     disposePrices();

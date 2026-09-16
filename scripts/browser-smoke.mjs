@@ -115,19 +115,26 @@ try {
   assert.equal(await page.locator('[data-gallery-dialog]').evaluate((d) => d.open), false);
   assert.equal(await cup.evaluate((el) => document.activeElement === el), true);
   const films = page.locator('.film-section video');
-  assert.equal(await films.count(), 4);
-  for (let index = 0; index < 4; index++) {
+  assert.equal(await films.count(), 5);
+  assert.match(await films.first().locator('source').getAttribute('src'), /june-awarded-2026\.mp4$/);
+  for (let index = 0; index < 5; index++) {
     await films.nth(index).evaluate(async (v) => { v.muted = true; await v.play(); });
     assert.equal(await films.nth(index).evaluate((v) => v.paused), false);
   }
   assert.equal(await films.first().evaluate((v) => v.paused), true);
   assert.equal(await films.nth(1).evaluate((v) => v.paused), true);
   assert.equal(await films.nth(2).evaluate((v) => v.paused), true);
-  await films.nth(3).evaluate((v) => v.pause());
-  report.push('Reviews nudge horizontally once and return; eight gallery photos with keyboard navigation; all four lower films play independently');
+  assert.equal(await films.nth(3).evaluate((v) => v.paused), true);
+  await films.nth(4).evaluate((v) => v.pause());
+  report.push('Reviews nudge horizontally once and return; eight gallery photos with keyboard navigation; all five lower films play independently');
 
   await page.goto(preview.url('/about'));
-  assert.match(await page.locator('.film-section--featured source').getAttribute('src'), /june-passion\.mp4$/);
+  await page.locator('.penzberg').scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => { const photo = document.querySelector('.penzberg img'); return photo.complete && photo.naturalWidth > 0; });
+  assert.match(await page.locator('.penzberg figcaption').innerText(), /PENZBERG · 2023/);
+  const aboutFilms = await page.locator('.film-section--featured source').evaluateAll((sources) => sources.map((source) => source.getAttribute('src')));
+  assert.ok(aboutFilms.some((source) => source.endsWith('/june-passion.mp4')));
+  assert.ok(aboutFilms.some((source) => source.endsWith('/june-awarded-2026.mp4')));
   await page.evaluate(() => window.scrollTo({ top: 1100, behavior: 'instant' }));
   await page.waitForFunction(() => Math.abs(window.scrollY - 1100) < 5);
   await page.waitForFunction(() => Math.abs((history.state?.scrollY ?? 0) - window.scrollY) < 5);
@@ -159,27 +166,39 @@ try {
     const responsive = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
     await responsive.addInitScript(savedWelcome);
     const view = await responsive.newPage(); track(view);
-    for (const route of ['/', '/meineangebote-preise', '/about', '/contact', '/massage-buxtehude-faq', '/th', '/en/treatments-prices', '/linkinbio']) {
+    for (const route of ['/', '/meineangebote-preise', '/about', '/contact', '/massage-buxtehude-faq', '/th', '/en/treatments-prices', '/linkinbio', '/en', '/es', '/pt', '/it']) {
       await view.goto(preview.url(encodeURI(route))); await settled(view);
       await noOverflow(view, `${width}px ${route}`);
       if (width === 390 || width === 1440) await view.screenshot({ path: path.join(artifacts, `${width}-${route.replaceAll('/', '_') || 'home'}.png`) });
-      if (width === 390) {
+      if (width === 390 && !['/en', '/es', '/pt', '/it'].includes(route)) {
         const audit = await new AxeBuilder({ page: view }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
         axeResults.push({ route, violations: audit.violations });
       }
     }
     if (width === 390) {
       await view.goto(preview.url('/en/treatments-prices'));
+      const socialLinks = view.locator('.social-dock__link');
+      assert.equal(await socialLinks.count(), 3);
+      const dockBefore = await view.locator('.social-dock__channels').boundingBox();
+      await view.evaluate(() => window.scrollTo({ top: 1800, behavior: 'instant' }));
+      const dockAfter = await view.locator('.social-dock__channels').boundingBox();
+      assert.ok(dockBefore && dockAfter && Math.abs(dockBefore.y - dockAfter.y) < 1, 'Social buttons moved with the page');
+      for (const link of await socialLinks.all()) {
+        const bounds = await link.boundingBox();
+        assert.ok(bounds && bounds.width >= 44 && bounds.height >= 44 && bounds.x >= 0 && bounds.x + bounds.width <= width, 'Social button is outside the usable mobile viewport');
+      }
       await view.locator('.nav-burger').click();
       assert.equal(await view.locator('.nav').evaluate((el) => el.inert), false);
+      assert.equal(await view.locator('.social-dock').isVisible(), false);
       await view.keyboard.press('Escape');
       assert.equal(await view.locator('.nav').evaluate((el) => el.inert), true);
+      assert.equal(await view.locator('.social-dock').isVisible(), true);
     }
     await responsive.close();
   }
   fs.writeFileSync(path.join(artifacts, 'accessibility.json'), JSON.stringify(axeResults, null, 2));
   assert.deepEqual(axeResults.filter((r) => r.violations.length).map((r) => ({ route: r.route, violations: r.violations.map((v) => v.id) })), []);
-  report.push('32 responsive page checks at 360, 390, 768 and 1440 pixels; eight axe WCAG audits');
+  report.push('48 responsive page checks at 360, 390, 768 and 1440 pixels; eight axe WCAG audits; fixed social links stay reachable and clear the menu');
 
   const galleryContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   await galleryContext.addInitScript(savedWelcome);
@@ -198,9 +217,18 @@ try {
     await galleryPage.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     await galleryTrack.scrollIntoViewIfNeeded();
     assert.equal(await galleryTrack.getAttribute('data-nudge'), 'done', 'Gallery hint repeated');
+    const filmTrack = galleryPage.locator('[data-film-track]');
+    await filmTrack.evaluate((track) => {
+      window.filmScrollSamples = [];
+      track.addEventListener('scroll', () => window.filmScrollSamples.push(track.scrollLeft));
+    });
+    await filmTrack.scrollIntoViewIfNeeded();
+    await galleryPage.waitForFunction(() => document.querySelector('[data-film-track]').dataset.nudge === 'done');
+    assert.ok((await galleryPage.evaluate(() => window.filmScrollSamples)).some((x) => x > 20 && x <= 49));
+    assert.ok(await filmTrack.evaluate((track) => track.scrollLeft < 2));
   }
   await galleryContext.close();
-  report.push('German and English homepage galleries hint sideways once on mobile, then return to the first photograph');
+  report.push('German and English photo and film galleries hint sideways once on mobile, then return to the first item');
 
   const reduced = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const reducedPage = await reduced.newPage(); track(reducedPage);
@@ -226,7 +254,7 @@ try {
   const staticPage = await noJS.newPage(); track(staticPage);
   await staticPage.goto(preview.url());
   assert.equal(await staticPage.locator('[data-language-dialog]').isVisible(), false);
-  assert.equal((await staticPage.locator('h1').innerText()).replace(/\s+/g, ' '), 'Beste Massage in Buxtehude');
+  assert.equal((await staticPage.locator('h1').innerText()).replace(/\s+/g, ' '), 'International ausgezeichnete Massage');
   await staticPage.locator('.nav-burger').click();
   await staticPage.locator('.nav').waitFor({ state: 'visible' });
   assert.equal(await staticPage.locator('.nav').isVisible(), true);
