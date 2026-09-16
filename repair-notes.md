@@ -9,6 +9,18 @@ Format: **what** · *how it was found* · why · guard.
 
 ## September interaction refinements
 
+**A skipped page animation raised an unhandled AbortError in Chromium 153.**
+The CI journeys finished but correctly failed their browser-error gate. A
+focused reproduction cancelled the native transition during `astro:before-swap`
+and confirmed that the DOM still reached Contact. Astro 5 observes the update
+and completion promises, but not the animation's `ready` promise. The shared
+lifecycle now observes that promise and acknowledges only native AbortError
+cancellation. Other errors remain visible. The browser suite explicitly
+cancels a transition and can use the CI browser locally with
+`LUMA_BROWSER_CHANNEL=bundled npm run check:browser`.
+References: [native transition readiness](https://developer.mozilla.org/en-US/docs/Web/API/ViewTransition/ready)
+and [Astro lifecycle events](https://docs.astro.build/en/guides/view-transitions/#astrobefore-swap).
+
 **The LUMA symbol was much smaller than its image element.** The source has
 large transparent margins. A shared `BrandMark` frames the actual painted
 area on an opaque light badge without changing the original shape. Headers,

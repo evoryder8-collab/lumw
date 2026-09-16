@@ -9,8 +9,10 @@ Local release checks, 16 September 2026, using the production build with
   H1s and substantive paragraphs retained; JSON-LD, contrast, reciprocal
   hreflang, six sitemaps, internal links and local assets checked.
 - No em dashes in rendered visible text, metadata or accessible labels.
-- JavaScript: 66.8 KiB gzip against a 100 KiB budget.
-- `npm run check:browser`: passed with local Chrome.
+- JavaScript: 66.9 KiB gzip against a 100 KiB budget.
+- `npm run check:browser`: passed with local Chrome. The final regression run
+  also passed with the CI browser, Chromium 153, using
+  `LUMA_BROWSER_CHANNEL=bundled npm run check:browser`.
 - 51 canonical URLs returned 200 beneath `/lumw`.
 - 32 responsive checks: eight representative pages at 360, 390, 768 and 1440px.
 - Eight axe WCAG A/AA audits: no detected violations. This is automated coverage,
@@ -36,12 +38,16 @@ Local release checks, 16 September 2026, using the production build with
   both pass. Mobile inspection caught and fixed an animated text layer that
   initially intercepted the close button.
 - No messages were sent. No Instagram profile or production DNS was changed.
+- The first CI run caught an unhandled native animation cancellation in
+  Chromium 153. A focused reproduction confirmed it, and the lifecycle now
+  acknowledges only AbortError cancellation. A regression journey skips the
+  animation and verifies that Contact still becomes interactive.
 
 ## Mobile performance
 
 `npm run check:performance`: passed. Lighthouse uses cold browser contexts and
-its mobile simulation. Each row below is one local run. The CI job uses three
-runs per scenario and enforces the median.
+its mobile simulation. Each row below is one local Chrome 151 run. The CI job
+uses three runs per scenario and enforces the median.
 
 Host: macOS, 12 CPU cores, load averages 5.93 / 5.04 / 3.89.
 
@@ -51,6 +57,13 @@ Host: macOS, 12 CPU cores, load averages 5.93 / 5.04 / 3.89.
 | Homepage after welcome | 97 | 2.405 s | 0.0001 | 0 ms |
 | Treatments | 97 | 2.423 s | 0.0003 | 0 ms |
 | Contact | 98 | 2.179 s | 0.0001 | 0 ms |
+
+Chromium 153 also passed the full browser journeys after the cancellation fix.
+Its first Lighthouse welcome measurement failed blocking time: the trace
+contained a 3.19-second wall-time task with only 0.34 ms of thread CPU. The
+prescribed three-run cold-context repeat passed: median score 97, LCP 2.407 s,
+CLS 0.0001 and blocking time 0 ms. Its other three scenarios passed on their
+first measurement. No budget or error filter was relaxed.
 
 Budgets: performance 95, LCP 2.5 s, CLS 0.02, blocking time 200 ms. Reports and
 screenshots are generated under ignored `artifacts/` and retained by CI for

@@ -139,5 +139,22 @@ function bootExperience() {
   };
 }
 bootExperience();
-document.addEventListener('astro:before-swap', () => cleanup?.());
+// Astro 5 owns DOM-update completion but leaves the native animation's `ready`
+// rejection unobserved. Cancelling an animation is valid during navigation.
+// Acknowledge that AbortError without concealing any other transition failure.
+const observedTransitions = new WeakSet<ViewTransition>();
+function observeTransition(transition?: ViewTransition | null) {
+  if (!transition || observedTransitions.has(transition)) return;
+  observedTransitions.add(transition);
+  void transition.ready.catch((error) => {
+    if (!(error instanceof DOMException && error.name === 'AbortError')) throw error;
+  });
+}
+document.addEventListener('astro:before-preparation', () => {
+  observeTransition((document as Document & { activeViewTransition?: ViewTransition | null }).activeViewTransition);
+});
+document.addEventListener('astro:before-swap', (event) => {
+  observeTransition((event as Event & { viewTransition?: ViewTransition }).viewTransition);
+  cleanup?.();
+});
 document.addEventListener('astro:page-load', bootExperience);

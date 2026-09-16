@@ -8,12 +8,12 @@ import { startPreview } from './preview-server.mjs';
 const preview = await startPreview();
 const artifacts = path.resolve('artifacts/browser');
 fs.mkdirSync(artifacts, { recursive: true });
-const channel = process.env.LUMA_BROWSER_CHANNEL || (process.platform === 'darwin' ? 'chrome' : undefined);
+const channel = process.env.LUMA_BROWSER_CHANNEL === 'bundled' ? undefined : process.env.LUMA_BROWSER_CHANNEL || (process.platform === 'darwin' ? 'chrome' : undefined);
 const browser = await chromium.launch({ headless: true, ...(channel ? { channel } : {}) });
 const failures = [];
 const report = [];
 const track = (page) => {
-  page.on('pageerror', (error) => failures.push(error.message));
+  page.on('pageerror', (error) => failures.push(`${page.url()}: ${error.name}: ${error.message}`));
   page.on('response', (response) => { if (response.url().startsWith(preview.origin) && response.status() >= 400) failures.push(`${response.status()}: ${response.url()}`); });
 };
 const savedWelcome = () => { sessionStorage.setItem('luma-welcome-done', 'yes'); sessionStorage.setItem('luma-sound', 'no'); };
@@ -146,6 +146,12 @@ try {
   await page.locator('[data-language-pick][lang="it"]').click();
   await page.waitForURL(preview.url('/it/chi-sono'));
   assert.equal(await page.locator('html').getAttribute('lang'), 'it');
+  await page.goto(preview.url('/about'));
+  await page.evaluate(() => document.addEventListener('astro:before-swap', (event) => event.viewTransition.skipTransition(), { once: true }));
+  await page.locator('.nav__link').last().click();
+  await page.waitForURL(preview.url('/contact'));
+  await page.locator('[data-enquiry]').waitFor({ state: 'visible' });
+  report.push('Cancelled native page animation still completes navigation without an unhandled rejection');
   await context.close();
 
   const axeResults = [];
