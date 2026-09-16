@@ -14,21 +14,34 @@ will hold the domain registration. Google Workspace mail stays in place.
   ignored `artifacts/cutover-2026-09-16/` for comparison and rollback.
 - Configured GitHub Pages for `www.luma-wellness.com` and set repository variable
   `LUMA_DEPLOYMENT=production`. The production build uses `/` and indexable
-  robots. The earlier verified deployment completed successfully in run
-  `35043904379`; subsequent design releases use the same pipeline.
+  robots. The international-awards and media release completed successfully
+  in run `35049072004`, deploying commit `4f5d179`. The build, browser journeys,
+  accessibility checks and median-of-three mobile performance budgets passed.
 - Changed the four apex A records at Wix to `185.199.108.153`,
   `185.199.109.153`, `185.199.110.153`, `185.199.111.153`, and the `www` CNAME
   to `evoryder8-collab.github.io`. Authoritative DNS and two public resolvers
   agree. Google Workspace and other non-web records were preserved.
-- GitHub's DNS health check now reports both www and apex valid, served by
-  Pages and HTTPS eligible. The HTTP origin serves the correct production
-  build. Certificate issuance and HTTPS enforcement are still pending at
-  this checkpoint. One remove/re-add of the custom domain, following GitHub's
-  documented recovery procedure, restarted issuance after DNS had propagated.
+- GitHub's DNS health check reports both www and apex valid and served by
+  Pages. The certificate became available at 04:44 Zurich time, and HTTPS
+  enforcement is enabled. Normal certificate-verified requests succeed.
+  Two remove/re-add attempts following GitHub's recovery procedure were needed;
+  the second followed consistently valid DNS results and completed issuance.
+- Audited all 51 canonical production URLs, 66 linked assets, robots and six
+  locale sitemaps over HTTPS. The apex, HTTP www and old GitHub Pages links
+  return permanent redirects to the correct HTTPS www destinations.
+- Checked the live German language and sound flow at a 390px viewport. Yes
+  starts the intro playing unmuted at full volume, and playback advances without
+  a media error. The new 2026 awards video also plays on the live domain.
 - Verified the Search Console domain property `sc-domain:luma-wellness.com`
   in June's signed-in Google account. Its new verification TXT record is in
   both the current Wix zone and the future Infomaniak zone. The previous DNS
   verification record and existing HTML verification meta tag remain intact.
+- Resubmitted `https://www.luma-wellness.com/sitemap.xml`. Search Console shows
+  Success and a 16 September read date. Requested indexing for the treatments
+  and prices page; Google confirmed its addition to the priority crawl queue.
+  The homepage already appears in Google's index. Its manual recrawl request
+  and live inspection returned temporary Google errors asking for a later retry.
+  These were not crawl-rejection reports. The submitted sitemap remains active.
 - The owner entered the transfer code and personally completed the CHF 14.70
   Infomaniak checkout. Registrar transfer is in progress, with registry status
   `pending transfer`. Infomaniak estimates 22 September 2026 at 03:21 Zurich time.
@@ -37,17 +50,15 @@ will hold the domain registration. Google Workspace mail stays in place.
   MX records, the existing SPF and mail CNAMEs, both Google verification TXT
   records, and legacy `de` and `en` CNAMEs. The unsuitable default SPF and DMARC
   entries were replaced with the preserved existing records.
+  Direct queries to the future nameserver also return the four GitHub A records,
+  www CNAME, Google MX records, SPF and both Google verification records.
 
 ## Outstanding checks
 
-1. Wait for GitHub's certificate, verify normal HTTPS on www and apex, then
-   enable HTTPS enforcement. Check apex-to-www and old GitHub Pages redirects.
-2. Run the saved production audit across all 51 canonical pages, media assets,
-   robots and all six locale sitemaps. Recheck live sound onboarding and media.
-3. Submit `https://www.luma-wellness.com/sitemap.xml` in the verified Search
-   Console property. Inspect the homepage and important services and request
-   indexing. The domain and paths are unchanged, so no Change of Address applies.
-4. Verify registrar completion and the nameserver switch to Infomaniak. Then
+1. Retry the optional homepage live inspection and indexing request after
+   Google's temporary service error clears. The domain and paths are unchanged,
+   so no Change of Address applies. Sitemap discovery is already enabled.
+2. Verify registrar completion and the nameserver switch to Infomaniak. Then
    verify mail DNS and configure Infomaniak DNSSEC with its own signing key.
 
 At this checkpoint authoritative nameservers remain `ns14.wixdns.net` and

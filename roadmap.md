@@ -108,7 +108,7 @@ checks accessibility, measures mobile performance and keeps its reports.
    database, RLS, rate limiting, confirmation email, DST and concurrent booking
    tests. The enquiry composer is the usable contact path in this release.
 2. Native review of translations and owner review of legal identity, Impressum,
-   privacy processors and archived medical claims before domain cutover.
+   privacy processors and archived medical claims remain ongoing editorial work.
 3. The owner authorized domain cutover and the Wix to Infomaniak transfer on
    16 September 2026. The fresh 25-page metadata archive is checked in. Follow
    `docs/cutover.md` for DNS, HTTPS, Search Console and rollback status.
