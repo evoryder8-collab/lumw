@@ -43,11 +43,11 @@ export interface LocaleMeta {
 
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
   de: { code: 'de', tag: 'de-DE', name: 'Deutsch',   flag: '🇩🇪', prefix: '',    greeting: 'Herzlich willkommen',  available: true },
-  en: { code: 'en', tag: 'en',    name: 'English',   flag: '🇬🇧', prefix: '/en', greeting: 'A very warm welcome',  available: false },
-  th: { code: 'th', tag: 'th',    name: 'ไทย',       flag: '🇹🇭', prefix: '/th', greeting: 'ยินดีต้อนรับ',          available: false },
-  es: { code: 'es', tag: 'es',    name: 'Español',   flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido de corazón', available: false },
-  pt: { code: 'pt', tag: 'pt',    name: 'Português', flag: '🇵🇹', prefix: '/pt', greeting: 'Seja muito bem-vindo',  available: false },
-  it: { code: 'it', tag: 'it',    name: 'Italiano',  flag: '🇮🇹', prefix: '/it', greeting: 'Un caloroso benvenuto', available: false },
+  en: { code: 'en', tag: 'en',    name: 'English',   flag: '🇬🇧', prefix: '/en', greeting: 'A very warm welcome',  available: true },
+  th: { code: 'th', tag: 'th',    name: 'ไทย',       flag: '🇹🇭', prefix: '/th', greeting: 'ยินดีต้อนรับ',          available: true },
+  es: { code: 'es', tag: 'es',    name: 'Español',   flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido de corazón', available: true },
+  pt: { code: 'pt', tag: 'pt',    name: 'Português', flag: '🇵🇹', prefix: '/pt', greeting: 'Seja muito bem-vindo',  available: true },
+  it: { code: 'it', tag: 'it',    name: 'Italiano',  flag: '🇮🇹', prefix: '/it', greeting: 'Un caloroso benvenuto', available: true },
 };
 
 /** Locales whose pages exist. The only ones anything may link to. */
@@ -65,10 +65,10 @@ export const ALTERNATES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
  */
 export const ROUTES = {
   home:     { de: '/',                       en: '/en',                          th: '/th',                          es: '/es',                             pt: '/pt',                             it: '/it' },
-  about:    { de: '/about',                  en: '/en/about',                    th: '/th/about',                    es: '/es/sobre-mi',                    pt: '/pt/sobre-mim',                   it: '/it/chi-sono' },
-  services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',        th: '/th/treatments-prices',        es: '/es/tratamientos-precios',        pt: '/pt/tratamentos-precos',          it: '/it/trattamenti-prezzi' },
-  faq:      { de: '/massage-buxtehude-faq',  en: '/en/massage-buxtehude-faq',    th: '/th/massage-buxtehude-faq',    es: '/es/masaje-buxtehude-faq',        pt: '/pt/massagem-buxtehude-faq',      it: '/it/massaggio-buxtehude-faq' },
-  contact:  { de: '/contact',                en: '/en/contact',                  th: '/th/contact',                  es: '/es/contacto',                    pt: '/pt/contacto',                    it: '/it/contatti' },
+  about:    { de: '/about',                  en: '/en/about',                    th: '/th/เกี่ยวกับจูน',                    es: '/es/sobre-mi',                    pt: '/pt/sobre-mim',                   it: '/it/chi-sono' },
+  services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',        th: '/th/บริการและราคา',        es: '/es/tratamientos-precios',        pt: '/pt/tratamentos-precos',          it: '/it/trattamenti-prezzi' },
+  faq:      { de: '/massage-buxtehude-faq',  en: '/en/massage-buxtehude-faq',    th: '/th/คำถามที่พบบ่อย',    es: '/es/masaje-buxtehude-faq',        pt: '/pt/massagem-buxtehude-faq',      it: '/it/massaggio-buxtehude-faq' },
+  contact:  { de: '/contact',                en: '/en/contact',                  th: '/th/ติดต่อ',                  es: '/es/contacto',                    pt: '/pt/contacto',                    it: '/it/contatti' },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -77,4 +77,12 @@ export const routePath = (key: RouteKey, locale: Locale): string => ROUTES[key][
 
 /** Every locale's version of one page, for reciprocal hreflang. */
 export const alternatesFor = (key: RouteKey) =>
-  LOCALES.map((l) => ({ locale: l, tag: LOCALE_META[l].tag, path: ROUTES[key][l] }));
+  AVAILABLE.map((l) => ({ locale: l, tag: LOCALE_META[l].tag, path: ROUTES[key][l] }));
+
+export function localeForPath(path: string): Locale {
+  return AVAILABLE.find((l) => l !== 'de' && (path === `/${l}` || path.startsWith(`/${l}/`))) ?? 'de';
+}
+
+export function routeKeyForPath(path: string): RouteKey | undefined {
+  return (Object.keys(ROUTES) as RouteKey[]).find((key) => Object.values(ROUTES[key]).includes(path as never));
+}

@@ -12,6 +12,7 @@
  * would risk indexing the staging build. Flip with PUBLIC_INDEXABLE=true.
  */
 import { SITE_URL } from '../../lib/site';
+import { localeForPath, routeKeyForPath, alternatesFor } from '../../i18n/locales';
 
 interface Props {
   title: string;
@@ -32,11 +33,17 @@ const { title, description, path, ogImage, ogType = 'website', noindex = false }
 const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
 const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true' && !noindex;
 const image = ogImage ? new URL(ogImage, SITE_URL).href : undefined;
+const locale = localeForPath(path);
+const ogLocale = { de: 'de_DE', en: 'en_GB', th: 'th_TH', es: 'es_ES', pt: 'pt_PT', it: 'it_IT' }[locale];
+const key = routeKeyForPath(path);
+const alternates = key ? alternatesFor(key) : [];
 ---
 
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+{alternates.map((a) => <link rel="alternate" hreflang={a.tag} href={`${SITE_URL}${a.path}`} />)}
+{alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={`${SITE_URL}${alternates[0].path}`} />}
 
 {
   indexable ? (
@@ -48,7 +55,7 @@ const image = ogImage ? new URL(ogImage, SITE_URL).href : undefined;
 
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="LUMA WELLNESS by June Saurin" />
-<meta property="og:locale" content="de_DE" />
+<meta property="og:locale" content={ogLocale} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />

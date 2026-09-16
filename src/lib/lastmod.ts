@@ -16,9 +16,10 @@ import { execFileSync } from 'node:child_process';
 
 /** The sources whose content actually decides what a page renders. */
 const SOURCES: Record<string, string[]> = {
-  '/': ['src/pages/index.astro', 'src/content/treatments.json'],
-  '/about': ['src/pages/about.astro'],
-  '/contact': ['src/pages/contact.astro'],
+  '/': ['src/pages/index.astro', 'src/content/treatments.json', 'src/components/HomeHero.astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'],
+  '/linkinbio': ['src/pages/linkinbio.astro', 'src/styles/linkinbio.css', 'src/lib/site.ts', 'src/components/IntroFilm.astro', 'src/components/LocationMap.astro'],
+  '/about': ['src/pages/about.astro', 'src/components/FilmSection.astro'],
+  '/contact': ['src/pages/contact.astro', 'src/components/LocationMap.astro'],
   '/meineangebote-preise': ['src/pages/meineangebote-preise.astro', 'src/content/treatments.json'],
   '/massage-buxtehude-faq': ['src/pages/massage-buxtehude-faq.astro', 'src/content/faq.json'],
   '/nutzungsbedingungen': ['src/pages/[legal].astro', 'src/content/legal'],
@@ -50,7 +51,8 @@ export function lastmodFor(path: string): string {
   const cached = cache.get(path);
   if (cached) return cached;
 
-  const sources = path.startsWith('/service-page/') ? SERVICE_SOURCES : SOURCES[path];
+  const locale = path.match(/^\/(en|th|es|pt|it)(?:\/|$)/)?.[1];
+  const sources = locale ? [`src/i18n/${locale}.json`, 'src/pages/[...localized].astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'] : path.startsWith('/service-page/') ? SERVICE_SOURCES : SOURCES[path];
   const date = (sources && lastCommit(sources)) || BUILD_DATE;
 
   cache.set(path, date);

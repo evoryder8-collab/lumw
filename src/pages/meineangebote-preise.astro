@@ -13,6 +13,8 @@ import { getCollection } from 'astro:content';
 import { url, treatmentName } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
+import Medal from '../components/Medal.astro';
+import Price from '../components/Price.astro';
 import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
@@ -122,6 +124,7 @@ const money = (n: number) => `${n}€`;
        page, and gives the section anchors somewhere to be linked from. -->
   <section class="section--tight">
     <div class="shell">
+      <nav class="treatment-index" aria-label="Massage auswählen">{treatments.map((t) => <a href={`#${t.data.id}`}>{treatmentName(t.data.name)}</a>)}</nav>
       <ul class="cards">
         {
           treatments.map((t, i) => {
@@ -132,6 +135,7 @@ const money = (n: number) => `${n}€`;
             return (
               <li
                 class:list={['card', 'spot', 'rim', isSignature && 'card--signature']}
+                id={t.data.id}
                 data-card
                 data-tier={isSignature ? 'signature' : 'standard'}
                 data-reveal2
@@ -164,7 +168,7 @@ const money = (n: number) => `${n}€`;
                 <span class="spot__light" aria-hidden="true"></span>
                 <span class="brackets" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
 
-                {isSignature && <span class="card__ribbon" aria-hidden="true">Signature</span>}
+                {isSignature && <span class="signature-seal" aria-hidden="true"><Medal metal="gold" size={48} /></span>}
 
                 <div class="card__content">
                   <header class="card__head">
@@ -174,7 +178,7 @@ const money = (n: number) => `${n}€`;
                     <p class="card__eyebrow">{isSignature ? 'Signature' : 'Massage'}</p>
                   </header>
 
-                  <h2 class:list={['card__name', isSignature && 'gilt gilt-live']}>
+                  <h2 class:list={['card__name', isSignature && 'gilt gilt-live']} transition:name={target ? `title-${target.family}` : undefined}>
                     {treatmentName(t.data.name)}
                   </h2>
 
@@ -189,9 +193,7 @@ const money = (n: number) => `${n}€`;
                         <span class="rate__leader" aria-hidden="true"></span>
                         <dd class="rate__amount">
                           <span class="rate__cur">EUR</span>
-                          <span class="rate__num" data-settle style={`--reveal-delay:${j * 90}ms`}>
-                            {pr.priceEur}
-                          </span>
+                          <Price amount={pr.priceEur} class="rate__num" />
                         </dd>
                       </div>
                     ))}
@@ -240,7 +242,7 @@ const money = (n: number) => `${n}€`;
                     </span>
                     <svg viewBox="0 0 24 12" aria-hidden="true" class="card__arrow">
                       <path d="M0 6h21M16 1l5 5-5 5" fill="none" stroke="currentColor"
-                            stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" />
+                            stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" pathLength="1" />
                     </svg>
                   </a>
                 </div>
@@ -642,29 +644,3 @@ const money = (n: number) => `${n}€`;
     .card__ribbon { right: -3.4rem; width: 10rem; }
   }
 </style>
-
-<script>
-  /* Closing a long description from its foot would otherwise strand the reader
-     below the card, because the card collapses out from under them and its
-     summary ends up far above the viewport. Bring the summary back into view
-     whenever the collapse would leave it off screen. */
-  document.querySelectorAll<HTMLButtonElement>('[data-collapse]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const details = btn.closest('details');
-      const summary = details?.querySelector('summary');
-      if (!details || !summary) return;
-
-      details.open = false;
-
-      // Clear of the sticky header, which is about 90px on the narrowest phone.
-      const MARGIN = 110;
-      const top = summary.getBoundingClientRect().top;
-      if (top < MARGIN) {
-        window.scrollBy({
-          top: top - MARGIN,
-          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-        });
-      }
-    });
-  });
-</script>

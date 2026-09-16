@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/june-welcome-portrait.webp';
+import Icon from './Icon.astro';
+import { url } from '../lib/site';
+import { routePath, type Locale } from '../i18n/locales';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const words = {
+  de: ['Hallo, schön, dass Sie da sind!', 'Lust auf eine kleine Auszeit? Hier können Sie Ihren Termin anfragen.', 'Termin mit June anfragen', 'Begrüßung schließen', 'Eine persönliche Einladung von June'],
+  en: ['Hi there. Lovely to see you!', 'Ready for a little time for yourself? You can request your appointment right here.', 'Book some time with June', 'Dismiss greeting', 'A personal invitation from June'],
+  es: ['¡Hola! Qué alegría verte.', '¿Te apetece un momento para ti? Puedes solicitar tu cita aquí.', 'Solicitar una cita con June', 'Cerrar saludo', 'Una invitación personal de June'],
+  pt: ['Olá! Que bom ter você aqui.', 'Que tal um momento só seu? Pode pedir a sua marcação aqui.', 'Marcar um momento com June', 'Fechar saudação', 'Um convite pessoal da June'],
+  it: ['Ciao, che bello averti qui!', 'Hai voglia di un momento per te? Puoi richiedere il tuo appuntamento qui.', 'Richiedi un appuntamento con June', 'Chiudi il saluto', 'Un invito personale da June'],
+  th: ['สวัสดีค่ะ ยินดีที่ได้พบคุณนะคะ', 'อยากให้เวลาพักผ่อนกับตัวเองสักนิดไหมคะ? สอบถามเพื่อนัดหมายได้ที่นี่เลยค่ะ', 'นัดหมายกับจูน', 'ปิดคำทักทาย', 'คำเชิญจากจูน'],
+}[locale];
+---
+<aside class="june-invitation" data-june-invitation aria-label={words[4]} hidden>
+  <button class="june-invitation__close" type="button" data-invitation-close aria-label={words[3]}><Icon name="close" size={18} /></button>
+  <div class="june-invitation__portrait"><Image src={portrait} width={168} height={216} alt="June Saurin" loading="lazy" format="webp" /><span aria-hidden="true"></span></div>
+  <div class="june-invitation__words" role="status" aria-live="polite" aria-atomic="true"><span class="june-invitation__name">June · LUMA Wellness</span><p class="june-invitation__hello">{words[0]}</p><p class="june-invitation__text">{words[1]}</p></div>
+  <a class="june-invitation__action" href={url(routePath('contact', locale))} data-invitation-book><span>{words[2]}</span><Icon size={19} /></a>
+</aside>
+
+<style>
+  .june-invitation { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 58; isolation: isolate; display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 0.8rem 1rem; width: min(390px, calc(100% - 2rem)); padding: 1.3rem; border: 1px solid #fffffbe6; border-radius: 25px; background: linear-gradient(135deg, #fffdf4f7, #edf0e4ed); color: #244232; backdrop-filter: blur(24px) saturate(1.2); -webkit-backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 18px 65px #0d291d30, 0 3px 10px #0d291d18, inset 0 1px 1px #fff, inset 0 -1px 1px #c2c9ac; }
+  .june-invitation[hidden] { display: none; }
+  .june-invitation__close { position: absolute; top: 2px; right: 2px; z-index: 4; display: grid; place-items: center; width: 40px; height: 40px; color: #456047; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+  .june-invitation__close:hover { background: #315b4510; }
+  .june-invitation__portrait { position: relative; width: 66px; height: 66px; padding: 3px; border-radius: 50%; background: linear-gradient(140deg, #e5d29d, #fffffb 45%, #b49d63); box-shadow: 0 5px 13px #344b3326, inset 0 1px 1px #fff; margin-top: 0.2rem; }
+  .june-invitation__portrait img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 38%; }
+  .june-invitation__portrait > span { position: absolute; right: 2px; bottom: 5px; width: 10px; height: 10px; border-radius: 50%; background: #c9b174; border: 2px solid #fffef6; }
+  .june-invitation__words { padding-right: 0.3rem; }
+  .june-invitation__name { display: block; color: #536548; font-size: 0.56rem; letter-spacing: 0.055em; margin: 0.1rem 1rem 0.4rem 0; }
+  .june-invitation__hello { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.15; letter-spacing: -0.015em; margin: 0; }
+  .june-invitation__text { font-size: 0.73rem; line-height: 1.55; margin: 0.6rem 0 0; color: #465940; }
+  .june-invitation__action { position: relative; overflow: hidden; grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 46px; padding: 0.75rem 1rem; margin-top: 0.1rem; border-radius: 14px; border: 1px solid #49684c; background: linear-gradient(150deg, #426748, #244a34); color: #fffdf0; box-shadow: 0 3px 0 #1c3c2d26, inset 0 1px 0 #a0b288; font-size: 0.75rem; transition: transform 180ms var(--ease); }
+  .june-invitation__action svg { flex: none; }
+  .june-invitation__action::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 20%, #ffffff32 50%, transparent 75%); transform: translateX(-125%); }
+  .june-invitation__action:active { transform: scale(0.975); }
+  @media (max-width: 900px) { .june-invitation { left: 1rem; bottom: max(5.75rem, calc(env(safe-area-inset-bottom) + 5rem)); } }
+  @media (prefers-reduced-motion: no-preference) {
+    .june-invitation:not([hidden]) { animation: invitation-enter 650ms var(--ease) both; }
+    .june-invitation:not([hidden]) .june-invitation__words { animation: invitation-copy 600ms var(--ease) 180ms both; }
+    .june-invitation:not([hidden]) .june-invitation__action { animation: invitation-action 650ms var(--ease) 750ms both; }
+    .june-invitation:not([hidden]) .june-invitation__action::after { animation: invitation-shine 1.5s ease 1.15s both; }
+    .june-invitation:not([hidden]) .june-invitation__portrait { animation: invitation-float 5s ease-in-out 1s infinite alternate; }
+  }
+  @keyframes invitation-enter { from { opacity: 0; transform: translateY(24px) scale(0.94); } to { opacity: 1; transform: none; } }
+  @keyframes invitation-copy { from { opacity: 0; translate: 0 6px; } to { opacity: 1; translate: 0 0; } }
+  @keyframes invitation-action { from { opacity: 0; translate: 0 8px; filter: blur(5px); } to { opacity: 1; translate: 0 0; filter: blur(0); } }
+  @keyframes invitation-shine { to { transform: translateX(125%); } }
+  @keyframes invitation-float { to { transform: translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce) { .june-invitation__action { transition: none; } }
+  @media print { .june-invitation { display: none; } }
+</style>

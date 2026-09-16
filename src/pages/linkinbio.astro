@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BrandMark from '../components/BrandMark.astro';
+import LocationMap from '../components/LocationMap.astro';
+import IntroFilm from '../components/IntroFilm.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import portrait from '../assets/june-dark-portrait.webp';
+import { BUSINESS, url, whatsappUrl } from '../lib/site';
+import { socialImageUrl } from '../lib/images';
+import { graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode } from '../lib/schema';
+import '../styles/linkinbio.css';
+
+const title = 'June Saurin | Kontakt & Links | LUMA Wellness';
+const description = 'Direkt zu June Saurin: WhatsApp, Kontakt speichern, Massagen, Preise und Einblicke bei LUMA Wellness in Buxtehude.';
+const path = '/linkinbio';
+const ogImage = await socialImageUrl(portrait, Astro.site);
+const links = [
+  { icon: 'contact' as const, title: 'Kontakt speichern', detail: 'June Saurin · direkt ins Adressbuch', href: url('/june-saurin.vcf'), download: 'June-Saurin.vcf' },
+  { icon: 'phone' as const, title: 'June anrufen', detail: BUSINESS.whatsapp, href: `tel:${BUSINESS.phoneE164}` },
+  { icon: 'mail' as const, title: 'Eine E-Mail schreiben', detail: BUSINESS.email, href: `mailto:${BUSINESS.email}?subject=Buchungsanfrage` },
+  { icon: 'instagram' as const, title: 'Instagram', detail: 'Einblicke, Inspiration & neue Momente', href: BUSINESS.sameAs[1], external: true },
+  { icon: 'facebook' as const, title: 'Facebook', detail: 'Mit LUMA verbunden bleiben', href: BUSINESS.sameAs[0], external: true },
+  { icon: 'spark' as const, title: 'Massagen & Preise', detail: 'Finden Sie Ihre persönliche Auszeit', href: url('/meineangebote-preise') },
+  { icon: 'globe' as const, title: 'Mehr über mich', detail: 'Meine Geschichte. Meine Leidenschaft.', href: url('/about') },
+];
+const schema = graph([businessNode(), personNode(), websiteNode(), webPageNode({title, description, path, imageUrl: ogImage, hasBreadcrumb: true}), breadcrumbNode(path, [{name:'LUMA Wellness', path:'/'}, {name:'Kontakt & Links', path}])]);
+---
+<Layout {title} {description} {path} {ogImage} {schema} compact>
+  <div class="bio-ambient" aria-hidden="true"><span></span><span></span></div>
+  <div class="bio-shell">
+    <header class="bio-nav">
+      <a class="brand bio-brand" href={url('/')} aria-label="LUMA Wellness, Startseite"><BrandMark /><span class="bio-brand__word">LUMA<small>WELLNESS</small></span></a>
+      <a class="bio-website" href={url('/')}>Zur Website<Icon size={17} /></a>
+    </header>
+
+    <section class="bio-profile" aria-labelledby="bio-name">
+      <div class="bio-profile__portrait"><Photo src={portrait} alt="June Saurin" widths={[360,540,720]} sizes="(max-width: 650px) 62vw, 340px" variant="fill" dissolve={false} priority /></div>
+      <div class="bio-profile__veil" aria-hidden="true"></div>
+      <div class="bio-profile__copy"><p class="eyebrow">Schön, dass Sie hier sind.</p><h1 id="bio-name">June<br /><em>Saurin.</em></h1><p>Ihre Auszeit beginnt<br />mit einer Berührung.</p></div>
+      <span class="bio-profile__location"><span></span>Massage & Wellness · Buxtehude</span>
+    </section>
+
+    <div class="bio-film"><IntroFilm bio /></div>
+
+    <nav class="bio-links" aria-label="Kontakt und persönliche Links">
+      <a class="bio-link bio-link--primary" href={whatsappUrl()} data-bio-action="whatsapp" data-bio-reveal><span class="bio-link__sheen" aria-hidden="true"></span><span class="bio-link__icon"><Icon name="whatsapp" /></span><span class="bio-link__copy"><strong>Schreiben Sie mir auf WhatsApp</strong><small>Gemeinsam finden wir Ihren Termin.</small></span><span class="bio-link__arrow"><Icon size={18} /></span></a>
+      <p class="bio-group-label">Ein guter Kontakt. Ein kurzer Weg.</p>
+      {links.map((link, i) => <a class="bio-link" href={link.href} download={link.download} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined} data-bio-action={link.icon} data-bio-reveal style={`--gleam-delay:${(i + 1) * 0.4}s`}>
+        <span class="bio-link__sheen" aria-hidden="true"></span><span class="bio-link__icon"><Icon name={link.icon} /></span><span class="bio-link__copy"><strong>{link.title}</strong><small>{link.detail}</small></span><span class="bio-link__arrow"><Icon size={18} /></span>
+      </a>)}
+    </nav>
+
+    <div class="bio-location" data-bio-reveal>
+      <p class="bio-group-label">Ihr Weg zu einer kleinen Auszeit.</p>
+      <LocationMap />
+    </div>
+
+    <footer class="bio-footer"><p>Mit Herz. Mit Hingabe. Für Ihr Wohlbefinden.</p><span>Termine nur nach vorheriger Absprache.</span><nav aria-label="Weitere Informationen"><a href={url('/')}>LUMA Wellness</a><a href={url('/contact')}>Kontakt</a><a href={url('/datenschutzrichtlinie')}>Datenschutz</a><a href={url('/nutzungsbedingungen')}>AGB</a></nav><span class="bio-footer__signature">JUNE SAURIN</span></footer>
+  </div>
+</Layout>

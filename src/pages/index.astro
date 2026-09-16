@@ -8,6 +8,12 @@
  */
 import { getCollection } from 'astro:content';
 import Photo from '../components/Photo.astro';
+import HomeHero from '../components/HomeHero.astro';
+import IntroFilm from '../components/IntroFilm.astro';
+import JuneFeature from '../components/JuneFeature.astro';
+import PhotoGallery from '../components/PhotoGallery.astro';
+import FilmSection from '../components/FilmSection.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
 import { heroPreload } from '../lib/heroPreload';
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
@@ -17,9 +23,9 @@ import {
   graph, businessNode, personNode, websiteNode, webPageNode,
 } from '../lib/schema';
 
-import junePortrait from '../assets/june-portrait.webp';
+import junePortrait from '../assets/june-winner.webp';
 import studioWorking from '../assets/studio-june-working.webp';
-import studioExterior from '../assets/studio-exterior-hautnah.webp';
+import studioExterior from '../assets/studio-exterior-clear.webp';
 /* The chapters run full-bleed at 100vw by 100svh, which is where the baked
    vignettes on these files hurt most: a transparent edge over a viewport-sized
    element lets the page through, so the photograph stops short of the edges it
@@ -80,8 +86,8 @@ const angebote = [
   },
 ];
 
-const heroSizes = '(max-width: 900px) 100vw, 40vw';
-const preloadImage = await heroPreload(junePortrait, [480, 720, 900, 1100], heroSizes);
+const heroSizes = '(max-width: 760px) 100vw, 55vw';
+const preloadImage = await heroPreload(junePortrait, [480, 720, 1000, 1400], heroSizes);
 
 const ogImage = await socialImageUrl(junePortrait, Astro.site);
 
@@ -115,46 +121,14 @@ const schema = graph([
 ---
 
 <Layout {title} {description} {path} schema={schema} {ogImage} {preloadImage}>
-  <!-- Chapter 1. Dawn hero. The page breathes before the user moves. -->
-  <section class="hero">
-    <!-- Light motes. Hero and closing chapter only, paused offscreen. -->
-    <canvas class="motes" aria-hidden="true"></canvas>
-
-    <div class="shell hero__inner">
-      <div class="hero__copy">
-        <p class="eyebrow" data-fade>Weltweit ausgezeichnete Massage</p>
-        <h1 class="hero__title" data-reveal>Beste Massage in Buxtehude</h1>
-        <p class="hero__sub" data-fade>
-          LUMA Wellness by June Saurin, Ihre ausgezeichnete Therapeutin.
-        </p>
-        <div class="hero__actions" data-fade>
-          <a href={url('/contact')} class="pill sheen halo" data-magnetic>
-            <span data-magnetic-label>Buchen Sie eine Massage</span>
-          </a>
-          <a href={url('/meineangebote-preise')} class="underline-gold hero__ghost">
-            Alle Angebote &amp; Preise
-          </a>
-        </div>
-      </div>
-
-      <figure class="hero__figure float float--slow bleed" data-drift>
-        <Photo
-          src={junePortrait}
-          alt="June Saurin, international ausgezeichnete Massagetherapeutin bei LUMA Wellness in Buxtehude"
-          widths={[480, 720, 900, 1100]}
-          sizes={heroSizes}
-          ratio="4 / 5"
-          priority
-        />
-      </figure>
-    </div>
-  </section>
+  <IntroFilm />
+  <HomeHero heading="Beste Massage in Buxtehude" lead="LUMA Wellness by June Saurin, Ihre ausgezeichnete Therapeutin." />
 
   <!-- Chapter 2. Credibility strip. -->
   <AwardStrip />
 
   <!-- Chapter 3. Intro. -->
-  <section class="section">
+  <section class="section editorial-intro" id="discover">
     <div class="shell shell--mid">
       <h2 class="section__title" data-reveal>
         Grosse Wirkung, kleiner Körper – erleben Sie LUMA Wellness in Buxtehude
@@ -179,7 +153,7 @@ const schema = graph([
   </section>
 
   <!-- Chapter 4. Ganzheitliche Massagen, against the studio photograph. -->
-  <section class="section holistic" data-sunbeam>
+  <section class="section holistic editorial-holistic" data-sunbeam>
     <div class="shell holistic__inner">
       <figure class="holistic__figure float float--slow bleed" data-drift>
         <Photo
@@ -228,10 +202,11 @@ const schema = graph([
          chapter, edge to edge and full height, scaling down through the pin so
          the scene settles as you read it. Same grammar every chapter, so the
          rhythm becomes the identity. -->
+    <div class="treatment-stories shell">
     {
       angebote.map((a, i) => (
-        <div class="chapter" data-chapter>
-          <figure class="chapter__media" data-chapter-media data-drift>
+        <div class="chapter treatment-story">
+          <figure class="chapter__media" data-story-media>
             <Photo
               src={a.image}
               alt={a.alt}
@@ -247,11 +222,11 @@ const schema = graph([
           <span class="chapter__scrim" aria-hidden="true"></span>
 
           <div class="shell chapter__inner">
-            <div class="chapter__copy" data-chapter-copy>
+            <div class="chapter__copy" data-story-copy>
               <p class="chapter__num">{String(i + 1).padStart(2, '0')} / 06</p>
               <h3 class="chapter__name">{a.name}</h3>
               <p class="chapter__text">{a.text}</p>
-              <p class="chapter__cta" data-chapter-price>
+              <p class="chapter__cta" data-story-price>
                 <a href={url('/meineangebote-preise')} class="underline-gold">
                   Preise ansehen
                 </a>
@@ -262,6 +237,7 @@ const schema = graph([
       ))
     }
 
+    </div>
     <div class="shell">
       <div class="offers__foot">
         <p>
@@ -279,6 +255,11 @@ const schema = graph([
       </div>
     </div>
   </section>
+
+  <JuneFeature />
+  <PhotoGallery />
+  <FilmSection />
+  <GoogleReviews />
 
   <!-- Chapter 6. Hours and location. -->
   <section class="section hours" data-sunbeam>
@@ -310,7 +291,8 @@ const schema = graph([
           src={studioExterior}
           alt="Das LUMA Wellness Studio in der Filiale HAUTNAH, Hauptstraße 19 in Buxtehude"
           widths={[520, 800, 1100]}
-          sizes="(max-width: 900px) 92vw, 62vw"
+          sizes="(max-width: 760px) 92vw, 62vw"
+          dissolve={false}
           ratio="16 / 9"
         />
       </figure>

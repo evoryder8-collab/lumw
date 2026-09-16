@@ -27,3 +27,8 @@ KICKOFF-PROMPT.md
 
 # preview/launch config is local
 .claude/
+
+# local browser inspection artifacts
+.playwright-mcp/
+.playwright-cli/
+artifacts/

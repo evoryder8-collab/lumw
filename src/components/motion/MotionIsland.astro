@@ -14,20 +14,14 @@
 
   const load = () => import('../../scripts/motion.ts');
 
-  if (reduced) {
-    // Reduced motion still needs the reveal states cleared, but nothing is
-    // scheduled against the scroll and no rAF loop ever starts. Loading on idle
-    // keeps it off the critical path entirely.
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(load, { timeout: 2000 });
-    } else {
-      setTimeout(load, 400);
-    }
-  } else {
+  if (!reduced) {
     // Wait for the largest contentful paint, then load on the next idle slot.
     let fired = false;
     const go = () => {
       if (fired) return;
+      // The welcome has its own CSS light. Keep the full motion engine out of
+      // the first screen until the visitor has chosen a language and sound.
+      if (document.querySelector('[data-intro-film]') && document.documentElement.dataset.welcomeComplete !== 'true') return;
       fired = true;
       if ('requestIdleCallback' in window) {
         (window as any).requestIdleCallback(load, { timeout: 1200 });
@@ -35,6 +29,8 @@
         setTimeout(load, 200);
       }
     };
+
+    document.addEventListener('luma:welcome-complete', go, { once: true });
 
     try {
       const po = new PerformanceObserver(() => {

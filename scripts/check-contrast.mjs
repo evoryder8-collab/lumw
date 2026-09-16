@@ -46,13 +46,10 @@ const over = (fg, bg, alpha) => fg.map((c, i) => Math.round(c * alpha + bg[i] * 
 // stale the moment someone edits a token, which is exactly how a contrast
 // regression ships green.
 
-const css = fs.readFileSync(
-  path.join(path.dirname(fileURLToPath(import.meta.url)), '../src/styles/global.css'),
-  'utf8',
-);
+const css = ['global.css', 'liquid-glass.css'].map((name) => fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../src/styles', name), 'utf8')).join('\n');
 
 const token = (name) => {
-  const m = css.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`));
+  const m = [...css.matchAll(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`, 'g'))].at(-1);
   if (!m) {
     console.error(`token --${name} not found in global.css`);
     process.exit(1);
@@ -223,6 +220,12 @@ if (goldTextMisuse.length) {
 if (failed) {
   console.log(`\n${RED}${BOLD}FAIL${OFF} ${failed} contrast rule(s) breached.\n`);
   process.exit(1);
+}
+
+for (const [fg, bg, label] of [['#f5f1e7', token('forest'), 'hero text'], ['#e6d3a1', token('forest'), 'hero highlight'], ['#19392f', '#efe6d0', 'light CTA'], ['#c8c8c9', '#090d14', 'portrait feature']]) {
+  const value = ratio(hex(fg), hex(bg));
+  if (value < AA) throw new Error(`${label}: ${value.toFixed(2)} contrast`);
+  console.log(`  ✓ ${label}: ${value.toFixed(2)}:1`);
 }
 
 console.log(`\n${GREEN}✓${OFF} every text token holds its minimum on the wash's worst ground\n`);

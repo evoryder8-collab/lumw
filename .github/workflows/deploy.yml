@@ -36,10 +36,8 @@ jobs:
 
       - run: npm ci
 
-      # `npm run build` runs check:urls as part of the build script, so a
-      # missing URL fails here and never reaches the deploy job.
-      - name: Build
-        run: npm run build
+      - name: Build and verify the complete staging artifact
+        run: npm run verify
         env:
           # Staging stays noindex until the DNS cutover release. Flip this to
           # 'true' in the same release that points DNS at Pages.
@@ -50,17 +48,24 @@ jobs:
           # Set this to '/' in the same release that points DNS at the domain.
           PUBLIC_BASE: '/lumw'
 
-      # Section 7's other guard: the title is one of the few things Google uses
-      # to identify a page, and this rebuild changes host, markup and rendering
-      # already. A drifted title must not reach the cutover unnoticed.
-      - name: Check titles and descriptions against the live site
-        run: npm run check:titles
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
 
-      - name: Validate JSON-LD on every page
-        run: npm run check:jsonld
+      - name: Verify real visitor journeys and accessibility
+        run: npm run check:browser
 
-      - name: Check contrast against the wash
-        run: npm run check:contrast
+      - name: Enforce mobile performance budgets
+        run: npm run check:performance
+        env:
+          LUMA_LIGHTHOUSE_RUNS: '3'
+
+      - name: Keep browser and performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-verification
+          path: artifacts/
+          retention-days: 14
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

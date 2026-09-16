@@ -14,7 +14,7 @@
  *
  * Data © OpenStreetMap contributors, ODbL.
  */
-import { BUSINESS } from '../lib/site';
+import { BUSINESS, url } from '../lib/site';
 import mapData from '../data/map.json';
 
 const destination = encodeURIComponent(
@@ -175,6 +175,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
           data-drive
           aria-expanded="false"
           aria-controls="route-choice"
+          hidden
         >
           <span>Route starten</span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -182,6 +183,8 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
                   stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
+
+        <noscript><a href={googleDir} target="_blank" rel="noopener noreferrer">Google Maps</a> · <a href={appleDir} target="_blank" rel="noopener noreferrer">Apple Karten</a></noscript>
 
         <a class="loc__view underline-gold" href={larger} target="_blank" rel="noopener noreferrer">
           Größere Karte öffnen
@@ -191,9 +194,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
   </div>
 </section>
 
-<!-- Chooser. A native dialog would be simpler, but Safari's focus handling on
-     older iOS is unreliable, so this is a plain element with its own trap. -->
-<div class="choice" id="route-choice" role="dialog" aria-modal="true" aria-labelledby="route-choice-title" hidden>
+<dialog class="choice" id="route-choice" aria-labelledby="route-choice-title">
   <div class="choice__panel rim">
     <button class="choice__close" type="button" data-choice-close aria-label="Auswahl schließen">
       <span aria-hidden="true"></span>
@@ -205,10 +206,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     <div class="choice__options">
       <a class="choice__option" href={googleDir} target="_blank" rel="noopener noreferrer" data-choice-option>
         <span class="choice__brand" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
-            <circle cx="12" cy="10" r="2.2" />
-          </svg>
+          <img src={url('/brand/google-maps.png')} width="30" height="30" alt="" loading="lazy" />
         </span>
         <strong>Google Maps</strong>
         <i class="choice__arrow" aria-hidden="true"></i>
@@ -226,7 +224,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
       </a>
     </div>
   </div>
-</div>
+</dialog>
 
 <style>
   /* --- Frame ------------------------------------------------------------ */
@@ -326,8 +324,8 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
 
   .loc__pin {
     position: absolute;
-    top: 38%;
-    left: 58%;
+    top: 50%;
+    left: 50%;
     z-index: 5;
     display: grid;
     place-items: center;
@@ -458,6 +456,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
   }
   .loc__drive svg { width: 20px; height: 20px; transition: transform 0.5s var(--ease); }
+  .loc__drive[hidden] { display: none; }
 
   @media (hover: hover) and (pointer: fine) {
     .loc__drive:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgb(63 118 82 / 0.42); }
@@ -469,16 +468,21 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
   /* --- Chooser ---------------------------------------------------------- */
 
   .choice {
-    position: fixed;
-    inset: 0;
-    z-index: 80;
-    display: grid;
-    place-items: center;
-    padding: var(--gutter);
-    background: rgb(43 38 34 / 0.28);
-    backdrop-filter: blur(10px);
+    width: min(28rem, calc(100% - 2rem));
+    max-height: calc(100svh - 2rem);
+    margin: auto;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 24px;
+    color: var(--ink);
+    background: transparent;
   }
-  .choice[hidden] { display: none; }
+  .choice::backdrop {
+    background: rgb(10 28 21 / 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
 
   .choice__panel {
     position: relative;
@@ -492,7 +496,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .choice__panel { animation: choice-in 0.45s var(--ease) both; }
+    .choice[open] .choice__panel { animation: choice-in 0.45s var(--ease) both; }
   }
   @keyframes choice-in {
     from { opacity: 0; transform: translateY(14px) scale(0.97); }
@@ -569,6 +573,7 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     width: 19px; height: 19px;
     fill: none; stroke: var(--leaf-text); stroke-width: 1.5; stroke-linejoin: round;
   }
+  .choice__brand img { object-fit: contain; }
 
   .choice__arrow {
     width: 8px; height: 8px;
@@ -595,52 +600,3 @@ const waterD = joinPaths(mapData.water.map((w) => w.p as number[][]), true);
     .loc__drive { justify-content: center; }
   }
 </style>
-
-<script>
-  // No click-to-load gate any more: the map is inline SVG from committed
-  // OpenStreetMap data, so nothing third-party is ever requested.
-
-  const drive = document.querySelector<HTMLButtonElement>('[data-drive]');
-  const choice = document.querySelector<HTMLElement>('#route-choice');
-  const closeBtn = document.querySelector<HTMLButtonElement>('[data-choice-close]');
-  const options = [...document.querySelectorAll<HTMLAnchorElement>('[data-choice-option]')];
-
-  if (drive && choice) {
-    let returnFocus: HTMLElement | null = null;
-
-    const open = () => {
-      returnFocus = document.activeElement as HTMLElement;
-      choice.hidden = false;
-      drive.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-      requestAnimationFrame(() => options[0]?.focus());
-    };
-
-    const close = (restore = true) => {
-      if (choice.hidden) return;
-      choice.hidden = true;
-      drive.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-      if (restore) returnFocus?.focus();
-    };
-
-    drive.addEventListener('click', open);
-    closeBtn?.addEventListener('click', () => close());
-    choice.addEventListener('click', (e) => { if (e.target === choice) close(); });
-    // Picking an app closes it without stealing focus back from the new tab.
-    options.forEach((o) => o.addEventListener('click', () => close(false)));
-
-    document.addEventListener('keydown', (e) => {
-      if (choice.hidden) return;
-      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-      if (e.key !== 'Tab') return;
-
-      // Focus stays inside the dialog while it is open.
-      const focusable = [closeBtn, ...options].filter(Boolean) as HTMLElement[];
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    });
-  }
-</script>

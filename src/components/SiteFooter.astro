@@ -1,24 +1,32 @@
 ---
 /** Footer copy is verbatim from the live site, on the deepest porcelain. */
-import { NAV, BUSINESS, url } from '../lib/site';
+import { BUSINESS, url } from '../lib/site';
+import BrandMark from './BrandMark.astro';
+import { labels, navigation } from '../i18n/content';
+import { AVAILABLE, LOCALE_META, routePath, routeKeyForPath, type Locale } from '../i18n/locales';
+const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: string };
+const u = labels(locale);
+const NAV = navigation(locale);
+const routeKey = routeKeyForPath(path) ?? 'home';
 ---
 
 <footer class="footer">
   <div class="shell footer__inner">
     <div class="footer__brand">
+      <BrandMark class="footer__symbol" />
       <p class="footer__wordmark">LUMA WELLNESS</p>
       <p class="footer__by">by June Saurin</p>
     </div>
 
-    <nav class="footer__col" aria-label="Fußzeilennavigation">
-      <h2 class="footer__title">Menu</h2>
+    <nav class="footer__col" aria-label={u.menu}>
+      <h2 class="footer__title">{u.menu}</h2>
       <ul>
         {NAV.map((i) => <li><a href={url(i.href)} class="underline-gold">{i.label}</a></li>)}
       </ul>
     </nav>
 
     <div class="footer__col">
-      <h2 class="footer__title">Folgen Sie mir</h2>
+      <h2 class="footer__title">{u.follow}</h2>
       <ul>
         <li><a href={BUSINESS.sameAs[0]} class="underline-gold" rel="me noopener" target="_blank">Facebook</a></li>
         <li><a href={BUSINESS.sameAs[1]} class="underline-gold" rel="me noopener" target="_blank">Instagram</a></li>
@@ -26,28 +34,31 @@ import { NAV, BUSINESS, url } from '../lib/site';
     </div>
 
     <div class="footer__col footer__col--wide">
-      <h2 class="footer__title">Buchungen</h2>
+      <h2 class="footer__title">{u.book}</h2>
       <ul class="footer__contact">
         <li>Mail: <a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></li>
         <li>Tel: <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></li>
         <li>
-          <span class="footer__addr">Adresse: Hauptstraße 19,</span>
+          <span class="footer__addr">{u.address}: Hauptstraße 19,</span>
           <span class="footer__addr">21614, Buxtehude DE</span>
         </li>
       </ul>
-      <p class="footer__note">Termine nur nach vorheriger Absprache.</p>
+      <p class="footer__note">{u.appointment}</p>
 
-      <a href={url('/contact')} class="pill footer__cta">
-        Jetzt buchen<span class="footer__cta-sub">Klick hier</span>
+      <a href={url(routePath('contact', locale))} class="pill footer__cta">
+        {u.book}
       </a>
     </div>
   </div>
 
+  <nav class="shell footer-languages" aria-label={u.language}>
+    {AVAILABLE.map((l) => <a href={url(routePath(routeKey, l))} lang={l} hreflang={LOCALE_META[l].tag} aria-current={l === locale ? 'true' : undefined}>{LOCALE_META[l].name}</a>)}
+  </nav>
   <div class="shell footer__base">
     <p class="footer__copy">© 2026 LUMA WELLNESS by June Saurin.</p>
     <ul class="footer__legal">
-      <li><a href={url('/datenschutzrichtlinie')} class="underline-gold">Datenschutzrichtlinie</a></li>
-      <li><a href={url('/nutzungsbedingungen')} class="underline-gold">Nutzungsbedingungen</a></li>
+      <li><a href={url('/datenschutzrichtlinie')} class="underline-gold">{u.privacy}</a></li>
+      <li><a href={url('/nutzungsbedingungen')} class="underline-gold">{u.terms}</a></li>
     </ul>
   </div>
 </footer>

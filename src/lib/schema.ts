@@ -12,6 +12,7 @@
  */
 
 import { SITE_URL, BUSINESS, AWARDS } from './site';
+import { localeForPath, LOCALE_META, AVAILABLE } from '../i18n/locales';
 
 type Node = Record<string, unknown>;
 
@@ -148,7 +149,7 @@ export function websiteNode(): Node {
     '@id': ID.website,
     url: SITE_URL,
     name: BUSINESS.name,
-    inLanguage: 'de-DE',
+    inLanguage: AVAILABLE.map((locale) => LOCALE_META[locale].tag),
     publisher: { '@id': ID.business },
   };
 }
@@ -166,7 +167,7 @@ export function webPageNode(opts: {
     url: abs(opts.path),
     name: opts.title,
     description: opts.description,
-    inLanguage: 'de-DE',
+    inLanguage: LOCALE_META[localeForPath(opts.path)].tag,
     isPartOf: { '@id': ID.website },
     about: { '@id': ID.business },
     ...(opts.imageUrl ? { primaryImageOfPage: opts.imageUrl } : {}),

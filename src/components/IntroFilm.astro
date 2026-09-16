@@ -1,0 +1,43 @@
+---
+import { getImage } from 'astro:assets';
+import type { Locale } from '../i18n/locales';
+import { url } from '../lib/site';
+import posterSource from '../assets/film-intro.webp';
+const { locale = 'de', bio = false } = Astro.props as { locale?: Locale; bio?: boolean };
+const words = {
+  de: ['Dürfen wir den Ton einschalten?', 'Ja - Empfohlen', 'Nein', 'Willkommen bei LUMA', 'Intro abspielen', 'Ton einschalten', 'Ton ausschalten', 'Der Film · 00:35'],
+  en: ['Would you like sound on this website?', 'Yes - Recommended', 'No', 'Welcome to LUMA', 'Play the introduction', 'Turn sound on', 'Turn sound off', 'The film · 00:35'],
+  es: ['¿Quieres activar el sonido?', 'Sí - Recomendado', 'No', 'Bienvenido a LUMA', 'Reproducir la presentación', 'Activar sonido', 'Silenciar', 'La película · 00:35'],
+  pt: ['Gostaria de ativar o som?', 'Sim - Recomendado', 'Não', 'Bem-vindo à LUMA', 'Reproduzir a apresentação', 'Ativar som', 'Desativar som', 'O filme · 00:35'],
+  it: ['Vuoi attivare l’audio?', 'Sì - Consigliato', 'No', 'Benvenuto da LUMA', 'Riproduci la presentazione', 'Attiva audio', 'Disattiva audio', 'Il film · 00:35'],
+  th: ['ต้องการเปิดเสียงบนเว็บไซต์ไหมคะ?', 'เปิดเสียง - แนะนำ', 'ไม่เปิดเสียง', 'ยินดีต้อนรับสู่ LUMA', 'เล่นวิดีโอแนะนำ', 'เปิดเสียง', 'ปิดเสียง', 'วิดีโอ · 00:35'],
+}[locale];
+const poster = await getImage({src: posterSource, width: 1440, format: 'webp', quality: 82});
+---
+<section class="intro-film" aria-label={words[3]}>
+  <div class="intro-film__frame liquid-glass" tabindex="-1" data-intro-frame>
+    <div class="intro-film__screen">
+      <video data-intro-film data-bio-film={bio || undefined} data-film controls playsinline muted={bio} preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
+        <source src={url('/media/june-intro.mp4')} type="video/mp4" />
+        <a href={url('/media/june-intro.mp4')}>{words[4]}</a>
+      </video>
+      <button class="intro-film__play" data-intro-play type="button" hidden>
+        <span aria-hidden="true">▷</span><span>{words[4]}</span>
+      </button>
+      <button class="intro-film__sound" data-intro-sound type="button" data-label-on={words[5]} data-label-off={words[6]} aria-label={words[5]} hidden>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z" stroke-linejoin="round" /><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke-linecap="round" /><path class="sound-slash" d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
+        <span data-intro-sound-label>{words[5]}</span>
+      </button>
+    </div>
+    <div class="intro-film__caption"><span>LUMA WELLNESS</span><span>{words[7]}</span><span>JUNE SAURIN</span></div>
+  </div>
+</section>
+{!bio && <dialog class="sound-dialog" data-sound-dialog aria-labelledby="sound-question">
+  <div class="sound-dialog__inner">
+    <h2 id="sound-question">{words[0]}</h2>
+    <div class="sound-dialog__choices">
+      <button type="button" class="pill sheen" data-sound-yes>{words[1]}</button>
+      <button type="button" class="sound-dialog__no" data-sound-no>{words[2]}</button>
+    </div>
+  </div>
+</dialog>}

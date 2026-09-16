@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HomeHero from '../components/HomeHero.astro';
+import IntroFilm from '../components/IntroFilm.astro';
+import JuneFeature from '../components/JuneFeature.astro';
+import PhotoGallery from '../components/PhotoGallery.astro';
+import FilmSection from '../components/FilmSection.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
+import Medal from '../components/Medal.astro';
+import Price from '../components/Price.astro';
+import { translations, labels, type TranslatedLocale } from '../i18n/content';
+import { ALTERNATES, ROUTES, routePath, type RouteKey } from '../i18n/locales';
+import { url, BUSINESS, AWARDS, whatsappUrl } from '../lib/site';
+import { graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, faqNode, serviceNode } from '../lib/schema';
+import { heroPreload } from '../lib/heroPreload';
+import { cardImageByName, socialImageUrl } from '../lib/images';
+import data from '../content/treatments.json';
+import winner from '../assets/june-winner.webp';
+import portrait from '../assets/june-dark-portrait.webp';
+
+export function getStaticPaths() {
+  return ALTERNATES.flatMap((locale) => (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
+    params: { localized: routePath(key, locale).slice(1) }, props: { locale, pageKey: key },
+  })));
+}
+const { locale, pageKey } = Astro.props as { locale: TranslatedLocale; pageKey: RouteKey };
+const t = translations[locale];
+const u = labels(locale);
+const page = t.pages[pageKey];
+const path = routePath(pageKey, locale);
+const title = page.title;
+const description = page.description;
+const treatments = data.treatments;
+const ogImage = await socialImageUrl(pageKey === 'home' ? winner : portrait, Astro.site);
+const preloadImage = pageKey === 'home' ? await heroPreload(winner, [480,720,1000,1400], '(max-width: 760px) 100vw, 55vw') : undefined;
+const schema = graph([
+  businessNode(), personNode(), websiteNode(), webPageNode({ path, title, description, hasBreadcrumb: true, imageUrl: ogImage }),
+  breadcrumbNode(path, [{ name: u.home, path: routePath('home', locale) }, ...(pageKey === 'home' ? [] : [{ name: page.eyebrow, path }])]),
+  ...(pageKey === 'faq' ? [faqNode(path, t.faq.map(([question, answerText]) => ({ question, answerText })))] : []),
+  ...(pageKey === 'services' ? treatments.map((item) => {
+    const translated = t.treatments[item.id as keyof typeof t.treatments];
+    return serviceNode({ family: item.id, name: translated.name, description: translated.description, offers: item.prices, url: `https://www.luma-wellness.com${path}#${item.id}` });
+  }) : []),
+]);
+---
+<Layout {title} {description} {path} {schema} {ogImage} {preloadImage}>
+  {pageKey === 'home' && <IntroFilm {locale} />}
+  {pageKey === 'home' ? <HomeHero {locale} heading={page.heading} lead={page.lead} /> : <section class="hero"><div class="shell"><p class="eyebrow">{page.eyebrow}</p><h1>{page.heading}</h1><p class="lede localized-lead">{page.lead}</p></div></section>}
+
+  {pageKey === 'home' && <>
+    <section class="section editorial-intro" id="discover"><div class="shell shell--mid"><h2 class="section__title">{t.intro.title}</h2><div class="prose">{t.intro.body.map((p) => <p>{p}</p>)}<a href={url(routePath('services', locale))} class="underline-gold">{u.all}</a></div></div></section>
+    <section class="section--tight"><div class="shell"><p class="eyebrow">{u.signature}</p><div class="localized-feature-grid">{['gold-medalie','aroma-luxus','thai-solution'].map((id) => {
+      const item = treatments.find((v) => v.id === id)!;
+      const text = t.treatments[id as keyof typeof t.treatments];
+      return <a class="localized-feature" href={url(`${routePath('services', locale)}#${id}`)}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /><span>{u.from} <Price amount={Math.min(...item.prices.map((p) => p.priceEur))} /> €</span><h3>{text.name}</h3><p>{text.description}</p><Icon /></a>;
+    })}</div></div></section>
+    <JuneFeature {locale} /><PhotoGallery {locale} /><FilmSection {locale} /><GoogleReviews {locale} />
+  </>}
+
+  {pageKey === 'about' && <>
+    <section class="section--tight"><div class="shell localized-about"><Photo src={portrait} alt="June Saurin" widths={[480,720,1000]} sizes="(max-width:760px) 90vw, 42vw" ratio="4 / 5" dissolve={false} priority /><div class="prose">{t.about.map((p) => <p>{p}</p>)}<p class="eyebrow">{u.awards}</p><ol class="localized-awards">{AWARDS.map((award) => <li><Medal metal={award.metal} size={40} /><span>{award.event}<small>{award.year} · {award.metal === 'gold' ? u.gold : award.metal === 'silver' ? 'II' : 'III'}</small></span></li>)}</ol></div></div></section><PhotoGallery {locale} />
+  </>}
+
+  {pageKey === 'about' && <FilmSection {locale} featured />}
+
+  {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item) => {
+    const text = t.treatments[item.id as keyof typeof t.treatments];
+    return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature']} id={item.id} data-card>
+      <div class="card__photo"><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></div>
+      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{text.name}</h2><p class="card__lead">{text.description}</p><dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl><a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><a class="localized-original underline-gold" href={url(`/meineangebote-preise#${item.id}`)} lang="de">{u.details}</a></div>
+    </article>;
+  })}</div></div></section>}
+
+  {pageKey === 'faq' && <section class="section--tight"><div class="shell shell--mid"><ol class="faq localized-faq">{t.faq.map(([question, answer], i) => <li class="faq__item"><details class="faq__details"><summary class="faq__summary"><span class="faq__num">{String(i+1).padStart(2,'0')}</span><h2 class="faq__q">{question}</h2><span class="faq__chev" aria-hidden="true"></span></summary><div class="faq__a prose"><p>{answer}</p></div></details></li>)}</ol></div></section>}
+
+  {pageKey === 'contact' && <section class="section--tight"><div class="shell localized-contact"><div><p class="eyebrow">{u.studio}</p><h2>{u.requestTitle}</h2><p class="lede localized-lead">{u.requestIntro}</p><address class="localized-address">LUMA Wellness by June Saurin<br />{BUSINESS.street}<br />{BUSINESS.postalCode} {BUSINESS.city}<br />HAUTNAH</address><div class="localized-channels"><a href={`tel:${BUSINESS.phoneE164}`}>{u.phone}<span>{BUSINESS.phone}</span><Icon /></a><a href={whatsappUrl(u.greeting)}>WhatsApp<span>{BUSINESS.whatsapp}</span><Icon /></a><a href={`mailto:${BUSINESS.email}`}>{u.email}<span>{BUSINESS.email}</span><Icon /></a><a href={BUSINESS.mapUrl} target="_blank" rel="noopener noreferrer">{u.directions}<Icon /></a></div></div><EnquiryForm {locale} /></div></section>}
+
+  {pageKey !== 'services' && <section class="section--tight"><div class="shell visit-journey"><p class="eyebrow">{u.journey}</p><ol>{t.journey.map(([heading, body], i) => <li><span>0{i+1}</span><h3>{heading}</h3><p>{body}</p></li>)}</ol></div></section>}
+  {pageKey !== 'contact' && <section class="section close"><div class="shell localized-close"><p class="eyebrow">LUMA WELLNESS</p><h2>{u.requestTitle}</h2><p>{u.appointment}</p><a class="pill sheen" href={url(routePath('contact', locale))}>{u.book}<Icon size={20} /></a></div></section>}
+</Layout>

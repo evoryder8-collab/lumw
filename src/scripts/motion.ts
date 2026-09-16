@@ -44,7 +44,7 @@ const onCleanup = (fn: () => void) => cleanups.push(fn);
 let lenis: Lenis | null = null;
 
 function initScroll() {
-  if (REDUCED) return; // Lenis off entirely under reduced motion.
+  if (REDUCED || MOBILE) return; // Native scrolling on touch-sized layouts.
 
   lenis = new Lenis({
     duration: 1.05,

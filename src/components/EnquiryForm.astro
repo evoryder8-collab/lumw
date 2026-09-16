@@ -1,0 +1,39 @@
+---
+import { labels, translations } from '../i18n/content';
+import type { Locale } from '../i18n/locales';
+import { BUSINESS, treatmentName, whatsappUrl } from '../lib/site';
+import treatments from '../content/treatments.json';
+import Icon from './Icon.astro';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const u = labels(locale);
+const prepare = { de: 'Nachricht vorbereiten', en: 'Prepare your message', es: 'Preparar el mensaje', pt: 'Preparar a mensagem', it: 'Prepara il messaggio', th: 'เตรียมข้อความ' }[locale];
+const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje con ventosas', pt: 'Massagem com ventosas', it: 'Massaggio con coppettazione', th: 'นวดครอบแก้ว' }[locale];
+---
+<div class="enquiry-panel liquid-glass" id="enquiry">
+  <div class="enquiry-panel__heading"><Icon name="spark" size={28} /><span>LUMA · {u.book}</span></div>
+  <form class="enquiry-form" data-enquiry hidden data-greeting={u.greeting} data-phone={BUSINESS.phoneE164.replace('+', '')} data-email={BUSINESS.email}>
+    <div class="enquiry-form__row">
+      <label class="enquiry-field"><span>{u.firstName}</span><input name="firstName" autocomplete="given-name" required maxlength="80" placeholder=" " /></label>
+      <label class="enquiry-field"><span>{u.lastName} <small>({u.optional})</small></span><input name="lastName" autocomplete="family-name" maxlength="80" placeholder=" " /></label>
+    </div>
+    <label class="enquiry-field"><span>{u.email} <small>({u.optional})</small></span><input type="email" name="email" autocomplete="email" maxlength="160" placeholder=" " /></label>
+    <label class="enquiry-field"><span>{u.select}</span><select name="treatment">
+      <option value="">{u.unsure}</option>
+      {treatments.treatments.map((t) => <option value={t.id}>{locale === 'de' ? treatmentName(t.name) : translations[locale].treatments[t.id as keyof typeof translations.en.treatments].name}</option>)}
+      <option value="schroepfkopf">{cupping}</option>
+    </select></label>
+    <label class="enquiry-field"><span>{u.preferred} <small>({u.optional})</small></span><input name="preferred" maxlength="160" placeholder=" " /></label>
+    <label class="enquiry-field"><span>{u.message} <small>({u.optional})</small></span><textarea name="message" rows="3" maxlength="1500" placeholder=" "></textarea></label>
+    <button type="submit" class="pill sheen enquiry-submit">{prepare}<Icon size={20} /></button>
+    <p class="enquiry-note">{u.enquiryNote}</p>
+    <div class="enquiry-result" data-enquiry-result hidden aria-live="polite" tabindex="-1">
+      <p>{u.prepared}</p>
+      <pre data-enquiry-preview></pre>
+      <div class="enquiry-result__actions">
+        <a class="pill" data-enquiry-whatsapp target="_blank" rel="noopener noreferrer">{u.whatsapp}<Icon size={18} /></a>
+        <a class="underline-gold" data-enquiry-email>{u.sendEmail}</a>
+      </div>
+    </div>
+  </form>
+  <noscript><p>{u.requestIntro}</p><p><a class="pill" href={whatsappUrl(u.greeting)}>WhatsApp</a></p><p><a class="underline-gold" href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></p></noscript>
+</div>

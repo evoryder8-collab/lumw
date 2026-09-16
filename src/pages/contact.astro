@@ -12,6 +12,7 @@ import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import LocationMap from '../components/LocationMap.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
 import { BUSINESS, whatsappUrl } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
@@ -102,50 +103,7 @@ const waLink = whatsappUrl();
         </div>
       </div>
 
-      <form class="form rim spot" method="post" action="#" novalidate data-reveal2>
-        <span class="spot__light" aria-hidden="true"></span>
-        <p class="form__label">Füllen Sie das untenstehende Formular aus.</p>
-
-        <div class="form__row">
-          <label class="field">
-            <span class="field__label">Vorname</span>
-            <input type="text" name="vorname" autocomplete="given-name" />
-          </label>
-          <label class="field">
-            <span class="field__label">Nachname</span>
-            <input type="text" name="nachname" autocomplete="family-name" />
-          </label>
-        </div>
-
-        <label class="field">
-          <span class="field__label">Email</span>
-          <input type="email" name="email" autocomplete="email" />
-        </label>
-
-        <label class="field">
-          <span class="field__label">Thema</span>
-          <input type="text" name="thema" />
-        </label>
-
-        <label class="field">
-          <span class="field__label">Hier schreiben...</span>
-          <textarea name="nachricht" rows="5"></textarea>
-        </label>
-
-        {/* Honeypot plus a timing field, so the form stays fast and accessible
-            without a CAPTCHA. Both are read by create-booking in stage 5. */}
-        <div class="hp" aria-hidden="true">
-          <label>Firma<input type="text" name="firma" tabindex="-1" autocomplete="off" /></label>
-        </div>
-        <input type="hidden" name="ts" value="" />
-
-        <button type="submit" class="pill gleam form__submit" disabled>Senden Sie</button>
-
-        <p class="form__note">
-          Das Formular wird derzeit noch angebunden. Bitte erreichen Sie mich in der Zwischenzeit
-          telefonisch, per WhatsApp oder per E-Mail.
-        </p>
-      </form>
+      <EnquiryForm />
     </div>
   </section>
 

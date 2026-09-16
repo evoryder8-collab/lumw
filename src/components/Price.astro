@@ -1,0 +1,9 @@
+---
+interface Props { amount: number; class?: string; }
+const { amount, class: className } = Astro.props;
+---
+<span class:list={['price-value', className]}>
+  <span class="price-value__width" aria-hidden="true">{amount}</span>
+  <span class="price-value__number" data-price-counter data-price={amount} aria-hidden="true">{amount}</span>
+  <span class="sr-only">{amount}</span>
+</span>

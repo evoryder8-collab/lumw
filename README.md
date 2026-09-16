@@ -1,111 +1,98 @@
-# luma-wellness.com
+# LUMA Wellness
 
-Hand-built replacement for the Wix site at www.luma-wellness.com. Astro 5,
-Tailwind 4, static output, deployed to GitHub Pages.
+Astro 5 and Tailwind 4. Static output deployed to GitHub Pages. `main` publishes
+[staging](https://evoryder8-collab.github.io/lumw/). The production domain remains
+on Wix until the owner completes the cutover procedure in `CLAUDE.md`.
 
-The live site ranks top 3 for "massage buxtehude" and number 1 on Google Maps.
-**Ranking preservation outranks every other concern, including design.**
+## Verify before every commit
 
-## The one rule
-
-All 25 live URLs must resolve byte-identically. GitHub Pages cannot issue a
-single 301, so the migration works by never changing a URL. Four of the 25
-contain non-ASCII characters (`schröpfkopf` ×2, `rücken`, `fuß`) and must be
-emitted composed (NFC) or they 404 on Linux while looking correct on macOS.
-
-`npm run build` runs that check and fails the build if any path is missing,
-empty, decomposed, or has lost its canonical.
-
-```bash
-npm run build
+```sh
+npm ci
+PUBLIC_BASE=/lumw PUBLIC_INDEXABLE=false npm run verify
+npm run check:browser
+npm run check:performance
 ```
 
-## Open decision before cutover: the trailing slash
+`verify` builds 51 pages and checks the original 25 URLs, German titles,
+descriptions, H1s and paragraphs, JSON-LD, text contrast, six-language links,
+sitemaps, assets, noindex, visible punctuation and compressed JavaScript size.
 
-Measured on the deployed build and on the live site:
+`check:browser` starts its own preview and checks real visitor journeys, video
+playback, price animation, gallery controls, the enquiry composer, keyboard
+navigation, four viewport widths, reduced motion and JavaScript disabled. It
+also runs axe on eight representative pages. Install the browser first with
+`npx playwright install --with-deps chromium`; local macOS checks use Chrome.
 
-| | `/about` | `/about/` |
-|---|---|---|
-| Live Wix site | **200** | 301 → `/about` |
-| This build on Pages (`format: 'directory'`) | 301 → `/about/` | **200** |
+`check:performance` measures four mobile scenarios with cold browser contexts.
+Budgets: performance 95, LCP 2.5 seconds, CLS 0.02 and blocking time 200 ms.
+CI uses the median of three runs. Reports, screenshots and host load are written
+to ignored `artifacts/`. Video transfer after the visitor presses play is not
+part of the initial page-loading budget.
 
-The redirect runs in the opposite direction. All 25 indexed URLs are the
-no-slash form, so at cutover every one of them would begin 301-redirecting to a
-form Google has never seen, and the canonical shape would flip.
+## Visitor experience
 
-Section 7 asks explicitly for `/path/index.html`, which is what ships, so this
-is flagged rather than quietly changed. `build.format: 'file'` in
-`astro.config.mjs` emits `about.html`, which Pages serves at `/about` with no
-redirect at all — byte-identical to live, umlauts included. `check:urls` prints
-which behaviour is currently built on every run.
+- The first homepage visit in a tab opens the language portal, then asks about
+  sound. The affirmative tap starts the introduction with audio. Declining
+  starts muted, or leaves it paused under reduced motion. Browser playback
+  restrictions fall back to an explicit play button.
+- Sound and welcome choices live only in session storage, with an in-memory
+  fallback if storage is blocked. Returning to the page does not restart audio.
+- The other four films have native controls and load only on playback. Starting
+  one film pauses the others; navigating away pauses all of them.
+- Prices count up once as they enter view, then glow once. The accessible text
+  always contains the final amount. Reduced motion and no-JavaScript views
+  show prices immediately.
+- Contact is an enquiry composer. It prepares an accurate WhatsApp or email
+  message for the visitor to send. It does not claim a reserved appointment.
+- Three short Google review excerpts link to their original reviews. The
+  rating is a dated, manually verified snapshot, not an automatic live feed.
+- Their horizontal cards make a small, once-only preview movement on entry.
+  Touch or keyboard input cancels it, and reduced motion disables it.
+- June's portrait greeting appears after 20 seconds of visible homepage time
+  after the welcome choices. It offers the translated enquiry link, never
+  takes focus, and can be dismissed for the session.
 
-Worth noting: the spec's build order mentions Cloudflare Pages, where
-`/path/index.html` *does* serve `/path` at 200. The instruction was most likely
-written for that host before the stack settled on GitHub Pages.
+## Native link-in-bio
 
-## Commands
+`/linkinbio` uses the same design system and the supplied introduction. It
+tries audible inline autoplay, falls back to muted playback if rejected, and
+respects a previously declined sound choice. The sound control stays visible.
+Reduced motion leaves it paused. Both browser permission outcomes are tested;
+an actual Instagram device check remains an owner task before changing the bio.
 
-| Command | What it does |
+Every TapLink action is present, including the current social profiles and a
+native downloadable contact card at `/june-saurin.vcf`. The production canonical
+is `https://www.luma-wellness.com/linkinbio`; staging uses `/lumw/linkinbio`.
+The platform-tinted glass buttons have a slow travelling gleam, viewport
+reveals and touch feedback. The Contact map is shared here, including its
+Google Maps / Apple Maps chooser and no-JavaScript directions links.
+
+## Content and structure
+
+| Location | Purpose |
 |---|---|
-| `npm run dev` | Dev server |
-| `npm run build` | Build **and** run the 25-URL migration check |
-| `npm run check:urls` | The migration guard on its own |
-| `npm run check:jsonld` | Expand and validate the JSON-LD on every page |
-| `npm run check:contrast` | Contrast against the aurora wash's extreme states |
-| `npm run assets` | Regenerate `src/assets` from the original photo export |
-| `npm run verify` | Build plus every check |
+| `src/content/` | Preserved German services, treatments, FAQs and legal text |
+| `src/i18n/` | Five translated core-page sets and route correspondence |
+| `src/data/expected-urls.json` | Original 25 migration paths |
+| `src/data/migration-content-baseline.json` | German H1 and paragraph regression baseline |
+| `src/data/google-reviews.json` | Verified review excerpts and source links |
+| `src/styles/liquid-glass.css` | Shared materials and composition |
+| `src/scripts/experience.ts` | Interaction setup and navigation cleanup |
+| `src/scripts/welcome.ts` | Language, sound consent and playback |
+| `src/scripts/prices.ts` | Scroll-triggered price animation |
+| `docs/media-sources.md` | Photo, video, flag and review provenance |
 
-## Staging and cutover
+German service details and legal pages remain in German. All five core pages
+are available in English, Thai, Spanish, Portuguese and Italian. Translated
+catalogues identify links to the full original German descriptions.
 
-Every page ships `noindex` and `robots.txt` disallows everything. This is
-deliberate: the cutover protocol builds staging noindex and lifts it in the
-same release that points DNS at Pages.
+## URL preservation and staging
 
-To go live, set `PUBLIC_INDEXABLE: 'true'` in `.github/workflows/deploy.yml`
-**in the same release as the DNS change**, never before.
+Astro emits flat files, so `/about` resolves at 200 on GitHub Pages. Small
+`/about/index.html` aliases support trailing-slash visitors. Umlaut paths stay
+NFC-normalized. Internal links and media honor `/lumw`; canonicals retain
+`https://www.luma-wellness.com`.
 
-## Content
-
-Copy is pasted verbatim from `content-source/luma-wellness-copy.md` and never
-paraphrased. The live site has a list of known inconsistencies (a "60min."
-service configured as 90 minutes, contradictory Thai prices, `UBER MICH`
-without its umlaut, an Australian Privacy Act clause on a German privacy page).
-**These are deliberately not fixed at cutover** — they get corrected one at a
-time once rankings have settled.
-
-| Where | What |
-|---|---|
-| `src/content/services.json` | The 18 Wix Bookings entries behind `/service-page/` |
-| `src/content/treatments.json` | The 9 sections on `/meineangebote-preise` |
-| `src/content/faq.json` | The 11 FAQ entries, feeding the page and `FAQPage` |
-| `src/content/legal/*.md` | Nutzungsbedingungen and Datenschutzrichtlinie |
-| `src/data/expected-urls.json` | The 25 URLs. The authority for the sitemap and the guard. |
-| `src/lib/site.ts` | NAP, hours, June's award record |
-
-### Photography
-
-The filenames in `june website media/` are keyword-stuffed for SEO and **do not
-describe what is in the pictures**. `thai-massage-buxtehude v2.webp` is June's
-portrait; `massage.webp` is the Google Reviews logo. `scripts/prepare-assets.mjs`
-holds the real mapping, established by looking at every image, plus the tone
-lift that brings the darker frames into the light design register. Never pick an
-image by its filename.
-
-## Design
-
-The visual contract is section 9 of the build spec: warm porcelain under a
-low-chroma aurora wash, Fraunces at light weights, gold as the only accent
-metal. Fonts are self-hosted variable WOFF2 — never the Google CDN, which
-German courts have ruled transmits visitor IPs without consent.
-
-One deviation, enforced by `check:contrast`: the spec names `#b8934e` as gold
-"for text and lines", but it measures 2.68:1 on porcelain and clears neither AA
-nor AA-large. It keeps every non-text job; a darker step on the same hue
-(`--gold-text`, 4.90:1) carries the text. The check lints for regressions.
-
-## Not built yet
-
-Stages 4 to 10 of the build order: Supabase schema, Edge Functions and the
-booking island, the GSAP motion layer, Impressum, locales, location pages, and
-the cutover itself. The contact form is inert until the booking backend lands
-and says so on the page.
+Staging is always `noindex, nofollow`. Do not change DNS, the indexing flag or
+production canonicals as part of ordinary staging design work. Pricing
+conflicts and the remaining production gates are recorded in `roadmap.md`.

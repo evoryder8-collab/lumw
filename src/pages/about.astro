@@ -10,13 +10,14 @@ import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import Medal from '../components/Medal.astro';
+import FilmSection from '../components/FilmSection.astro';
 import { heroPreload } from '../lib/heroPreload';
 import { AWARDS, url } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
 } from '../lib/schema';
 
-import junePortrait from '../assets/june-portrait.webp';
+import junePortrait from '../assets/june-dark-portrait.webp';
 /* Cropped to the shapes this page renders them at, and flattened, by
    scripts/normalize-cards.mjs. The originals are portraits carrying a baked
    vignette, and a portrait cover-cropped into a 3:2 plate keeps a narrow band
@@ -212,6 +213,8 @@ const schema = graph([
       </p>
     </div>
   </section>
+
+  <FilmSection featured />
 
   <!-- Testimonial in air. One quote alone on the pale wash. -->
   <section class="section testimonial" data-sunbeam>

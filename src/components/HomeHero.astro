@@ -1,0 +1,37 @@
+---
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import Medal from './Medal.astro';
+import winner from '../assets/june-winner.webp';
+import { labels } from '../i18n/content';
+import { routePath, type Locale } from '../i18n/locales';
+import { url } from '../lib/site';
+interface Props { locale?: Locale; heading: string; lead: string; }
+const { locale = 'de', heading, lead } = Astro.props;
+const u = labels(locale);
+---
+<section class="hero hero--immersive">
+  <figure class="hero-winner">
+    <Photo src={winner} alt={u.portrait} widths={[480, 720, 1000, 1400]}
+      sizes="(max-width: 760px) 100vw, 55vw" variant="fill" dissolve={false} priority />
+  </figure>
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="hero-orbit" aria-hidden="true"></div>
+  <div class="hero-editorial">
+    <div class="hero-edition"><span class="edition-rule"></span><span>LUMA WELLNESS</span><span>BUXTEHUDE</span></div>
+    <p class="hero-kicker">{locale === 'de' ? 'Weltweit ausgezeichnete Massage' : u.awards}</p>
+    <h1 class="hero-headline">{locale === 'de' ? <><span>Beste</span>{' '}<span class="hero-headline__accent">Massage</span>{' '}<span class="hero-headline__place">in Buxtehude</span></> : heading}</h1>
+    <p class="hero-description">{lead}</p>
+    <div class="hero-links">
+      <a href={url(routePath('contact', locale))} class="pill pill--light sheen" data-magnetic><span data-magnetic-label>{u.book}</span><Icon size={20} /></a>
+      <a href={url(routePath('services', locale))} class="hero-text-link">{u.all}<span aria-hidden="true">↗</span></a>
+    </div>
+    <a class="hero-discover" href="#discover"><span class="scroll-mote" aria-hidden="true"></span>{u.scroll}</a>
+  </div>
+  <a class="winner-caption liquid-glass" href={url(routePath('about', locale))}>
+    <span class="winner-caption__seal"><Medal metal="gold" size={48} /></span>
+    <span><span class="winner-caption__overline">{u.awards}</span><span class="winner-caption__name">June Saurin</span></span>
+    <Icon size={22} />
+  </a>
+  <div class="hero-coordinate" aria-hidden="true">53°28′ N &nbsp; 9°41′ E</div>
+</section>

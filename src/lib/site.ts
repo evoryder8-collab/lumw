@@ -43,8 +43,8 @@ export const BUSINESS = {
   geo: { lat: 53.4679964, lng: 9.6892602 },
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=LUMA+Wellness+Hauptstra%C3%9Fe+19+21614+Buxtehude',
   sameAs: [
-    'https://www.facebook.com/lumawellnessbuxtehude',
-    'https://www.instagram.com/luma_wellness_buxtehude',
+    'https://www.facebook.com/lumawellnessbyjunesaurin',
+    'https://www.instagram.com/lumawellnessbyjune',
   ],
 } as const;
 

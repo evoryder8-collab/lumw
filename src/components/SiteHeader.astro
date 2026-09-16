@@ -7,19 +7,22 @@
  * all: the site must be fully navigable with JS disabled, and the booking
  * widget is meant to be the only interactive island on the whole site.
  */
-import { Image } from 'astro:assets';
-import { NAV, BUSINESS, url } from '../lib/site';
-import logo from '../assets/logo-luma-mark.webp';
+import BrandMark from './BrandMark.astro';
+import { BUSINESS, url } from '../lib/site';
+import { labels, navigation } from '../i18n/content';
+import { routePath, type Locale } from '../i18n/locales';
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: string };
+const u = labels(locale);
+const NAV = navigation(locale);
 ---
 
-<header class="header">
-  <a class="skip" href="#main">Zum Inhalt springen</a>
+<header class="header" transition:name="header">
+  <a class="skip" href="#main">{u.skip}</a>
 
   <div class="header__inner glass">
-    <a class="brand" href={url('/')} aria-label="LUMA WELLNESS by June Saurin, zur Startseite">
-      <Image src={logo} alt="" width={44} height={44} loading="eager" class="brand__mark" />
+    <a class="brand" href={url(routePath('home', locale))} aria-label={`LUMA Wellness, ${u.home}`} >
+      <BrandMark />
       <span class="brand__text">
         <span class="brand__name">LUMA</span>
         <span class="brand__sub">WELLNESS</span>
@@ -28,7 +31,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
     {/* Sits before the checkbox so `.nav-toggle + .nav-burger` and
         `.nav-toggle ~ .nav` keep matching; CSS order places it visually. */}
-    <button class="lang-btn" type="button" data-portal-open aria-label="Sprache wählen">
+    <button class="lang-btn" type="button" data-portal-open hidden aria-label={u.language}>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.25" />
         <ellipse cx="12" cy="12" rx="3.5" ry="8.4" fill="none" stroke="currentColor" stroke-width="1.25" />
@@ -40,13 +43,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       type="checkbox"
       id="nav-toggle"
       class="nav-toggle"
-      aria-label="Menü öffnen und schließen"
+      aria-label={u.menu}
     />
     <label for="nav-toggle" class="nav-burger" aria-hidden="true">
       <span></span><span></span>
     </label>
 
-    <nav class="nav" aria-label="Hauptnavigation">
+    <nav class="nav" aria-label={u.menu}>
       <ul class="nav__list">
         {
           NAV.map((item, i) => (
@@ -63,7 +66,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
           ))
         }
         <li class="nav__cta" style={`--i:${NAV.length}`}>
-          <a href={url('/contact')} class="pill">Jetzt buchen</a>
+          <a href={url(routePath('contact', locale))} class="pill">{u.book}</a>
         </li>
       </ul>
 
@@ -72,20 +75,20 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
           them rather than sending people back to the footer. */}
       <div class="nav__meta">
         <div class="nav__meta-row">
-          <span class="nav__meta-label">Telefon</span>
+          <span class="nav__meta-label">{u.phone}</span>
           <a href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a>
         </div>
         <div class="nav__meta-row">
-          <span class="nav__meta-label">E-Mail</span>
+          <span class="nav__meta-label">{u.email}</span>
           <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
         </div>
         <div class="nav__meta-row">
-          <span class="nav__meta-label">Adresse</span>
+          <span class="nav__meta-label">{u.address}</span>
           <span>Hauptstraße 19, 21614 Buxtehude</span>
         </div>
         <div class="nav__meta-row">
-          <span class="nav__meta-label">Termine</span>
-          <span>Nur nach vorheriger Absprache</span>
+          <span class="nav__meta-label">{u.book}</span>
+          <span>{u.appointment}</span>
         </div>
       </div>
     </nav>
@@ -208,7 +211,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   /* Desktop: after the nav, at the right end of the bar. */
-  @media (min-width: 901px) {
+  @media (min-width: 1181px) {
     .lang-btn { order: 3; margin-left: 0.9rem; }
     .nav { margin-left: auto; }
   }
@@ -216,7 +219,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   /* Phone: pushed to the right so it pairs with the burger, but held a clear
      16px clear of it - a 40px and a 44px target that close together is how
      you get a mis-tap on the wrong one. */
-  @media (max-width: 900px) {
+  @media (max-width: 1180px) {
     .lang-btn { margin-left: auto; margin-right: 1rem; }
     .header__inner { gap: 0.75rem; }
   }
@@ -224,7 +227,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .nav-toggle { position: absolute; opacity: 0; pointer-events: none; }
   .nav-burger { display: none; }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1180px) {
     .nav-burger {
       display: flex;
       flex-direction: column;

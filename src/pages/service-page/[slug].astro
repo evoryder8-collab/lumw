@@ -13,6 +13,7 @@
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import Price from '../../components/Price.astro';
 import Photo from '../../components/Photo.astro';
 import { imageByName, socialImageUrl } from '../../lib/images';
 import { heroPreload } from '../../lib/heroPreload';
@@ -118,7 +119,7 @@ const schema = graph([
           </nav>
 
           <p class="eyebrow" data-fade>{service.tagline}</p>
-          <h1 class="hero__title" data-reveal>{service.name}</h1>
+          <h1 class="hero__title" transition:name={`title-${service.family}`}>{service.name}</h1>
 
           <dl class="facts">
             <div class="fact">
@@ -127,12 +128,12 @@ const schema = graph([
             </div>
             <div class="fact">
               <dt>Preis</dt>
-              <dd class="fact__price">{service.priceEur}€</dd>
+              <dd class="fact__price"><Price amount={service.priceEur} />€</dd>
             </div>
           </dl>
 
           <div class="hero__actions">
-            <a href={url('/contact')} class="pill sheen halo" data-magnetic>
+            <a href={url(`/contact?treatment=${service.family === 'thai' ? 'thai-solution' : service.family}#enquiry`)} class="pill sheen halo" data-magnetic>
               <span data-magnetic-label>Termin anfragen</span>
             </a>
             <a
@@ -180,7 +181,7 @@ const schema = graph([
                 <li>
                   <a href={url(`/service-page/${s.slug}`)} class="sibling panel float">
                     <span class="sibling__dur">{s.durationMin} Minuten</span>
-                    <span class="sibling__price">{s.priceEur}€</span>
+                    <span class="sibling__price"><Price amount={s.priceEur} />€</span>
                   </a>
                 </li>
               ))}
@@ -201,7 +202,7 @@ const schema = graph([
                   <a href={url(`/service-page/${s.slug}`)} class="related__link panel float">
                     <span class="related__name">{s.familyName}</span>
                     <span class="related__meta">
-                      ab {s.durationMin} Minuten · {s.priceEur}€
+                      ab {s.durationMin} Minuten · <Price amount={s.priceEur} />€
                     </span>
                   </a>
                 </li>
@@ -216,7 +217,7 @@ const schema = graph([
       <div class="shell shell--narrow close__inner">
         <p class="eyebrow">Termine nur nach vorheriger Absprache</p>
         <h2 class="close__title" data-reveal>{service.familyName} buchen</h2>
-        <a href={url('/contact')} class="pill sheen" data-magnetic>
+        <a href={url(`/contact?treatment=${service.family === 'thai' ? 'thai-solution' : service.family}#enquiry`)} class="pill sheen" data-magnetic>
           <span data-magnetic-label>Termin anfragen</span>
         </a>
         <p class="close__back">
