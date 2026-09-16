@@ -12,8 +12,8 @@ const u = labels(locale);
 ---
 <section class="hero hero--immersive">
   <figure class="hero-winner">
-    <Photo src={winner} alt={u.portrait} widths={[480, 720, 1000, 1400]}
-      sizes="(max-width: 760px) 100vw, 55vw" variant="fill" dissolve={false} priority />
+    <Photo src={winner} alt={u.portrait} widths={[360, 480, 720, 1000, 1400]}
+      sizes="(max-width: 760px) calc(100vw - 80px), 44vw" variant="fill" dissolve={false} priority />
   </figure>
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="hero-orbit" aria-hidden="true"></div>

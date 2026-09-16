@@ -87,8 +87,8 @@ const angebote = [
   },
 ];
 
-const heroSizes = '(max-width: 760px) 100vw, 55vw';
-const preloadImage = await heroPreload(junePortrait, [480, 720, 1000, 1400], heroSizes);
+const heroSizes = '(max-width: 760px) calc(100vw - 80px), 44vw';
+const preloadImage = await heroPreload(junePortrait, [360, 480, 720, 1000, 1400], heroSizes);
 
 const ogImage = await socialImageUrl(junePortrait, Astro.site);
 

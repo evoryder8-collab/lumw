@@ -40,7 +40,7 @@ const treatmentWidths = [420,640,860];
 const treatmentSizes = '(max-width:760px) 92vw, (max-width:1000px) 46vw, 31vw';
 const firstTreatmentImage = cardImageByName(treatments[0]?.image);
 const preloadImage = pageKey === 'home'
-  ? await heroPreload(winner, [480,720,1000,1400], '(max-width: 760px) 100vw, 55vw')
+  ? await heroPreload(winner, [360,480,720,1000,1400], '(max-width: 760px) calc(100vw - 80px), 44vw')
   : pageKey === 'services' && firstTreatmentImage
     ? await heroPreload(firstTreatmentImage, treatmentWidths, treatmentSizes)
     : undefined;

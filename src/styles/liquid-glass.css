@@ -201,8 +201,8 @@ body:has(#nav-toggle:checked) .june-invitation { visibility: hidden; pointer-eve
 @media (prefers-reduced-motion: no-preference) {
   .motion-ready .winner-caption::after { animation: glass-pass 11s ease-in-out infinite; }
   .motion-ready .hero-winner img { animation: portrait-breath 18s ease-in-out infinite alternate; }
-  .hero-winner { animation: portrait-float 13s ease-in-out infinite; }
-  .hero-winner::before { animation: portrait-aura 10s ease-in-out infinite; }
+  .motion-ready .hero-winner { animation: portrait-float 13s ease-in-out infinite; }
+  .motion-ready .hero-winner::before { animation: portrait-aura 10s ease-in-out infinite; }
   .motion-ready .scroll-mote::after { animation: mote-fall 3s ease-in-out infinite; }
 }
 @media (hover: hover) and (pointer: fine) {
@@ -511,6 +511,7 @@ body[data-ambient-sleep] .hero-winner img, body[data-ambient-sleep] .winner-capt
 .portal-atmosphere > span:nth-child(3) { left: 18%; top: -23vmax; background: radial-gradient(circle, #76988952, transparent 64%); }
 .portal-atmosphere > i { position: absolute; width: 86vmax; height: 86vmax; border: 1px solid #f0dfac26; border-radius: 50%; top: -43vmax; right: -33vmax; box-shadow: 0 0 0 65px #f4e8bd05, 0 0 0 145px #f4e8bd04; }
 .language-dialog.is-welcome { background: #13382e; }
+.language-dialog.is-welcome::backdrop, .sound-dialog::backdrop { background: #13382e; backdrop-filter: none; -webkit-backdrop-filter: none; }
 .language-dialog .language-dialog__inner, .language-dialog.is-welcome .language-dialog__inner {
  position: relative; isolation: isolate; width: min(780px, 100%); padding: clamp(2rem, 4.5vw, 3.6rem); border-radius: 32px; border: 1px solid #fff9; background: radial-gradient(ellipse at var(--portal-x, 30%) var(--portal-y, 15%), #fffffff2, #f6f5e8df 60%, #e0e5d7e6); backdrop-filter: blur(30px) saturate(1.25); box-shadow: 0 40px 100px #00130c47, inset 0 2px 2px #fff, inset 0 -1px 1px #ffffffb0;
 }

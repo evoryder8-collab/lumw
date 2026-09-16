@@ -404,3 +404,12 @@ the shared `is-nudging` state to temporarily suspend snapping. The mobile tests
 observe actual horizontal movement and its return to zero for photos and films.
 The film rail also starts flush at zero: a 3px inset had let native snapping
 look like prior visitor input and suppress the hint.
+
+
+**The circular hero changed the first-paint cost.** CI caught welcome-screen
+blocking and a homepage LCP just above 2.5 seconds. Portrait drift and its aura
+now join the existing deferred motion layer, so they stay still behind the
+initial welcome. Fullscreen welcome backdrops no longer blur the hidden page.
+The circular portrait and its matching preload now declare their actual rendered
+width and include a 360px candidate for small screens. The moving light inside
+the language portal remains visible, and no performance threshold was relaxed.
