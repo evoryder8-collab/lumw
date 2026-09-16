@@ -9,6 +9,13 @@ Format: **what** · *how it was found* · why · guard.
 
 ## September interaction refinements
 
+**The first treatment photo was lazy despite being visible at page entry.**
+CI mobile Lighthouse identified the first Aroma-Luxus card as the largest
+contentful element. Its median paint arrived at 2.541 seconds, just beyond the
+2.5-second budget. German and translated treatment pages now preload the exact
+responsive candidate and mark only the first card eager with high priority.
+The remaining cards stay lazy. The release budget is unchanged.
+
 **A skipped page animation raised an unhandled AbortError in Chromium 153.**
 The CI journeys finished but correctly failed their browser-error gate. A
 focused reproduction cancelled the native transition during `astro:before-swap`

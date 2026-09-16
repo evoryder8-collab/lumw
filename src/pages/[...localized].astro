@@ -35,7 +35,14 @@ const title = page.title;
 const description = page.description;
 const treatments = data.treatments;
 const ogImage = await socialImageUrl(pageKey === 'home' ? winner : portrait, Astro.site);
-const preloadImage = pageKey === 'home' ? await heroPreload(winner, [480,720,1000,1400], '(max-width: 760px) 100vw, 55vw') : undefined;
+const treatmentWidths = [420,640,860];
+const treatmentSizes = '(max-width:760px) 92vw, (max-width:1000px) 46vw, 31vw';
+const firstTreatmentImage = cardImageByName(treatments[0]?.image);
+const preloadImage = pageKey === 'home'
+  ? await heroPreload(winner, [480,720,1000,1400], '(max-width: 760px) 100vw, 55vw')
+  : pageKey === 'services' && firstTreatmentImage
+    ? await heroPreload(firstTreatmentImage, treatmentWidths, treatmentSizes)
+    : undefined;
 const schema = graph([
   businessNode(), personNode(), websiteNode(), webPageNode({ path, title, description, hasBreadcrumb: true, imageUrl: ogImage }),
   breadcrumbNode(path, [{ name: u.home, path: routePath('home', locale) }, ...(pageKey === 'home' ? [] : [{ name: page.eyebrow, path }])]),
@@ -69,7 +76,7 @@ const schema = graph([
   {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item) => {
     const text = t.treatments[item.id as keyof typeof t.treatments];
     return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature']} id={item.id} data-card>
-      <div class="card__photo"><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></div>
+      <div class="card__photo"><Photo src={cardImageByName(item.image)!} alt={text.name} widths={treatmentWidths} sizes={treatmentSizes} priority={item === treatments[0]} ratio="7 / 6" dissolve={false} /></div>
       <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{text.name}</h2><p class="card__lead">{text.description}</p><dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl><a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><a class="localized-original underline-gold" href={url(`/meineangebote-preise#${item.id}`)} lang="de">{u.details}</a></div>
     </article>;
   })}</div></div></section>}

@@ -65,6 +65,14 @@ prescribed three-run cold-context repeat passed: median score 97, LCP 2.407 s,
 CLS 0.0001 and blocking time 0 ms. Its other three scenarios passed on their
 first measurement. No budget or error filter was relaxed.
 
+The next CI run passed all browser checks and three performance scenarios.
+Treatments missed its LCP budget at a 2.541-second median because its first
+visible photo was lazy. That photo now has a matching responsive preload and
+eager high-priority loading in all six treatment pages. A Chromium 153 repeat
+passed all three cold measurements: 2.106, 2.104 and 2.104 seconds, with a median
+score of 98, CLS 0.0003 and blocking time 0 ms. Network evidence confirms one
+download of the chosen photo candidate. The remaining photos stay lazy.
+
 Budgets: performance 95, LCP 2.5 s, CLS 0.02, blocking time 200 ms. Reports and
 screenshots are generated under ignored `artifacts/` and retained by CI for
 14 days. Field INP and an actual Instagram app session are not measured by

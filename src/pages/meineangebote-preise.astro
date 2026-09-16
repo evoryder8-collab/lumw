@@ -16,6 +16,7 @@ import Photo from '../components/Photo.astro';
 import Medal from '../components/Medal.astro';
 import Price from '../components/Price.astro';
 import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
+import { heroPreload } from '../lib/heroPreload';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode, serviceNode,
 } from '../lib/schema';
@@ -33,6 +34,11 @@ const path = '/meineangebote-preise';
 
 const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
 const services = await getCollection('services');
+const cardWidths = [420, 640, 860];
+const cardSizes = '(max-width: 640px) 100vw, (max-width: 1100px) 46vw, 31vw';
+// The first card is part of the initial mobile viewport and is its LCP image.
+const firstCardImage = cardImageByName(treatments[0]?.data.image);
+const preloadImage = firstCardImage ? await heroPreload(firstCardImage, cardWidths, cardSizes) : undefined;
 
 /**
  * A card morphs into the service page hero on tap, so it has to link there.
@@ -109,7 +115,7 @@ const schema = graph([
 const money = (n: number) => `${n}€`;
 ---
 
-<Layout {title} {description} {path} schema={schema}>
+<Layout {title} {description} {path} {preloadImage} schema={schema}>
   <section class="hero">
     <div class="shell">
       <p class="eyebrow" data-fade>LUMA Wellness by June Saurin</p>
@@ -154,8 +160,9 @@ const money = (n: number) => `${n}€`;
                           photographs of distinct treatments, not decoration the
                           heading already covers. */}
                       alt={t.data.imageAlt ?? treatmentName(t.data.name)}
-                      widths={[420, 640, 860]}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1100px) 46vw, 31vw"
+                      widths={cardWidths}
+                      sizes={cardSizes}
+                      priority={i === 0}
                       {/* 7:6, matching scripts/normalize-cards.mjs. Tall enough
                           that the photograph owns the top half of the card. */}
                       ratio="7 / 6"
