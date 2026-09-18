@@ -8,7 +8,7 @@ interface Props { metal: 'gold' | 'silver' | 'bronze'; size?: number; label?: st
 const { metal, size = 64, label } = Astro.props;
 const artwork = { gold, silver, bronze }[metal];
 ---
-<Image class="medal" src={artwork} width={224} height={224} format="webp" quality={85}
+<Image class="medal" src={artwork} width={224} height={224} widths={[48, 80, 112, 160, 224]} sizes={`${size}px`} format="webp" quality={85}
   alt={label ?? ''} aria-hidden={label ? undefined : 'true'} loading="lazy"
   style={`--medal-size:${size}px`} />
 <style>

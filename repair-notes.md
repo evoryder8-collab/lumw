@@ -571,3 +571,18 @@ for welcome and 2.407 seconds for returning Home, scoring 98 with zero CLS.
 The full browser suite passes, including row alignment at tablet and desktop
 widths; a separate desktop check confirms alignment in all five translations.
 No performance budget changed.
+
+**Local and deployment performance checks used different browser versions.**
+The macOS command previously selected the installed Chrome, while deployment
+used Playwright's pinned Chromium. Both now default to the pinned browser;
+`CHROME_PATH` remains an explicit override. Failed timing budgets preserve
+their traces even when the overall score is high, with an optional
+`LUMA_LIGHTHOUSE_TRACE=1` for diagnosis.
+
+**Offscreen native players participated in the initial layout.** Film cards now
+reserve the exact 9:16 content area, including the existing border widths, and
+use automatic content visibility to defer their controls until near the view.
+The player, poster and frame retain their sizes when scrolling into view.
+The introductory film is unaffected. Medal artwork also has 48, 80, 112, 160
+and 224px delivery candidates, selected by display size and pixel density.
+This keeps the small portrait badge from fetching a 224px image on every phone.

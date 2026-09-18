@@ -150,6 +150,9 @@ The gold, silver and bronze placement illustrations are generated metal assets,
 not championship logos. The award text and event names continue to use the
 existing award record. Original PNGs, exact prompts and delivery details are
 documented in [medal-artwork.md](medal-artwork.md).
+Responsive WebP delivery uses 48, 80, 112, 160 and 224px candidates at quality
+85, preserving the original artwork while matching the displayed size and
+screen density.
 
 ## Sharing cover and icons
 

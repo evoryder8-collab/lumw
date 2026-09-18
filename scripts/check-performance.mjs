@@ -8,7 +8,9 @@ import { chromium } from '@playwright/test';
 import { startPreview } from './preview-server.mjs';
 
 const preview = await startPreview();
-const executablePath = process.env.CHROME_PATH || (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : chromium.executablePath());
+// Use the same pinned browser locally and in CI. An installed Chrome can be
+// several versions apart and have different loading and rendering behaviour.
+const executablePath = process.env.CHROME_PATH || chromium.executablePath();
 const browser = await puppeteer.launch({ executablePath, headless: true, args: ['--no-sandbox'] });
 const directory = path.resolve('artifacts/performance');
 fs.mkdirSync(directory, { recursive: true });
@@ -35,7 +37,9 @@ try {
       }, undefined, page);
       if (result.lhr.runtimeError) throw new Error(JSON.stringify(result.lhr.runtimeError));
       const audits = result.lhr.audits;
-      if (result.lhr.categories.performance.score < 0.95) fs.writeFileSync(path.join(directory, `${scenario.name}-${run}-trace.json`), JSON.stringify(result.artifacts.Trace));
+      if (process.env.LUMA_LIGHTHOUSE_TRACE === '1' || result.lhr.categories.performance.score < 0.95 || audits['largest-contentful-paint'].numericValue > 2500 || audits['cumulative-layout-shift'].numericValue > 0.02 || audits['total-blocking-time'].numericValue > 200) {
+        fs.writeFileSync(path.join(directory, `${scenario.name}-${run}-trace.json`), JSON.stringify(result.artifacts.Trace));
+      }
       const measurement = {
         score: Math.round(result.lhr.categories.performance.score * 100),
         lcp: Math.round(audits['largest-contentful-paint'].numericValue),
