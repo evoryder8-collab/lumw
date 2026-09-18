@@ -269,10 +269,25 @@ try {
   for (let sample = 0; sample < 4; sample++) { await ribbonPage.waitForTimeout(250); releasePositions.push(await ribbonX()); }
   const distances = releasePositions.slice(1).map((position, i) => releasePositions[i] - position);
   assert.ok(distances.every((distance) => distance > 0) && distances[3] > distances[0] * 1.5, `Ribbon failed to accelerate smoothly after release: ${distances}`);
-  await ribbonPage.mouse.click(ribbonBounds.x + 650, ribbonBounds.y + ribbonBounds.height / 2);
+  await ribbon.click({ position: { x: 650, y: ribbonBounds.height / 2 } });
   const tapStart = await ribbonX();
-  await ribbonPage.waitForTimeout(500);
-  assert.ok(await ribbonX() < tapStart - 3, 'A simple tap left the ribbon paused');
+  // Observe displacement rather than assuming a CI renderer paints enough
+  // frames in exactly 500ms. A latched pause still fails within two seconds.
+  const resumed = async (start) => ribbonPage.waitForFunction((x) => {
+    const rail = document.querySelector('.strip__track');
+    const period = document.querySelector('.strip__pass').getBoundingClientRect().width;
+    const current = new DOMMatrixReadOnly(getComputedStyle(rail).transform).m41;
+    return ((x - current + period) % period) > 3;
+  }, start, { timeout: 2000 });
+  await resumed(tapStart);
+  const releaseBounds = await ribbon.boundingBox();
+  await ribbonPage.mouse.move(releaseBounds.x + 650, releaseBounds.y + releaseBounds.height / 2);
+  await ribbonPage.mouse.down();
+  await ribbonPage.mouse.move(releaseBounds.x + 600, releaseBounds.y - 30);
+  await ribbonPage.waitForTimeout(160);
+  await ribbonPage.mouse.up();
+  await resumed(await ribbonX());
+  assert.notEqual(await ribbon.evaluate((el) => el.style.cursor), 'grabbing', 'Release outside left the ribbon held');
   await ribbonPage.screenshot({ path: path.join(artifacts, 'awards-ribbon.png') });
   await ribbonContext.close();
   report.push('Awards ribbon keeps moving on hover, tracks dragging, accelerates after release and resumes after a tap');

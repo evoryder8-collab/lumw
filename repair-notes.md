@@ -521,6 +521,10 @@ with exponential damping. Vertical touch scrolling passes through. Hidden and
 offscreen animation stops; reduced motion provides native horizontal scrolling.
 Browser tests observe displacement while hovering, drag distance, acceleration
 after a held release, and recovery after a tap.
+The deployment runner exposed a timing-sensitive 500ms tap assertion. It now
+waits for actual resumed displacement with a two-second failure limit and
+also tests release outside the rail. Window-level release and blur handlers
+provide a fallback when pointer capture is interrupted.
 
 **Main-page navigation now shares the floral entrance.** A persistent decorative
 curtain closes while Astro fetches the destination, covers the DOM swap, then

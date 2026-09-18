@@ -59,6 +59,16 @@ export function mountAwardRibbon(strip: HTMLElement) {
   viewport.addEventListener('pointerup', release, { signal });
   viewport.addEventListener('pointercancel', release, { signal });
   viewport.addEventListener('lostpointercapture', release, { signal });
+  // Capture normally routes releases back to the rail. Also handle window
+  // releases and interrupted focus so a fast tap or drag outside cannot latch
+  // the held state if the browser drops that capture.
+  window.addEventListener('pointerup', release, { signal });
+  window.addEventListener('pointercancel', release, { signal });
+  window.addEventListener('blur', () => {
+    const captured = pointer;
+    pointer = undefined; speed = 0; viewport.style.cursor = '';
+    if (captured !== undefined && viewport.hasPointerCapture(captured)) viewport.releasePointerCapture(captured);
+  }, { signal });
   viewport.addEventListener('dragstart', (event) => event.preventDefault(), { signal });
   viewport.addEventListener('wheel', (event) => {
     if (reduced.matches || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
