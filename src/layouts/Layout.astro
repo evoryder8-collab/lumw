@@ -4,8 +4,8 @@
  *
  * The aurora wash and the grain are fixed layers behind the content, so they
  * cost one paint and never move in the layout. The display face is preloaded
- * because it draws the LCP element on every page; the body face is not, since
- * it renders below the fold on first paint and swap handles it.
+ * because it draws the primary headings. The interface face also appears
+ * above the fold; both preload, while unused display weights load on demand.
  */
 import Meta from '../components/seo/Meta.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
@@ -53,14 +53,14 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <link
       rel="preload"
-      href={url('/fonts/cormorant-garamond-display-var.woff2')}
+      href={url('/fonts/cormorant-garamond-display-light.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href={url('/fonts/hankengrotesk-ui-var.woff2')}
+      href={url('/fonts/hankengrotesk-interface-var.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
@@ -89,8 +89,15 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
     <style is:inline set:html={`
       @font-face {
         font-family: 'Cormorant Garamond';
+        src: url('${fontBase}/fonts/cormorant-garamond-display-light.woff2') format('woff2');
+        font-weight: 300; font-style: normal; font-display: swap;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: 'Cormorant Garamond';
         src: url('${fontBase}/fonts/cormorant-garamond-display-var.woff2') format('woff2-variations');
-        font-weight: 300 700; font-style: normal; font-display: swap;
+        font-weight: 301 700; font-style: normal; font-display: swap;
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
           U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
       }
@@ -103,7 +110,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
       }
       @font-face {
         font-family: 'Hanken Grotesk';
-        src: url('${fontBase}/fonts/hankengrotesk-ui-var.woff2') format('woff2-variations');
+        src: url('${fontBase}/fonts/hankengrotesk-interface-var.woff2') format('woff2-variations');
         font-weight: 300 700; font-style: normal; font-display: swap;
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
           U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;

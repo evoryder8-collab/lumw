@@ -104,12 +104,14 @@ Latin variable normal and italic WOFF2 files, weights 300 to 700. Source:
 through Google Fonts. The SIL Open Font License is retained in
 `public/fonts/Cormorant-Garamond-OFL.txt`. No visitor request goes to Google Fonts.
 Delivery subsets retain standard kerning, ligatures, number styles and the
-site's Latin characters. The normal variable face is 30.7 KB; the true italic
-is instantiated at the site's used weight 300 and is 18.3 KB. This removes
-about 28 KB from the initial typography download without changing its
-letterforms. Reproduce with `python3 scripts/prepare-display-fonts.py` using
-FontTools 4.60.2. The normal face preloads; the German homepage also preloads
-its italic headline face. Elsewhere, the italic loads where used. Thai
+site's Latin characters. The used normal weight 300 is instantiated at 17.4 KB;
+the true weight-300 italic is 18.2 KB. Higher weights retain the 30.7 KB variable
+file and load only where needed. Navigation numbers share the existing Hanken
+interface face. This removes about 41 KB from the initial typography download
+without changing the display letterforms. Reproduce with
+`python3 scripts/prepare-display-fonts.py` using FontTools 4.60.2. The light face
+preloads; the German homepage also preloads its italic headline face.
+Elsewhere, the italic loads where used. Thai
 keeps the existing sans-serif treatment. The earlier files described below
 remain archived, but Fraunces is no longer referenced by the site.
 
@@ -118,9 +120,11 @@ with optical size set to 48 and the used weight range 300 to 700 preserved.
 This reduces its transfer from about 67 KB to 35 KB while retaining the display
 family and variable weights. The source font is kept alongside it.
 
-`hankengrotesk-ui-var.woff2` retains the original Hanken Grotesk characters and
-the used weight range 300 to 700, including the wordmark's intermediate weight.
-It is 31.3 KB, derived from the preserved 34.7 KB original with FontTools 4.60.2.
+`hankengrotesk-interface-var.woff2` retains the site's Latin characters,
+standard kerning, ligatures and number features, with the used weight range
+300 to 700, including the wordmark's intermediate weight. It is 27.2 KB,
+derived from the preserved 34.7 KB original by the same reproducible script.
+The previous 31.3 KB `hankengrotesk-ui-var.woff2` remains archived.
 Both above-the-fold font families are preloaded. The introduction's WebP poster
 is delivered at 1280px and quality 72; its 1080p video is unchanged.
 

@@ -561,7 +561,13 @@ headline's italic is preloaded, and the gold reliefs now use responsive images.
 The six small flag originals are embedded in the portal HTML, removing six
 competing connections. A stored welcome choice no longer starts the motion
 engine before the primary photograph and fonts have had two paint frames.
-The affected cold three-run medians pass at 2.482 seconds for welcome and 2.489
-seconds for returning Home, scoring 97 with zero CLS. The full browser suite
-passes, including row alignment at tablet and desktop widths; a separate
-desktop check confirms alignment in all five translations. No budget changed.
+The deployment runner still measured a 2.574-second median with the full normal
+variable font. The initial view now receives its exact weight-300 face at
+17.4 KB, with other display weights loaded only where used. The interface face
+retains all used weights and standard typography features in a 27.2 KB subset.
+Original fonts remain available, and delivery generation preserves timestamps
+for reproducible files. The final local cold three-run medians are 2.409 seconds
+for welcome and 2.407 seconds for returning Home, scoring 98 with zero CLS.
+The full browser suite passes, including row alignment at tablet and desktop
+widths; a separate desktop check confirms alignment in all five translations.
+No performance budget changed.
