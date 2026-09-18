@@ -125,6 +125,12 @@ try {
     await detail.locator('[data-treatment-close]').click();
     assert.equal(await more.evaluate((el) => document.activeElement === el), true);
     assert.equal(await page.locator('body').evaluate((b) => b.style.overflow), '');
+    if (locale === 'en') for (let repeat = 0; repeat < 3; repeat++) {
+      await page.keyboard.press('Enter');
+      assert.equal(await detail.count(), 1);
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('body').evaluate((b) => b.style.overflow), '', 'Rapid popup reopening left scrolling locked');
+    }
   }
   await page.goto(preview.url('/en/treatments-prices'));
   await page.locator('#gold-medalie .treatment-details__trigger').click();

@@ -9,6 +9,13 @@ Format: **what** · *how it was found* · why · guard.
 
 ## 18 September: editorial, awards and welcome experience
 
+**Popup scroll restoration must not wait for the native close event.** CI's
+Chromium caught `body.overflow` still hidden immediately after closing a
+treatment dialog. Native close events are queued and can arrive after a rapid
+reopen. Close, Escape and backdrop actions now release the scroll lock and
+return focus synchronously. A queued close event cannot unlock an already
+reopened dialog. Browser checks include repeated keyboard open/close cycles.
+
 **The refined entrance initially missed the mobile LCP budget.** The first
 three-run median was 2.635 seconds. The new wordmark needed the body font early,
 and a treatment photograph far below the introduction was still eager. Both

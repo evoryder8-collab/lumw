@@ -9,6 +9,10 @@ Production artifact: `PUBLIC_BASE=/`, `PUBLIC_INDEXABLE=true`.
   structured data, reciprocal languages, working assets, and no em dashes.
 - Browser journeys pass across 360, 390, 768 and 1440px. Eight page accessibility
   audits and the new treatment-dialog audit report no WCAG A/AA violations.
+- The first CI attempt caught delayed scroll restoration after closing a
+  treatment popup. Restoration is now synchronous, queued close events cannot
+  affect a reopened dialog, and repeated keyboard cycles pass. The full suite
+  then passed locally in CI's bundled Chromium as well as system Chrome.
 - Language confirmation leaves the portal behind the animated sound popup.
   Both Yes and No then open the floral curtains. Yes plays actual audible
   media from the consent gesture; No remains muted. Reduced motion skips the

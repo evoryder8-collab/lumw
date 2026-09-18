@@ -18,6 +18,13 @@ export function mountTreatmentDetails(signal: AbortSignal) {
     trigger.setAttribute('aria-controls', dialog.id);
     const close = panel.querySelector<HTMLButtonElement>('[data-treatment-close]')!;
     close.hidden = false;
+    const release = () => {
+      if (active !== dialog) return;
+      active = undefined;
+      document.body.style.overflow = previousOverflow;
+      trigger.focus({ preventScroll: true });
+    };
+    const closeDialog = () => { dialog.close(); release(); };
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
       previousOverflow = document.body.style.overflow;
@@ -25,18 +32,19 @@ export function mountTreatmentDetails(signal: AbortSignal) {
       active = dialog;
       dialog.showModal();
     }, { signal });
-    close.addEventListener('click', () => dialog.close(), { signal });
+    close.addEventListener('click', closeDialog, { signal });
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault(); closeDialog();
+    }, { signal });
     dialog.addEventListener('close', () => {
-      if (active === dialog) {
-        active = undefined;
-        document.body.style.overflow = previousOverflow;
-        trigger.focus({ preventScroll: true });
-      }
+      // Native close events are queued. Ignore one from an earlier opening if
+      // the visitor has already reopened this dialog in the meantime.
+      if (!dialog.open) release();
     }, { signal });
     dialog.addEventListener('click', (event) => {
       if (event.target !== dialog) return;
       const r = dialog.getBoundingClientRect();
-      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close();
+      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) closeDialog();
     }, { signal });
   });
   return () => {
