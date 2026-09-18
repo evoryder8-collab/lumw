@@ -8,6 +8,7 @@ const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: s
 const u = labels(locale);
 const NAV = navigation(locale);
 const routeKey = routeKeyForPath(path) ?? 'home';
+const telephone = { de: 'Telefon', en: 'Phone', fr: 'Téléphone', es: 'Teléfono', pt: 'Telefone', it: 'Telefono' }[locale];
 ---
 
 <footer class="footer">
@@ -36,11 +37,11 @@ const routeKey = routeKeyForPath(path) ?? 'home';
     <div class="footer__col footer__col--wide">
       <h2 class="footer__title">{u.book}</h2>
       <ul class="footer__contact">
-        <li>Mail: <a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></li>
-        <li>Tel: <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></li>
+        <li>{u.email}: <a href={`mailto:${BUSINESS.email}`} class="underline-gold">{BUSINESS.email}</a></li>
+        <li>{telephone}: <a href={`tel:${BUSINESS.phoneE164}`} class="underline-gold">{BUSINESS.phone}</a></li>
         <li>
           <span class="footer__addr">{u.address}: Hauptstraße 19,</span>
-          <span class="footer__addr">21614, Buxtehude DE</span>
+          <span class="footer__addr">21614 Buxtehude, DE</span>
         </li>
       </ul>
       <p class="footer__note">{u.appointment}</p>

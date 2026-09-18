@@ -7,8 +7,8 @@ import Icon from './Icon.astro';
 import BrandMark from './BrandMark.astro';
 const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: string };
 const u = labels(locale);
-const flagCodes: Record<Locale, string> = { de: 'de', en: 'gb', th: 'th', es: 'es', pt: 'pt', it: 'it' };
-// These six tiny originals total 4.4 KB. Embed them so the portal's flags
+const flagCodes: Record<Locale, string> = { de: 'de', en: 'gb', fr: 'fr', es: 'es', pt: 'pt', it: 'it' };
+// Embed these six small flag assets so the portal's flags
 // appear with its HTML and do not compete with the portrait for connections.
 const flags = Object.fromEntries(Object.entries(flagCodes).map(([locale, code]) => [locale, `data:image/webp;base64,${readFileSync(`public/flags/${code}.webp`).toString('base64')}`]));
 const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'services' : 'home');

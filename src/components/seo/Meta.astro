@@ -32,9 +32,16 @@ const { title, description, path, ogType = 'website', noindex = false } = Astro.
 const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
 const indexable = import.meta.env.PUBLIC_INDEXABLE === 'true' && !noindex;
 const image = new URL(url('/social/luma-wellness-cover.jpg'), SITE_URL).href;
-const imageAlt = 'June Saurin with the gold LUMA Wellness identity against deep forest green. Internationally awarded massage in Buxtehude.';
 const locale = localeForPath(path);
-const ogLocale = { de: 'de_DE', en: 'en_GB', th: 'th_TH', es: 'es_ES', pt: 'pt_PT', it: 'it_IT' }[locale];
+const imageAlt = {
+  de: 'June Saurin neben dem goldenen LUMA Wellness Logo auf dunkelgrünem Hintergrund. International ausgezeichnete Massage in Buxtehude.',
+  en: 'June Saurin beside the gold LUMA Wellness logo on a dark green background. Internationally awarded massage in Buxtehude.',
+  fr: 'June Saurin à côté du logo doré LUMA Wellness sur fond vert foncé. Des massages primés à l’international, à Buxtehude.',
+  es: 'June Saurin junto al logotipo dorado de LUMA Wellness sobre un fondo verde oscuro. Masajes premiados internacionalmente en Buxtehude.',
+  pt: 'June Saurin junto ao logótipo dourado da LUMA Wellness sobre um fundo verde-escuro. Massagens premiadas internacionalmente em Buxtehude.',
+  it: 'June Saurin accanto al logo dorato di LUMA Wellness su uno sfondo verde scuro. Massaggi premiati a livello internazionale a Buxtehude.',
+}[locale];
+const ogLocale = { de: 'de_DE', en: 'en_GB', fr: 'fr_FR', es: 'es_ES', pt: 'pt_PT', it: 'it_IT' }[locale];
 const key = routeKeyForPath(path);
 const alternates = key ? alternatesFor(key) : [];
 ---

@@ -100,7 +100,7 @@ Google Maps / Apple Maps chooser and no-JavaScript directions links.
 | `docs/media-sources.md` | Photo, video, flag and review provenance |
 
 German service details and legal pages remain in German. All five core pages
-are available in English, Thai, Spanish, Portuguese and Italian. Translated
+are available in English, French, Spanish, Portuguese and Italian. Translated
 catalogues identify links to the full original German descriptions.
 
 ## URL preservation and staging

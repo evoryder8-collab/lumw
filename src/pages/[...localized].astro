@@ -8,6 +8,7 @@ import FilmSection from '../components/FilmSection.astro';
 import PenzbergPhoto from '../components/PenzbergPhoto.astro';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
+import LocationMap from '../components/LocationMap.astro';
 import Photo from '../components/Photo.astro';
 import Icon from '../components/Icon.astro';
 import AwardRecord from '../components/AwardRecord.astro';
@@ -88,6 +89,7 @@ const schema = graph([
   {pageKey === 'faq' && <section class="section--tight"><div class="shell shell--mid"><ol class="faq localized-faq">{t.faq.map(([question, answer], i) => <li class="faq__item"><details class="faq__details"><summary class="faq__summary"><span class="faq__num">{String(i+1).padStart(2,'0')}</span><h2 class="faq__q">{question}</h2><span class="faq__chev" aria-hidden="true"></span></summary><div class="faq__a prose"><p>{answer}</p></div></details></li>)}</ol></div></section>}
 
   {pageKey === 'contact' && <section class="section--tight"><div class="shell localized-contact"><div><h2>{u.studio}</h2><address class="localized-address">LUMA Wellness by June Saurin<br />{BUSINESS.street}<br />{BUSINESS.postalCode} {BUSINESS.city}<br />HAUTNAH</address><div class="localized-channels"><a href={`tel:${BUSINESS.phoneE164}`}>{u.phone}<span>{BUSINESS.phone}</span><Icon /></a><a href={whatsappUrl(u.greeting)}>WhatsApp<span>{BUSINESS.whatsapp}</span><Icon /></a><a href={`mailto:${BUSINESS.email}`}>{u.email}<span>{BUSINESS.email}</span><Icon /></a><a href={BUSINESS.mapUrl} target="_blank" rel="noopener noreferrer">{u.directions}<Icon /></a></div></div><EnquiryForm {locale} /></div></section>}
+  {pageKey === 'contact' && <div class="shell section--tight"><LocationMap {locale} /></div>}
 
   {pageKey === 'home' && <section class="section--tight"><div class="shell visit-journey"><p class="eyebrow">{u.journey}</p><ol>{t.journey.map(([heading, body], i) => <li><span>0{i+1}</span><h3>{heading}</h3><p>{body}</p></li>)}</ol></div></section>}
   {pageKey !== 'contact' && <section class="section close"><div class="shell localized-close"><p class="eyebrow">LUMA WELLNESS</p><h2>{t.closing}</h2><p>{u.appointment}</p><a class="pill sheen" href={url(routePath('contact', locale))}>{u.book}<Icon size={20} /></a></div></section>}

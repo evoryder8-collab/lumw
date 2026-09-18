@@ -10,11 +10,11 @@ const words = {
   es: ['¿Quieres activar el sonido?', 'Sí - Recomendado', 'No', 'Bienvenido a LUMA', 'Reproducir la presentación', 'Activar sonido', 'Silenciar'],
   pt: ['Gostaria de ativar o som?', 'Sim - Recomendado', 'Não', 'Bem-vindo à LUMA', 'Reproduzir a apresentação', 'Ativar som', 'Desativar som'],
   it: ['Vuoi attivare l’audio?', 'Sì - Consigliato', 'No', 'Benvenuto da LUMA', 'Riproduci la presentazione', 'Attiva audio', 'Disattiva audio'],
-  th: ['ต้องการเปิดเสียงบนเว็บไซต์ไหมคะ?', 'เปิดเสียง - แนะนำ', 'ไม่เปิดเสียง', 'ยินดีต้อนรับสู่ LUMA', 'เล่นวิดีโอแนะนำ', 'เปิดเสียง', 'ปิดเสียง'],
+  fr: ["Souhaitez-vous activer le son ?", "Oui - Recommandé", "Non", "Bienvenue chez LUMA", "Lire la présentation", "Activer le son", "Couper le son"],
 }[locale];
 // The delivery poster is independent of the unchanged 1080p film.
 const poster = await getImage({src: posterSource, width: 1280, format: 'webp', quality: 72});
-const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Reproducir con sonido', pt: 'Reproduzir com som', it: 'Riproduci con audio', th: 'เล่นพร้อมเสียง' }[locale];
+const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Reproducir con sonido', pt: 'Reproduzir com som', it: 'Riproduci con audio', fr: 'Lire avec le son' }[locale];
 ---
 <section class="intro-film" aria-label={words[3]}>
   <div class="intro-film__frame liquid-glass" tabindex="-1" data-intro-frame>

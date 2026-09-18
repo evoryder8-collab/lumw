@@ -16,6 +16,19 @@
  */
 import { BUSINESS, url } from '../lib/site';
 import mapData from '../data/map.json';
+import type { Locale } from '../i18n/locales';
+import { labels } from '../i18n/content';
+
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const u = labels(locale);
+const copy = {
+  de: { map: 'Karte rund um die Hauptstraße 19 in Buxtehude', hint: 'Das Studio befindet sich bei HAUTNAH.', drive: 'Route starten', open: 'Auf Google Maps öffnen', choose: 'Welche Karten-App möchten Sie nutzen?', apple: 'Apple Karten' },
+  en: { map: 'Map around Hauptstraße 19 in Buxtehude', hint: 'The studio is inside HAUTNAH.', drive: 'Drive here', open: 'Open in Google Maps', choose: 'Which maps app would you like to use?', apple: 'Apple Maps' },
+  fr: { map: 'Plan des environs de Hauptstraße 19 à Buxtehude', hint: 'Le studio se trouve chez HAUTNAH.', drive: 'Itinéraire en voiture', open: 'Ouvrir dans Google Maps', choose: 'Quelle application souhaitez-vous utiliser ?', apple: 'Plans d’Apple' },
+  es: { map: 'Mapa de los alrededores de Hauptstraße 19 en Buxtehude', hint: 'El estudio está dentro de HAUTNAH.', drive: 'Cómo llegar en coche', open: 'Abrir en Google Maps', choose: '¿Qué aplicación de mapas quieres usar?', apple: 'Mapas de Apple' },
+  pt: { map: 'Mapa da zona da Hauptstraße 19 em Buxtehude', hint: 'O estúdio fica dentro da HAUTNAH.', drive: 'Como chegar de carro', open: 'Abrir no Google Maps', choose: 'Que aplicação de mapas prefere?', apple: 'Mapas da Apple' },
+  it: { map: 'Mappa della zona di Hauptstraße 19 a Buxtehude', hint: 'Lo studio si trova all’interno di HAUTNAH.', drive: 'Indicazioni in auto', open: 'Apri in Google Maps', choose: 'Quale app di mappe vuoi usare?', apple: 'Mappe di Apple' },
+}[locale];
 
 const destination = encodeURIComponent(
   `${BUSINESS.name}, ${BUSINESS.street}, ${BUSINESS.postalCode} ${BUSINESS.city}, Deutschland`,
@@ -91,7 +104,7 @@ const streetLabels = [
         viewBox="0 0 1000 1000"
         preserveAspectRatio="xMidYMid slice"
         role="img"
-        aria-label="Karte der Straßen rund um die Hauptstraße 19 in Buxtehude"
+        aria-label={copy.map}
       >
         <defs>
           <linearGradient id="loc-ground" x1="0" y1="0" x2="1" y2="1">
@@ -173,13 +186,13 @@ const streetLabels = [
     </div>
 
     <div class="loc__details">
-      <p class="loc__eyebrow"><span aria-hidden="true"></span><b>Studio in Buxtehude</b></p>
+      <p class="loc__eyebrow"><span aria-hidden="true"></span><b>{u.studio}</b></p>
       <h2 id="standort-title" class="loc__title">LUMA Wellness by June Saurin</h2>
       <address class="loc__address">
         Hauptstraße 19<br />21614 Buxtehude
       </address>
       <p class="loc__hint">
-        Das Studio befindet sich in der Filiale HAUTNAH.
+        {copy.hint}
       </p>
 
       <div class="loc__actions">
@@ -191,17 +204,17 @@ const streetLabels = [
           aria-controls="route-choice"
           hidden
         >
-          <span>Route starten</span>
+          <span>{copy.drive}</span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 12h13M14 7l5 5-5 5" fill="none" stroke="currentColor"
                   stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
 
-        <noscript><a href={googleDir} target="_blank" rel="noopener noreferrer">Google Maps</a> · <a href={appleDir} target="_blank" rel="noopener noreferrer">Apple Karten</a></noscript>
+        <noscript><a href={googleDir} target="_blank" rel="noopener noreferrer">Google Maps</a> · <a href={appleDir} target="_blank" rel="noopener noreferrer">{copy.apple}</a></noscript>
 
         <a class="loc__view underline-gold" href={larger} target="_blank" rel="noopener noreferrer">
-          <img src={url('/brand/google-maps.png')} alt="" width="22" height="22" loading="lazy" /> Auf Google Maps öffnen
+          <img src={url('/brand/google-maps.png')} alt="" width="22" height="22" loading="lazy" /> {copy.open}
         </a>
       </div>
     </div>
@@ -210,12 +223,12 @@ const streetLabels = [
 
 <dialog class="choice" id="route-choice" aria-labelledby="route-choice-title">
   <div class="choice__panel rim">
-    <button class="choice__close" type="button" data-choice-close aria-label="Auswahl schließen">
+    <button class="choice__close" type="button" data-choice-close aria-label={u.close}>
       <span aria-hidden="true"></span>
     </button>
 
     <p class="choice__eyebrow">LUMA Wellness <i></i> Buxtehude</p>
-    <h2 id="route-choice-title" class="choice__title">Womit möchten Sie navigieren?</h2>
+    <h2 id="route-choice-title" class="choice__title">{copy.choose}</h2>
 
     <div class="choice__options">
       <a class="choice__option" href={googleDir} target="_blank" rel="noopener noreferrer" data-choice-option>
@@ -233,7 +246,7 @@ const streetLabels = [
             <path d="m14.9 9.1-1.6 4.2-4.2 1.6 1.6-4.2 4.2-1.6Z" />
           </svg>
         </span>
-        <strong>Apple Karten</strong>
+        <strong>{copy.apple}</strong>
         <i class="choice__arrow" aria-hidden="true"></i>
       </a>
     </div>

@@ -51,7 +51,7 @@ export function lastmodFor(path: string): string {
   const cached = cache.get(path);
   if (cached) return cached;
 
-  const locale = path.match(/^\/(en|th|es|pt|it)(?:\/|$)/)?.[1];
+  const locale = path.match(/^\/(en|fr|es|pt|it)(?:\/|$)/)?.[1];
   const sources = locale ? [`src/i18n/${locale}.json`, 'src/pages/[...localized].astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'] : path.startsWith('/service-page/') ? SERVICE_SOURCES : SOURCES[path];
   const date = (sources && lastCommit(sources)) || BUILD_DATE;
 

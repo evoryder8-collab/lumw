@@ -32,29 +32,29 @@
     "select": "Choose a treatment",
     "optional": "Optional",
     "requestTitle": "Write to June.",
-    "requestIntro": "Tell June what you have in mind. Together, you will find the right treatment and a time that suits you.",
+    "requestIntro": "Tell June what you are looking for. She will help you choose a treatment and find a time that suits you.",
     "whatsapp": "Continue in WhatsApp",
-    "sendEmail": "Continue in email",
-    "enquiryNote": "This prepares a message in your chosen app. You send it yourself; your appointment is confirmed personally by June.",
-    "prepared": "Your message is ready. Send it in your chosen app to request an appointment.",
+    "sendEmail": "Open email app",
+    "enquiryNote": "This form prepares your message. You then send it by WhatsApp or email. June confirms your appointment personally.",
+    "prepared": "Your message is ready. Choose WhatsApp or email to send it to June.",
     "unsure": "I would like a recommendation",
     "back": "Back to treatments",
     "legal": "Legal information is available in German.",
     "journey": "Your visit, at your pace",
-    "signature": "The signature experience",
+    "signature": "Selected treatments",
     "studio": "The Buxtehude studio",
     "scroll": "Discover LUMA",
-    "portrait": "June Saurin, founder of LUMA Wellness",
+    "portrait": "June Saurin holding her gold medal",
     "gold": "Gold · Wellness & Spa",
     "greeting": "Hello June, I would like to request an appointment at LUMA Wellness."
   },
   "pages": {
     "home": {
       "title": "Massage in Buxtehude | LUMA Wellness by June Saurin",
-      "description": "Discover award-winning massage with June Saurin in Buxtehude. Personal treatments, thoughtful care, and a peaceful moment just for you.",
+      "description": "Discover massage with internationally awarded practitioner June Saurin in Buxtehude. Nine treatments, with pressure and techniques tailored to you.",
       "heading": "Internationally awarded massage",
       "eyebrow": "LUMA Wellness · By June Saurin",
-      "lead": "Thai roots. International experience. Massage tailored by June, in her Buxtehude studio."
+      "lead": "Thai roots. International experience. Massage tailored to you by June, in her Buxtehude studio."
     },
     "about": {
       "title": "Meet June Saurin | LUMA Wellness",
@@ -65,7 +65,7 @@
     },
     "services": {
       "title": "Massage treatments & prices | LUMA Wellness Buxtehude",
-      "description": "Explore LUMA Wellness massage treatments and prices, from Aroma-Luxus to the Gold Medalie signature experience.",
+      "description": "See all nine LUMA Wellness massage treatments, session lengths and prices. June can help you choose the right treatment for you.",
       "heading": "Treatments for the way you feel.",
       "eyebrow": "Treatments & prices",
       "lead": "From gentle aromatherapy to focused bodywork. Discover the treatment that feels right for you."
@@ -82,25 +82,25 @@
       "description": "Request a massage appointment with June Saurin. Find LUMA Wellness inside HAUTNAH, Hauptstraße 19, Buxtehude.",
       "heading": "Arrange your appointment.",
       "eyebrow": "Your appointment",
-      "lead": "A personal welcome awaits at Hauptstraße 19, inside HAUTNAH in Buxtehude. Every visit is arranged in advance."
+      "lead": "Visit June at Hauptstraße 19, inside HAUTNAH in Buxtehude. All visits are by appointment."
     }
   },
   "intro": {
     "title": "Good massage starts with listening.",
     "body": [
-      "Your preferences guide the session: the areas you want to focus on, the pressure you enjoy, and how you feel throughout. June brings Thai traditions and contemporary techniques together with those details in mind.",
-      "Explore nine treatments, from flowing aromatherapy to focused bodywork. If you are unsure where to start, June will help you choose."
+      "Before your massage, June asks which areas you want to focus on and what pressure feels comfortable. She combines Thai and modern techniques, adjusting the session to your feedback.",
+      "Choose from nine treatments, from gentle massage with aromatic oils to focused work on specific areas. If you are unsure where to start, June will help you choose."
     ]
   },
   "about": [
     "Born in Thailand, June grew up close to experienced massage practitioners. That early connection to touch and movement continues to shape her work.",
     "In 2023 she won silver in Freestyle Eastern at the Swiss Massage Championship in Zurich, and silver in Wellness & Spa at the World Massage Federation competition in Athens. Penzberg brought three further medals, including bronze in Champ of the Champs, where category champions competed for the overall ranking.",
-    "At LUMA Wellness, competition experience becomes attentive, individual care. June discusses your preferences before your massage and adapts the pressure and approach throughout."
+    "At LUMA Wellness, June takes time to understand what you need. She discusses your preferences before the massage and adjusts the pressure and techniques as you go."
   ],
   "treatments": {
     "aroma-luxus": {
       "name": "LUMA Aroma-Luxus Massage",
-      "description": "A classic LUMA experience combining flowing massage techniques with organic jojoba aroma oils. An unhurried session for anyone who enjoys warm scents, gentle care, and time to relax.",
+      "description": "Flowing massage with aromatic oils made from organic jojoba. A gentle, unhurried session for anyone who enjoys fragrance and time to relax.",
       "details": [
         "Flowing, rhythmic movements combine with organic jojoba aroma oils. Before starting, June discusses the areas you would like her to focus on and your preferred pressure.",
         "Please mention any sensitivity to oils or fragrances when arranging your visit."
@@ -108,7 +108,7 @@
     },
     "balance-stone": {
       "name": "Balance Stone & Bamboo Massage",
-      "description": "Specially shaped granite Balance Stones and bamboo tools bring warmth and a distinctive touch to this massage. June adapts the pressure and works attentively with areas that feel tense.",
+      "description": "Shaped granite Balance Stones and bamboo tools bring warmth and varied pressure to the massage. June adjusts the session to your preferences and the areas you want to focus on.",
       "details": [
         "Specially shaped granite stones and bamboo tools allow broad strokes as well as more focused work. Their different surfaces give the massage its distinctive feel.",
         "June agrees the warmth and pressure with you. Let her know whenever you would prefer a lighter touch or less heat."
@@ -124,7 +124,7 @@
     },
     "schwangerschaft": {
       "name": "LUMA Pregnancy Massage",
-      "description": "A gentle experience designed around the comfort of expectant mothers. Speak with June before arranging a session so that your individual needs can be discussed.",
+      "description": "A gentle massage with the comfort of expectant mothers in mind. Talk to June before booking about your pregnancy and what you need from the session.",
       "details": [
         "Gentle techniques and a comfortable position are central to this treatment for expectant mothers. Discuss your pregnancy and preferences with June before booking.",
         "If you have symptoms or health concerns, check with your maternity care professional whether massage is appropriate for you."
@@ -132,16 +132,16 @@
     },
     "gold-medalie": {
       "name": "LUMA Gold Medalie Signature",
-      "description": "June’s signature experience brings together techniques recognised at international competitions. Balance Stones, classic massage, cupping, and aromatherapy create a carefully composed session, accompanied by a bespoke soundscape.",
+      "description": "June’s signature massage combines Balance Stones, classic massage, cupping and aromatherapy. A specially created soundscape accompanies techniques recognised at international competitions.",
       "details": [
-        "This signature draws on the techniques that earned June gold in Wellness & Spa at the Universal Massage Championship in Penzberg in 2023. It brings together Balance Stones, classic massage, cupping and aromatherapy.",
-        "A bespoke soundscape accompanies the session. June explains the techniques and agrees the approach with you beforehand.",
+        "This massage draws on the techniques that earned June gold in Wellness & Spa at the Universal Massage Championship in Penzberg in 2023. It combines Balance Stones, classic massage, cupping and aromatherapy.",
+        "A soundscape created for the session accompanies the massage. June explains the techniques and agrees the approach with you beforehand.",
         "Cupping can leave visible marks. Please discuss pregnancy, blood-thinning medication or other health concerns before booking, and seek medical advice if you are unsure about suitability."
       ]
     },
     "stark-ball": {
       "name": "Stark Ball Massage",
-      "description": "A method developed by world champion Nadine Stark Chognon. Special massage balls allow focused work on individual muscle groups, with a distinctive approach to relaxation and body awareness.",
+      "description": "A method developed by world champion Nadine Stark Chognon. June uses specially shaped massage balls to work on individual muscle groups.",
       "details": [
         "Developed by Nadine Stark Chognon, this method uses specially shaped massage balls to work on individual muscle groups.",
         "June controls the placement and pressure of the tools, adapting the session to your feedback. Ask her about the technique if you would like to know how it differs from hands-only massage."
@@ -149,7 +149,7 @@
     },
     "gesicht-kopf": {
       "name": "Face & Head Massage with Gua Sha",
-      "description": "Gentle hands-on techniques for the face and head, complemented by a Gua Sha tool. A focused treatment for anyone who wants to give these areas particular attention.",
+      "description": "Gentle massage for the face and head, combined with a Gua Sha tool. The session is dedicated to these areas.",
       "details": [
         "The session focuses on the face and head, combining gentle hands-on massage with a Gua Sha tool.",
         "Please mention skin conditions, injuries or ongoing medical treatments before booking so that suitability can be discussed with your care professional when needed."
@@ -179,15 +179,15 @@
     ],
     [
       "Which treatment should I choose?",
-      "Explore the nine treatments and their descriptions. The Gold Medalie Signature brings together several techniques and a bespoke soundscape. If you are unsure, June can help you choose before your visit."
+      "The nine treatments offer different approaches. Aroma-Luxus uses aromatic oils, while Thai Solution combines stretches and pressure without oil. Gold Medalie Signature brings several techniques together. June can help if you are unsure which to choose."
     ],
     [
       "What is Thai Solution Massage?",
-      "An oil-free massage combining stretches, focused pressure, and deeper bodywork. June adapts the intensity to your preferences."
+      "An oil-free massage combining Thai stretches and focused pressure. June adjusts the intensity to your preferences."
     ],
     [
       "What should I expect at my first visit?",
-      "A personal welcome and a quiet setting. June explains the session and discusses your preferences, so you can settle comfortably into the experience."
+      "June explains the session and asks what you would like from your massage. Mention any health concerns or sensitivities before starting. You can ask to change the pressure or movements at any time."
     ],
     [
       "Are there treatments for particular needs?",
@@ -195,7 +195,7 @@
     ],
     [
       "How do Aroma-Luxus and Gold Medalie differ?",
-      "Aroma-Luxus centres on classic massage and organic jojoba aroma oils. Gold Medalie combines several techniques, including Balance Stones and cupping, with a bespoke soundscape."
+      "Aroma-Luxus combines classic massage with organic jojoba aroma oils. Gold Medalie brings together several techniques, including Balance Stones and cupping, with a soundscape created for the session."
     ],
     [
       "How do I arrange an appointment?",
@@ -203,19 +203,19 @@
     ],
     [
       "What about hygiene?",
-      "June’s published studio standards include fresh linen and towels, cleaned tools, careful hand hygiene, and a clean, ventilated space. Speak with her about any specific concerns."
+      "June uses fresh linen and towels, cleans the tools and takes care with hand hygiene. The studio is kept clean and ventilated. Speak with her if you have any questions."
     ],
     [
       "Can I buy a gift voucher?",
-      "Contact June for current gift vouchers, packages, and offers. Available options can be discussed directly by email or during your visit."
+      "Contact June for the gift vouchers, packages and offers currently available."
     ],
     [
       "Where is the studio?",
-      "LUMA Wellness is inside the HAUTNAH branch at Hauptstraße 19, 21614 Buxtehude. Visits are by appointment only."
+      "LUMA Wellness is inside HAUTNAH at Hauptstraße 19, 21614 Buxtehude. Visits are by appointment only. You can plan your journey with Google Maps or Apple Maps on the Contact page."
     ],
     [
       "Where can I read the cancellation policy?",
-      "The operative terms and cancellation policy are available in German through the Terms link below. Please ask June if you need help understanding them before confirming your appointment."
+      "The terms, including the cancellation policy, are available in German through the Terms link at the bottom of the page. Ask June for an explanation if you need one before confirming your appointment."
     ]
   ],
   "journey": [
@@ -225,7 +225,7 @@
     ],
     [
       "Talk",
-      "Share your wishes and choose your pressure."
+      "Discuss what you need and the pressure you prefer."
     ],
     [
       "Unwind",
@@ -239,6 +239,6 @@
   "closing": "Let’s plan your visit.",
   "feature": [
     "Thai roots. A precise touch.",
-    "June’s approach has grown through international competitions and years of hands-on practice. Get to know the person behind LUMA, and the care she brings to each treatment."
+    "Years of practice and international competitions have shaped June’s work. Learn about her background and her approach to each massage."
   ]
 }

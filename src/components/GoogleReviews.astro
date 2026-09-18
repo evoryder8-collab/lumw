@@ -5,12 +5,12 @@ import Icon from './Icon.astro';
 import { url } from '../lib/site';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const words = {
-  de: ['Was bleibt, ist ein gutes Gefühl.', 'Stimmen aus Google Maps', '39 Rezensionen auf Google', 'Alle Rezensionen lesen', 'Original auf Google lesen', 'Vorherige Rezension', 'Nächste Rezension', 'Ausgewählte Originalauszüge · Stand 16.09.2026', '5 von 5 Sternen'],
-  en: ['A feeling that stays with you.', 'Voices from Google Maps', '39 reviews on Google', 'Read all reviews', 'Read the original on Google', 'Previous review', 'Next review', 'Selected excerpts in the original German · Verified 16 Sep 2026', '5 out of 5 stars'],
-  es: ['Una sensación que permanece.', 'Opiniones de Google Maps', '39 reseñas en Google', 'Leer todas las reseñas', 'Leer el original en Google', 'Reseña anterior', 'Siguiente reseña', 'Extractos originales en alemán · Verificados el 16 sep 2026', '5 de 5 estrellas'],
-  pt: ['Uma sensação que fica.', 'Opiniões do Google Maps', '39 avaliações no Google', 'Ler todas as avaliações', 'Ler o original no Google', 'Avaliação anterior', 'Avaliação seguinte', 'Excertos originais em alemão · Verificados em 16 set 2026', '5 de 5 estrelas'],
-  it: ['Una sensazione che rimane.', 'Voci da Google Maps', '39 recensioni su Google', 'Leggi tutte le recensioni', 'Leggi l’originale su Google', 'Recensione precedente', 'Recensione successiva', 'Estratti originali in tedesco · Verificati il 16 set 2026', '5 stelle su 5'],
-  th: ['ความรู้สึกดีที่ยังคงอยู่', 'เสียงจากผู้ใช้ Google Maps', '39 รีวิวบน Google', 'อ่านรีวิวทั้งหมด', 'อ่านต้นฉบับบน Google', 'รีวิวก่อนหน้า', 'รีวิวถัดไป', 'ข้อความคัดจากรีวิวภาษาเยอรมัน · ตรวจสอบ 16 ก.ย. 2026', '5 จาก 5 ดาว'],
+  de: ["Das sagen die Gäste.", "Bewertungen auf Google Maps", "39 Rezensionen auf Google Maps", "Alle Rezensionen lesen", "Original auf Google Maps lesen", "Vorherige Rezension", "Nächste Rezension", "Ausgewählte Originalauszüge · Stand 16.09.2026", "5 von 5 Sternen"],
+  en: ["What guests say.", "Reviews on Google Maps", "39 reviews on Google Maps", "Read all reviews", "Read the original on Google Maps", "Previous review", "Next review", "Selected excerpts in the original German · Checked 16 Sep 2026", "5 out of 5 stars"],
+  es: ["Lo que cuentan los clientes.", "Opiniones en Google Maps", "39 reseñas en Google Maps", "Leer todas las reseñas", "Leer el original en Google Maps", "Reseña anterior", "Siguiente reseña", "Extractos en su alemán original · Revisados el 16 sep. 2026", "5 de 5 estrellas"],
+  pt: ["O que dizem os clientes.", "Opiniões no Google Maps", "39 avaliações no Google Maps", "Ler todas as avaliações", "Ler o original no Google Maps", "Avaliação anterior", "Avaliação seguinte", "Excertos no alemão original · Verificados a 16 de setembro de 2026", "5 de 5 estrelas"],
+  it: ["Cosa dicono i clienti.", "Recensioni su Google Maps", "39 recensioni su Google Maps", "Leggi tutte le recensioni", "Leggi l’originale su Google Maps", "Recensione precedente", "Recensione successiva", "Estratti nella lingua originale, il tedesco · Verificati il 16 set. 2026", "5 stelle su 5"],
+  fr: ["Les avis des clients.", "Avis sur Google Maps", "39 avis sur Google Maps", "Lire tous les avis", "Lire l’original sur Google Maps", "Avis précédent", "Avis suivant", "Extraits en allemand, leur langue d’origine · Vérifiés le 16 sept. 2026", "5 étoiles sur 5"],
 }[locale];
 const star = 'm12 2 2.9 6 6.6.9-4.8 4.7 1.1 6.6-5.8-3.1-5.8 3.1 1.1-6.6L2.5 8.9 9.1 8Z';
 ---
@@ -20,7 +20,7 @@ const star = 'm12 2 2.9 6 6.6.9-4.8 4.7 1.1 6.6-5.8-3.1-5.8 3.1 1.1-6.6L2.5 8.9 
     <div><p class="eyebrow">{words[1]}</p><h2 id="reviews-title">{words[0]}</h2></div>
     <a class="reviews__rating" href={reviews.listingUrl} target="_blank" rel="noopener noreferrer">
       <span class="reviews__google"><img src={url('/brand/google-maps.png')} width="40" height="40" alt="" loading="lazy" decoding="async" /><span>Google Maps</span><Icon size={20} /></span>
-      <span class="reviews__rating-detail"><span class="reviews__score">{locale === 'en' || locale === 'th' ? '5.0' : '5,0'}</span>
+      <span class="reviews__rating-detail"><span class="reviews__score">{locale === 'en' ? '5.0' : '5,0'}</span>
       <span><span class="review-stars" role="img" aria-label={words[8]}>{Array.from({length: 5}, () => <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d={star} /></svg>)}</span><span class="reviews__count">{words[2]}</span></span></span>
     </a>
   </div>

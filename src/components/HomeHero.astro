@@ -16,7 +16,7 @@ const lotus = {
   es: ['Esparcir los pétalos', 'Toca o activa el movimiento para esparcir los pétalos', 'El movimiento está activado. También puedes volver a tocar.'],
   pt: ['Espalhar as pétalas', 'Toque ou ative o movimento para espalhar as pétalas', 'O movimento está ativado. Também pode tocar novamente.'],
   it: ['Spargi i petali', 'Tocca o attiva il movimento per spargere i petali', 'Il movimento è attivo. Puoi anche toccare di nuovo.'],
-  th: ['โปรยกลีบบัว', 'แตะหรือเปิดการเขย่าเพื่อโปรยกลีบบัว', 'เปิดการเขย่าแล้ว คุณสามารถแตะอีกครั้งได้เช่นกัน'],
+  fr: ["Faire voler les pétales", "Touchez la photo ou activez la détection des mouvements pour faire voler les pétales", "La détection des mouvements est activée. Vous pouvez aussi toucher à nouveau la photo."],
 }[locale];
 ---
 <section class="hero hero--immersive" data-lotus-garden>
@@ -30,7 +30,7 @@ const lotus = {
   <div class="hero-orbit" aria-hidden="true"></div>
   <div class="hero-editorial">
     <div class="hero-edition"><span class="edition-rule"></span><span>LUMA WELLNESS</span><span>BUXTEHUDE</span></div>
-    <p class="hero-kicker">{{ de: 'Massage mit June Saurin', en: 'Massage with June Saurin', es: 'Masaje con June Saurin', pt: 'Massagem com June Saurin', it: 'Massaggio con June Saurin', th: 'การนวดกับจูน เซาริน' }[locale]}</p>
+    <p class="hero-kicker">{{ de: 'Massage mit June Saurin', en: 'Massage with June Saurin', es: 'Masaje con June Saurin', pt: 'Massagem com June Saurin', it: 'Massaggio con June Saurin', fr: 'Massage avec June Saurin' }[locale]}</p>
     <h1 class:list={['hero-headline', locale === 'de' && 'hero-headline--awarded']}>{locale === 'de' ? <><span class="hero-headline__international">International</span>{' '}<span class="hero-headline__accent">ausgezeichnete</span>{' '}<span>Massage</span></> : heading}</h1>
     <p class="hero-description">{lead}</p>
     <div class="hero-links">

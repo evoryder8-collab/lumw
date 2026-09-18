@@ -535,8 +535,8 @@ and page instances. Browser checks cover navigation, Back and rapid taps.
 
 **The owner rejected Fraunces' distinctive J.** Display typography now uses
 self-hosted Cormorant Garamond, with genuine italic artwork for signatures.
-Hanken Grotesk remains the interface/wordmark family, and Thai retains its
-existing readable sans-serif fallback. Original SEO text is unchanged. The
+Hanken Grotesk remains the interface/wordmark family. The retired Thai
+sans-serif fallback was removed when French replaced that language. Original SEO text is unchanged. The
 footer wordmark scales to its column; desktop menu, social and contact columns
 are raised together and have a larger horizontal gap. The contact form's
 decorative star is removed in every language.
@@ -586,3 +586,41 @@ The player, poster and frame retain their sizes when scrolling into view.
 The introductory film is unaffected. Medal artwork also has 48, 80, 112, 160
 and 224px delivery candidates, selected by display size and pixel density.
 This keeps the small portrait badge from fetching a 224px image on every phone.
+
+
+## French and plain-language review, 18 September 2026
+
+The owner replaced Thai with French. French now has five complete pages,
+translated route names, navigation, treatment descriptions and details, FAQ,
+forms, media controls, image descriptions and a real French flag. Its routes
+participate in the six-way hreflang cluster and the French sitemap. Existing
+Thai bookmarks redirect in one hop to the corresponding French page, including
+trailing-slash and staging-prefix variants. June’s Thai background, Thai massage
+names and the languages she personally speaks remain factual references.
+
+Reviewed all six languages for ordinary, natural phrasing: German uses Sie,
+French vous, Spanish tú, European Portuguese uses its consistent formal address,
+and Italian tu. Shorter headings and concrete treatment descriptions replace
+literal English idioms and ornate marketing copy. Booking prompts explain that
+the form prepares a message which the visitor sends. Google review excerpts
+remain in their original German with a translated explanation and language tag.
+Original German legal pages and frozen commercial/SEO facts remain intact.
+
+The map panel now receives a locale and appears on every translated Contact
+page. Directions, map descriptions and the Google/Apple chooser are translated.
+Footer contact labels, social navigation labels and sharing-image descriptions
+no longer fall back to English or German in other language modes.
+
+The verification gate checks every translation field, all 51 pages, all six
+portal choices, the French flag, localized navigation/forms/maps, removal of
+Thai from active sitemaps, direct legacy redirects and no em dashes in visible
+or accessible copy. Browser coverage includes all six treatment grids and all
+six contact pages at phone, tablet and desktop widths, plus French onboarding
+and the French directions dialog.
+
+Validation: `npm run verify` passes. Browser journeys pass across 84 responsive
+page checks, and all 17 automated accessibility audits report zero violations.
+The unchanged mobile performance budgets pass in three cold runs per scenario:
+median LCP is 2.412 seconds for welcome, 2.411 for Home, 2.109 for treatments
+and 2.032 for contact, with zero CLS in every run. French portal, treatment grid,
+map and directions choices were also inspected visually.

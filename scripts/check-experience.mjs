@@ -144,7 +144,7 @@ const total = compressed.reduce((sum, item) => sum + item.size, 0);
 check(total < 100 * 1024, `JavaScript exceeds 100 KiB gzip: ${(total / 1024).toFixed(1)} KiB`);
 for (const item of compressed.filter((item) => path.basename(item.file).startsWith('motion.'))) check(item.size < 60 * 1024, 'Motion exceeds 60 KiB gzip');
 
-for (const locale of ['de','en','th','es','pt','it']) {
+for (const locale of ['de','en','fr','es','pt','it']) {
   const sitemap = fs.readFileSync(path.join(dist, `sitemaps/${locale}.xml`), 'utf8');
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => decodeURI(new URL(m[1]).pathname));
   check(urls.length === (locale === 'de' ? 26 : 5), `${locale}: incorrect sitemap coverage`);

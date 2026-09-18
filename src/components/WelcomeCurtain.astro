@@ -3,7 +3,7 @@ import type { Locale } from '../i18n/locales';
 const { locale = 'de', mode = 'welcome' } = Astro.props as { locale?: Locale; mode?: 'welcome' | 'page' };
 const pageTransition = mode === 'page';
 const Tag = pageTransition ? 'div' : 'dialog';
-const label = { de: 'Willkommen bei LUMA', en: 'Welcome to LUMA', es: 'Bienvenido a LUMA', pt: 'Bem-vindo à LUMA', it: 'Benvenuto da LUMA', th: 'ยินดีต้อนรับสู่ LUMA' }[locale];
+const label = { de: 'Willkommen bei LUMA', en: 'Welcome to LUMA', es: 'Bienvenido a LUMA', pt: 'Bem-vindo à LUMA', it: 'Benvenuto da LUMA', fr: 'Bienvenue chez LUMA' }[locale];
 const petals = Array.from({ length: 24 }, (_, i) => ({ x: 44 + (i % 5) * 3, y: 8 + (i * 17 % 70), dx: (i % 2 ? 1 : -1) * (28 + i * 4), turn: (i % 2 ? 1 : -1) * (100 + i * 25), delay: 160 + (i * 59 % 480) }));
 ---
 <Tag class:list={['welcome-curtain', pageTransition && 'page-curtain']} data-welcome-curtain={pageTransition ? undefined : ''} data-page-curtain={pageTransition ? '' : undefined} aria-label={pageTransition ? undefined : label} aria-hidden={pageTransition ? 'true' : undefined} hidden={pageTransition} transition:persist={pageTransition ? 'luma-page-curtain' : undefined}>

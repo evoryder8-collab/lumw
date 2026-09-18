@@ -5,13 +5,14 @@ import { labels } from '../i18n/content';
 import { routePath, type Locale } from '../i18n/locales';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const ui = labels(locale);
+const socialLabel = { de: 'June kontaktieren und folgen', en: 'Contact and follow June', fr: 'Contacter et suivre June', es: 'Contacta con June y síguela', pt: 'Contacte e siga a June', it: 'Contatta e segui June' }[locale];
 const links = [
   { name: 'instagram' as const, label: 'Instagram', href: BUSINESS.sameAs[1] },
   { name: 'facebook' as const, label: 'Facebook', href: BUSINESS.sameAs[0] },
   { name: 'whatsapp' as const, label: 'WhatsApp', href: whatsappUrl(ui.greeting) },
 ];
 ---
-<nav class="social-dock" aria-label={locale === 'de' ? 'June kontaktieren und folgen' : 'Connect with June'}>
+<nav class="social-dock" aria-label={socialLabel}>
   <a class="social-dock__book" href={url(routePath('contact', locale))} data-thumb-bar>{ui.book}<Icon size={16} /></a>
   <div class="social-dock__channels">
     {links.map((link, index) => <a class={`social-dock__link social-dock__link--${link.name}`} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${link.label} · June Saurin`} style={`--dock-delay:${index * 0.55}s`}>

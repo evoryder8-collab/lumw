@@ -270,10 +270,6 @@ body:has(#nav-toggle:checked) .june-invitation { visibility: hidden; pointer-eve
   :root body[data-page] .footer__brand, :root body[data-page] .footer__col--wide { grid-column: 1 / -1; }
   :root body[data-page] .footer__wordmark { font-size: 4.4rem; max-width: none; }
 }
-html[lang='th'] { --font-display: 'Hanken Grotesk', Tahoma, sans-serif; }
-html[lang='th'] h1, html[lang='th'] h2, html[lang='th'] h3 { line-height: 1.35; letter-spacing: 0; }
-html[lang='th'] .hero-headline { font-size: clamp(2.8rem, 5vw, 5.2rem); }
-html[lang='th'] .nav__link, html[lang='th'] .pill { letter-spacing: 0; }
 .lang-btn[hidden], .enquiry-form[hidden], .enquiry-result[hidden] { display: none !important; }
 .is-offscreen, .is-offscreen *, .is-offscreen::before, .is-offscreen::after,
 body[data-ambient-sleep] .hero-winner, body[data-ambient-sleep] .hero-winner::before,

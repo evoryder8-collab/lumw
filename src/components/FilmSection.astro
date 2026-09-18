@@ -9,17 +9,17 @@ import awardedPoster from '../assets/film-june-awarded-2026.webp';
 const { locale = 'de', featured = false } = Astro.props as { locale?: Locale; featured?: boolean };
 const text = {
   de: ['LUMA in Bewegung', 'June bei der Arbeit.', 'Einblicke in Junes Arbeit, ihre Erfolge und das, was sie bewegt.', 'Die Kunst der Berührung', 'June erzählt.', '', 'Video abspielen', 'Video öffnen'],
-  en: ['LUMA in motion', 'Watch June at work.', 'A glimpse of June’s work, her achievements, and what keeps her moving.', 'The art of touch', 'In June’s own words.', '', 'Play video', 'Open video'],
-  es: ['LUMA en movimiento', 'June en acción.', 'Una mirada al trabajo de June, sus logros y lo que la inspira.', 'El arte del contacto', 'June. Su camino. Su motivación.', '', 'Reproducir vídeo', 'Abrir vídeo'],
-  pt: ['LUMA em movimento', 'June em ação.', 'Um olhar sobre o trabalho da June, as suas conquistas e o que a inspira.', 'A arte do toque', 'June. O seu percurso. A sua motivação.', '', 'Reproduzir vídeo', 'Abrir vídeo'],
-  it: ['LUMA in movimento', 'June al lavoro.', 'Uno sguardo al lavoro di June, ai suoi traguardi e a ciò che la ispira.', 'L’arte del tocco', 'June. Il suo percorso. La sua motivazione.', '', 'Riproduci video', 'Apri video'],
-  th: ['LUMA ในทุกการเคลื่อนไหว', 'ชมจูนขณะทำงาน', 'ชมการทำงาน ความสำเร็จ และแรงบันดาลใจของจูน', 'ศิลปะแห่งการสัมผัส', 'จูน เส้นทางและแรงบันดาลใจ', '', 'เล่นวิดีโอ', 'เปิดวิดีโอ'],
+  en: ["LUMA in motion", "Watch June at work.", "June shares her work, her achievements and what inspires her.", "The art of touch", "In June’s own words.", "", "Play video", "Open video"],
+  es: ["LUMA en vídeo", "June en acción.", "Conoce su trabajo, sus logros y lo que la motiva.", "El arte del masaje", "June cuenta su historia.", "", "Reproducir vídeo", "Abrir vídeo"],
+  pt: ["LUMA em vídeo", "A June em ação.", "Conheça o seu trabalho, as suas conquistas e o que a motiva.", "A arte da massagem", "A June conta a sua história.", "", "Reproduzir vídeo", "Abrir vídeo"],
+  it: ["LUMA in video", "June al lavoro.", "Scopri il suo lavoro, i suoi traguardi e ciò che la motiva.", "L’arte del massaggio", "June si racconta.", "", "Riproduci video", "Apri video"],
+  fr: ["LUMA en vidéo", "June au travail.", "Découvrez son travail, ses récompenses et ce qui la motive.", "L’art du toucher", "June raconte.", "", "Lire la vidéo", "Ouvrir la vidéo"],
 }[locale];
 const films = [
-  { src: '/media/june-awarded-2026.mp4', poster: (await getImage({src: awardedPoster, width: 720, format: 'webp'})).src, title: {de:'Ausgezeichnet. June 2026.', en:'Awarded. June 2026.', es:'Premiada. June 2026.', pt:'Premiada. June 2026.', it:'Premiata. June 2026.', th:'ช่วงเวลาแห่งรางวัล จูน 2026'}[locale], duration:'00:33', width:720, height:1280 },
+  { src: '/media/june-awarded-2026.mp4', poster: (await getImage({src: awardedPoster, width: 720, format: 'webp'})).src, title: {de:'Ausgezeichnet. June 2026.', en:'Awarded. June 2026.', es:'Premiada. June 2026.', pt:'Premiada. June 2026.', it:'Premiata. June 2026.', fr:'Les récompenses de June. 2026.'}[locale], duration:'00:33', width:720, height:1280 },
   { src: '/media/june-in-motion.mp4', poster: (await getImage({src: motionPoster, width: 480, format: 'webp'})).src, title: text[3], duration: '00:14', width:480, height:848 },
   { src: '/media/june-story.mp4', poster: (await getImage({src: storyPoster, width: 720, format: 'webp'})).src, title: text[4], duration: '00:41', width:720, height:1280 },
-  { src: '/media/june-touch-and-technique.mp4', poster: (await getImage({src: techniquePoster, width: 480, format: 'webp'})).src, title: {de:'Mit Gefühl. Mit Präzision.', en:'Touch and technique.', es:'Cuidado en cada detalle.', pt:'Cuidado em cada detalhe.', it:'Cura in ogni dettaglio.', th:'ใส่ใจในทุกรายละเอียด'}[locale], duration:'00:51', width:480, height:848 },
+  { src: '/media/june-touch-and-technique.mp4', poster: (await getImage({src: techniquePoster, width: 480, format: 'webp'})).src, title: {de:'Mit Gefühl. Mit Präzision.', en:'Touch and technique.', es:'Cuidado en cada detalle.', pt:'Cuidado em cada detalhe.', it:'Cura in ogni dettaglio.', fr:'Le geste et la technique.'}[locale], duration:'00:51', width:480, height:848 },
 ];
 // The earlier "passion" upload is an older export of the 2026 award film.
 // About already offers that film beside the photograph that won the award.

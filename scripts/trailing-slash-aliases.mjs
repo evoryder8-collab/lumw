@@ -87,3 +87,25 @@ for (const route of flatPages(DIST)) {
 }
 
 console.log(`\x1b[32m✓\x1b[0m ${written} trailing-slash aliases written, so /about/ resolves like it does on the live site`);
+
+// The owner replaced Thai with French on 18 September 2026. Keep existing
+// bookmarks usable, with a single hop to the corresponding French page.
+// Relative destinations work both at the custom domain and under /lumw.
+const retired = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/retired-locale-routes.json'), 'utf8'));
+for (const [from, to] of Object.entries(retired)) {
+  if (!fs.existsSync(path.join(DIST, `${to.slice(1)}.html`))) throw new Error(`Missing replacement for ${from}: ${to}`);
+  for (const trailing of [false, true]) {
+    const base = trailing ? from : path.posix.dirname(from);
+    const hop = path.posix.relative(base, to);
+    const output = path.join(DIST, trailing ? `${from.slice(1)}/index.html` : `${from.slice(1)}.html`);
+    fs.mkdirSync(path.dirname(output), { recursive: true });
+    fs.writeFileSync(output, `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Page déplacée | LUMA Wellness</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="${SITE}${to}">
+<meta http-equiv="refresh" content="0; url=${hop}">
+</head><body><p>Cette page est disponible en français : <a href="${hop}">Continuer</a></p></body></html>\n`);
+  }
+}
+console.log(`\x1b[32m✓\x1b[0m ${Object.keys(retired).length} retired Thai destinations redirect directly to French`);

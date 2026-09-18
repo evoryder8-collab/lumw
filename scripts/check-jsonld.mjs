@@ -81,6 +81,8 @@ for (const file of files) {
   const rel = '/' + path.relative(DIST, file).replace(/index\.html$/, '').replace(/\/$/, '');
   const html = fs.readFileSync(file, 'utf8');
   const { document } = parseHTML(html);
+  // Retired language URLs are redirect documents, not content pages.
+  if (document.querySelector('meta[http-equiv="refresh"]')) continue;
   const blocks = [...document.querySelectorAll('script[type="application/ld+json"]')];
 
   if (blocks.length === 0) {

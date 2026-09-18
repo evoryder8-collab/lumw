@@ -6,8 +6,8 @@ import treatments from '../content/treatments.json';
 import Icon from './Icon.astro';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const u = labels(locale);
-const prepare = { de: 'Nachricht vorbereiten', en: 'Prepare your message', es: 'Preparar el mensaje', pt: 'Preparar a mensagem', it: 'Prepara il messaggio', th: 'เตรียมข้อความ' }[locale];
-const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje con ventosas', pt: 'Massagem com ventosas', it: 'Massaggio con coppettazione', th: 'นวดครอบแก้ว' }[locale];
+const prepare = { de: 'Nachricht vorbereiten', en: 'Prepare your message', es: 'Preparar el mensaje', pt: 'Preparar a mensagem', it: 'Prepara il messaggio', fr: 'Préparer le message' }[locale];
+const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje con ventosas', pt: 'Massagem com ventosas', it: 'Massaggio con coppettazione', fr: 'Massage aux ventouses' }[locale];
 ---
 <div class="enquiry-panel liquid-glass" id="enquiry">
   <div class="enquiry-panel__heading"><span>LUMA · {u.book}</span></div>

@@ -13,7 +13,7 @@
  * the portal is a layer on top shown once per visitor.
  */
 
-export const LOCALES = ['de', 'en', 'th', 'es', 'pt', 'it'] as const;
+export const LOCALES = ['de', 'en', 'fr', 'es', 'pt', 'it'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = 'de';
@@ -43,11 +43,11 @@ export interface LocaleMeta {
 
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
   de: { code: 'de', tag: 'de-DE', name: 'Deutsch',   flag: '🇩🇪', prefix: '',    greeting: 'Herzlich willkommen',  available: true },
-  en: { code: 'en', tag: 'en',    name: 'English',   flag: '🇬🇧', prefix: '/en', greeting: 'A very warm welcome',  available: true },
-  th: { code: 'th', tag: 'th',    name: 'ไทย',       flag: '🇹🇭', prefix: '/th', greeting: 'ยินดีต้อนรับ',          available: true },
-  es: { code: 'es', tag: 'es',    name: 'Español',   flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido de corazón', available: true },
-  pt: { code: 'pt', tag: 'pt',    name: 'Português', flag: '🇵🇹', prefix: '/pt', greeting: 'Seja muito bem-vindo',  available: true },
-  it: { code: 'it', tag: 'it',    name: 'Italiano',  flag: '🇮🇹', prefix: '/it', greeting: 'Un caloroso benvenuto', available: true },
+  en: { code: 'en', tag: 'en',    name: 'English',   flag: '🇬🇧', prefix: '/en', greeting: 'Welcome',             available: true },
+  fr: { code: 'fr', tag: 'fr',    name: 'Français',  flag: '🇫🇷', prefix: '/fr', greeting: 'Bienvenue',           available: true },
+  es: { code: 'es', tag: 'es',    name: 'Español',   flag: '🇪🇸', prefix: '/es', greeting: 'Bienvenido',          available: true },
+  pt: { code: 'pt', tag: 'pt',    name: 'Português', flag: '🇵🇹', prefix: '/pt', greeting: 'Bem-vindo',           available: true },
+  it: { code: 'it', tag: 'it',    name: 'Italiano',  flag: '🇮🇹', prefix: '/it', greeting: 'Benvenuto',           available: true },
 };
 
 /** Locales whose pages exist. The only ones anything may link to. */
@@ -64,11 +64,11 @@ export const ALTERNATES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
  * page, so hreflang can pair them up.
  */
 export const ROUTES = {
-  home:     { de: '/',                       en: '/en',                          th: '/th',                          es: '/es',                             pt: '/pt',                             it: '/it' },
-  about:    { de: '/about',                  en: '/en/about',                    th: '/th/เกี่ยวกับจูน',                    es: '/es/sobre-mi',                    pt: '/pt/sobre-mim',                   it: '/it/chi-sono' },
-  services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',        th: '/th/บริการและราคา',        es: '/es/tratamientos-precios',        pt: '/pt/tratamentos-precos',          it: '/it/trattamenti-prezzi' },
-  faq:      { de: '/massage-buxtehude-faq',  en: '/en/massage-buxtehude-faq',    th: '/th/คำถามที่พบบ่อย',    es: '/es/masaje-buxtehude-faq',        pt: '/pt/massagem-buxtehude-faq',      it: '/it/massaggio-buxtehude-faq' },
-  contact:  { de: '/contact',                en: '/en/contact',                  th: '/th/ติดต่อ',                  es: '/es/contacto',                    pt: '/pt/contacto',                    it: '/it/contatti' },
+  home:     { de: '/',                       en: '/en',                        fr: '/fr',                      es: '/es',                      pt: '/pt',                      it: '/it' },
+  about:    { de: '/about',                  en: '/en/about',                  fr: '/fr/a-propos',              es: '/es/sobre-mi',              pt: '/pt/sobre-mim',             it: '/it/chi-sono' },
+  services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',      fr: '/fr/massages-tarifs',       es: '/es/tratamientos-precios',  pt: '/pt/tratamentos-precos',    it: '/it/trattamenti-prezzi' },
+  faq:      { de: '/massage-buxtehude-faq',  en: '/en/massage-buxtehude-faq',  fr: '/fr/questions-frequentes',  es: '/es/masaje-buxtehude-faq',  pt: '/pt/massagem-buxtehude-faq',it: '/it/massaggio-buxtehude-faq' },
+  contact:  { de: '/contact',                en: '/en/contact',                fr: '/fr/contact',              es: '/es/contacto',              pt: '/pt/contacto',              it: '/it/contatti' },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type RouteKey = keyof typeof ROUTES;

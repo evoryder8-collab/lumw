@@ -18,8 +18,10 @@ animated prices, Google reviews and a native Instagram landing page.
 
 ## Phase 0: working foundations
 
-- [x] Five core pages in each of English, Thai, Spanish, Portuguese and Italian.
+- [x] Five core pages in each of English, French, Spanish, Portuguese and Italian.
   Translated navigation, corresponding routes, reciprocal hreflang and sitemaps.
+  French replaces Thai at the owner’s request. Existing Thai links redirect to
+  their French equivalents. All six languages receive a full plain-language review.
 - [x] Replace the disabled contact form with an appointment-enquiry composer.
   The visitor sends through WhatsApp or email. June confirms availability.
 - [x] Archive the migration copy and automatically check built destinations,

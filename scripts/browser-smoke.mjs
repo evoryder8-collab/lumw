@@ -24,7 +24,7 @@ const noOverflow = async (page, label) => {
 };
 try {
   // Every canonical route must return 200 under the real deployment prefix.
-  const routes = ['de','en','th','es','pt','it'].flatMap((locale) => [...fs.readFileSync(`dist/sitemaps/${locale}.xml`, 'utf8').matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => new URL(m[1]).pathname));
+  const routes = ['de','en','fr','es','pt','it'].flatMap((locale) => [...fs.readFileSync(`dist/sitemaps/${locale}.xml`, 'utf8').matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => new URL(m[1]).pathname));
   for (const route of routes) assert.equal((await fetch(preview.url(route))).status, 200, route);
   report.push(`${routes.length} canonical URLs return 200 at ${preview.base || '/'}`);
 
@@ -100,7 +100,7 @@ try {
   assert.equal(await page.locator('[data-enquiry-result]').isVisible(), false);
   report.push('Treatment choice, native form validation, safely encoded WhatsApp/email handoff; no message sent');
 
-  for (const [locale, route] of [['en', '/en/treatments-prices'], ['es', '/es/tratamientos-precios'], ['pt', '/pt/tratamentos-precos'], ['it', '/it/trattamenti-prezzi'], ['th', '/th/บริการและราคา']]) {
+  for (const [locale, route] of [['en', '/en/treatments-prices'], ['es', '/es/tratamientos-precios'], ['pt', '/pt/tratamentos-precos'], ['it', '/it/trattamenti-prezzi'], ['fr', '/fr/massages-tarifs']]) {
     const copy = JSON.parse(fs.readFileSync(`src/i18n/${locale}.json`, 'utf8'));
     await page.goto(preview.url(encodeURI(route)));
     assert.equal(await page.locator('.treatment-dialog').count(), 9);
@@ -294,10 +294,12 @@ try {
 
   const silentContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const silentPage = await silentContext.newPage(); track(silentPage);
-  await silentPage.goto(preview.url('/en'));
-  await silentPage.locator('[data-language-pick][lang="en"]').click();
+  await silentPage.goto(preview.url('/fr'));
+  await silentPage.locator('[data-language-pick][lang="fr"]').click();
   await silentPage.locator('[data-sound-dialog]').waitFor({ state: 'visible' });
   assert.equal(await silentPage.locator('[data-language-dialog]').evaluate((d) => d.open), true);
+  assert.equal(await silentPage.locator('[data-sound-no]').innerText(), 'Non');
+  assert.ok((await silentPage.locator('[data-sound-dialog]').innerText()).includes('Souhaitez-vous activer le son'));
   await noOverflow(silentPage, 'Sound popup on a 390px portal');
   await silentPage.screenshot({ path: path.join(artifacts, 'sound-question-mobile.png') });
   await silentPage.locator('[data-sound-no]').click();
@@ -306,17 +308,17 @@ try {
   await silentPage.waitForFunction(() => !document.querySelector('[data-welcome-curtain]').open);
   assert.equal(await silentPage.locator('body').evaluate((b) => b.style.overflow), '');
   await silentContext.close();
-  report.push('Same-language confirmation and No preserve the portal-to-curtain order with muted playback on mobile');
+  report.push('French language confirmation and Non preserve the portal-to-curtain order with muted playback on mobile');
 
   const axeResults = [];
   for (const width of [360, 390, 768, 1440]) {
     const responsive = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
     await responsive.addInitScript(savedWelcome);
     const view = await responsive.newPage(); track(view);
-    for (const route of ['/', '/meineangebote-preise', '/about', '/contact', '/massage-buxtehude-faq', '/th', '/en/treatments-prices', '/linkinbio', '/en', '/es', '/pt', '/it']) {
+    for (const route of ['/', '/meineangebote-preise', '/about', '/contact', '/massage-buxtehude-faq', '/fr', '/en/treatments-prices', '/linkinbio', '/en', '/es', '/pt', '/it', '/fr/massages-tarifs', '/es/tratamientos-precios', '/pt/tratamentos-precos', '/it/trattamenti-prezzi', '/en/contact', '/fr/contact', '/es/contacto', '/pt/contacto', '/it/contatti']) {
       await view.goto(preview.url(encodeURI(route))); await settled(view);
       await noOverflow(view, `${width}px ${route}`);
-      if (width >= 768 && ['/meineangebote-preise', '/en/treatments-prices'].includes(route)) {
+      if (width >= 768 && (await view.locator('.cards > .card, .localized-treatment').count()) === 9) {
         const cards = await view.locator('.cards > .card, .localized-treatment').evaluateAll((elements) => elements.map((card) => {
           const bounds = card.getBoundingClientRect();
           const action = card.querySelector('.card__cta, .card__content > .pill').getBoundingClientRect();
@@ -361,6 +363,15 @@ try {
         }
       }
       if (width === 390 || width === 1440) await view.screenshot({ path: path.join(artifacts, `${width}-${route.replaceAll('/', '_') || 'home'}.png`) });
+      if (route === '/fr/contact') {
+        await view.locator('[data-drive]').click();
+        const choice = view.locator('#route-choice');
+        assert.equal(await choice.isVisible(), true);
+        assert.equal(await choice.locator('h2').innerText(), 'Quelle application souhaitez-vous utiliser ?');
+        assert.deepEqual(await choice.locator('.choice__option strong').allTextContents(), ['Google Maps', 'Plans d’Apple']);
+        await choice.locator('[data-choice-close]').click();
+        assert.equal(await view.locator('[data-drive]').evaluate((button) => document.activeElement === button), true);
+      }
       if (width === 390 && !['/en', '/es', '/pt', '/it'].includes(route)) {
         const audit = await new AxeBuilder({ page: view }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
         axeResults.push({ route, violations: audit.violations });
@@ -389,7 +400,7 @@ try {
   }
   fs.writeFileSync(path.join(artifacts, 'accessibility.json'), JSON.stringify(axeResults, null, 2));
   assert.deepEqual(axeResults.filter((r) => r.violations.length).map((r) => ({ route: r.route, violations: r.violations.map((v) => v.id) })), []);
-  report.push('48 responsive page checks at 360, 390, 768 and 1440 pixels; treatment booking actions align in each row; concentric portrait rim and readable portal branding; eight axe WCAG audits; fixed social links stay reachable and clear the menu');
+  report.push(`84 responsive page checks at 360, 390, 768 and 1440 pixels; treatment actions align in all six languages; French directions dialog; concentric portrait rim and readable portal branding; ${axeResults.length} axe WCAG audits; fixed social links stay reachable and clear the menu`);
 
   const galleryContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   await galleryContext.addInitScript(savedWelcome);
