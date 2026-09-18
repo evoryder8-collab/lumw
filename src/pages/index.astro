@@ -90,7 +90,6 @@ const angebote = [
 const heroSizes = '(max-width: 760px) calc(100vw - 80px), 44vw';
 const preloadImage = await heroPreload(junePortrait, [360, 480, 720, 1000, 1400], heroSizes);
 
-const ogImage = await socialImageUrl(junePortrait, Astro.site);
 
 /**
  * The catalogue on the business node.
@@ -121,7 +120,7 @@ const schema = graph([
 ]);
 ---
 
-<Layout {title} {description} {path} schema={schema} {ogImage} {preloadImage}>
+<Layout {title} {description} {path} schema={schema} {preloadImage}>
   <IntroFilm />
   <HomeHero heading="International ausgezeichnete Massage" lead="Thailändische Wurzeln. Internationale Erfahrung. Eine Massage, die June auf Sie abstimmt, in ihrem Studio in Buxtehude." />
 

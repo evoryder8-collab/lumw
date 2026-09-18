@@ -820,6 +820,16 @@ function installRevealFailsafe() {
 function boot() {
   document.documentElement.classList.add('motion-ready');
 
+  const ribbon = document.querySelector<HTMLElement>('.strip');
+  if (ribbon && !REDUCED) {
+    let active = true;
+    let disposeRibbon: (() => void) | undefined;
+    void import('./award-ribbon').then(({ mountAwardRibbon }) => {
+      if (active && ribbon.isConnected) disposeRibbon = mountAwardRibbon(ribbon);
+    }).catch(() => { /* Native horizontal scrolling remains available. */ });
+    onCleanup(() => { active = false; disposeRibbon?.(); });
+  }
+
   // Botanical detail is optional and kept outside the main motion bundle.
   const garden = document.querySelector<HTMLElement>('[data-lotus-garden]');
   if (garden && !REDUCED) {

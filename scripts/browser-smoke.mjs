@@ -37,6 +37,7 @@ try {
   assert.equal(mediaRequests.length, 0, 'A video downloaded before the welcome choice');
   assert.equal(await page.locator('[data-language-dialog] .language-choice__flag img').count(), 6);
   await page.waitForFunction(() => [...document.querySelectorAll('[data-language-dialog] img')].every((img) => img.complete && img.naturalWidth > 0));
+  assert.ok(await page.locator('.portal-brand__sub').evaluate((el) => parseFloat(getComputedStyle(el).fontSize) >= 14), 'Portal branding is too small to read');
   await page.locator('[data-language-pick][lang="en"]').click();
   await page.waitForURL(preview.url('/en'));
   await page.waitForFunction(() => document.querySelector('[data-sound-dialog]').open);
@@ -166,26 +167,43 @@ try {
   assert.equal(await page.locator('[data-gallery-dialog]').evaluate((d) => d.open), false);
   assert.equal(await cup.evaluate((el) => document.activeElement === el), true);
   const films = page.locator('.film-section video');
-  assert.equal(await films.count(), 5);
+  assert.equal(await films.count(), 4);
   assert.match(await films.first().locator('source').getAttribute('src'), /june-awarded-2026\.mp4$/);
-  for (let index = 0; index < 5; index++) {
+  for (let index = 0; index < 4; index++) {
     await films.nth(index).evaluate(async (v) => { v.muted = true; await v.play(); });
     assert.equal(await films.nth(index).evaluate((v) => v.paused), false);
   }
   assert.equal(await films.first().evaluate((v) => v.paused), true);
   assert.equal(await films.nth(1).evaluate((v) => v.paused), true);
   assert.equal(await films.nth(2).evaluate((v) => v.paused), true);
-  assert.equal(await films.nth(3).evaluate((v) => v.paused), true);
-  await films.nth(4).evaluate((v) => v.pause());
-  report.push('Reviews nudge horizontally once and return; eight gallery photos with keyboard navigation; all five lower films play independently');
+  await films.nth(3).evaluate((v) => v.pause());
+  report.push('Reviews nudge horizontally once and return; eight gallery photos with keyboard navigation; four distinct lower films play independently');
 
   await page.goto(preview.url('/about'));
   await page.locator('.penzberg').scrollIntoViewIfNeeded();
   await page.waitForFunction(() => { const photo = document.querySelector('.penzberg img'); return photo.complete && photo.naturalWidth > 0; });
   assert.match(await page.locator('.penzberg figcaption').innerText(), /PENZBERG · 2023/);
   const aboutFilms = await page.locator('.film-section--featured source').evaluateAll((sources) => sources.map((source) => source.getAttribute('src')));
-  assert.ok(aboutFilms.some((source) => source.endsWith('/june-passion.mp4')));
-  assert.ok(aboutFilms.some((source) => source.endsWith('/june-awarded-2026.mp4')));
+  assert.equal(aboutFilms.length, 2);
+  assert.ok(aboutFilms.some((source) => source.endsWith('/june-story.mp4')));
+  assert.ok(aboutFilms.some((source) => source.endsWith('/june-touch-and-technique.mp4')));
+  const watchAward = page.locator('[data-award-video-open]');
+  const awardVideo = page.locator('[data-award-video]');
+  assert.equal(await awardVideo.getAttribute('src'), null, 'Award popup eagerly loads its film');
+  await watchAward.click();
+  await page.waitForFunction(() => { const film = document.querySelector('[data-award-video]'); return !film.paused && film.currentTime > .1; });
+  const awardDialog = await page.locator('[data-award-video-dialog]').boundingBox();
+  assert.ok(Math.abs(awardDialog.x + awardDialog.width / 2 - 720) < 2, 'Award player is not centred');
+  assert.match(await awardVideo.getAttribute('src'), /june-awarded-2026\.mp4$/);
+  await page.screenshot({ path: path.join(artifacts, 'award-film-popup.png') });
+  await page.keyboard.press('Escape');
+  assert.equal(await awardVideo.evaluate((v) => v.paused), true, 'Closing the award film left audio playing');
+  assert.equal(await watchAward.evaluate((el) => document.activeElement === el), true);
+  assert.equal(await page.locator('body').evaluate((el) => el.style.overflow), '');
+  await watchAward.click();
+  await page.locator('[data-award-video-close]').click();
+  assert.equal(await page.locator('body').evaluate((el) => el.style.overflow), '');
+  report.push('About has distinct story and technique films; photography story opens its award film in a centred player, with playback, Escape, close, focus return and immediate scroll restoration');
   await page.evaluate(() => window.scrollTo({ top: 1100, behavior: 'instant' }));
   await page.waitForFunction(() => Math.abs(window.scrollY - 1100) < 5);
   await page.waitForFunction(() => Math.abs((history.state?.scrollY ?? 0) - window.scrollY) < 5);
@@ -196,9 +214,13 @@ try {
   assert.ok(contactLink && contactLink.y >= 0 && contactLink.y < 1000, 'Sticky contact link is not visible');
   await page.mouse.click(contactLink.x + contactLink.width / 2, contactLink.y + contactLink.height / 2);
   await page.waitForURL(preview.url('/contact'));
+  await page.locator('[data-page-curtain].is-opening').waitFor({ state: 'visible' });
+  await page.screenshot({ path: path.join(artifacts, 'page-curtain.png') });
+  await page.locator('[data-page-curtain]').waitFor({ state: 'hidden' });
   await page.locator('[data-enquiry]').waitFor({ state: 'visible' });
   await page.goBack();
   await page.waitForURL(preview.url('/about'));
+  assert.equal(await page.locator('[data-page-curtain]').isVisible(), false, 'History traversal replayed the page curtain');
   await page.waitForFunction((saved) => Math.abs(window.scrollY - saved) < 100, rememberedScroll, { timeout: 5000 });
   await page.locator('[data-portal-open]').click();
   await page.locator('[data-language-pick][lang="it"]').click();
@@ -210,7 +232,50 @@ try {
   await page.waitForURL(preview.url('/contact'));
   await page.locator('[data-enquiry]').waitFor({ state: 'visible' });
   report.push('Cancelled native page animation still completes navigation without an unhandled rejection');
+  // Rapid taps must leave one curtain and the final requested page usable.
+  await page.goto(preview.url('/en'));
+  await page.locator('.nav__link').nth(1).click();
+  await page.locator('.nav__link').last().click();
+  await page.waitForURL(preview.url('/en/contact'));
+  await page.locator('[data-page-curtain]').waitFor({ state: 'hidden' });
+  assert.equal(await page.locator('[data-page-curtain]').count(), 1);
+  assert.equal(await page.locator('body').evaluate((el) => el.style.overflow), '');
+  report.push('Floral curtains cover main-page navigation, clean up after rapid taps, and skip Back history');
   await context.close();
+
+  const ribbonContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await ribbonContext.addInitScript(savedWelcome);
+  const ribbonPage = await ribbonContext.newPage(); track(ribbonPage);
+  await ribbonPage.goto(preview.url('/en'));
+  const ribbon = ribbonPage.locator('.strip__viewport');
+  await ribbon.scrollIntoViewIfNeeded();
+  await ribbonPage.locator('.strip[data-ribbon-ready]').waitFor();
+  const ribbonX = () => ribbonPage.locator('.strip__track').evaluate((el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41);
+  await ribbon.hover();
+  const hoverStart = await ribbonX();
+  await ribbonPage.waitForTimeout(350);
+  assert.ok(await ribbonX() < hoverStart - 5, 'Hover left the awards ribbon paused');
+  const ribbonBounds = await ribbon.boundingBox();
+  await ribbonPage.mouse.move(ribbonBounds.x + 650, ribbonBounds.y + ribbonBounds.height / 2);
+  await ribbonPage.mouse.down();
+  const held = await ribbonX();
+  await ribbonPage.waitForTimeout(150);
+  assert.ok(Math.abs(await ribbonX() - held) < 1, 'Ribbon did not yield to the held pointer');
+  await ribbonPage.mouse.move(ribbonBounds.x + 510, ribbonBounds.y + ribbonBounds.height / 2, { steps: 6 });
+  assert.ok(Math.abs(await ribbonX() - held + 140) < 2, 'Ribbon did not follow horizontal drag');
+  await ribbonPage.waitForTimeout(160);
+  await ribbonPage.mouse.up();
+  const releasePositions = [await ribbonX()];
+  for (let sample = 0; sample < 4; sample++) { await ribbonPage.waitForTimeout(250); releasePositions.push(await ribbonX()); }
+  const distances = releasePositions.slice(1).map((position, i) => releasePositions[i] - position);
+  assert.ok(distances.every((distance) => distance > 0) && distances[3] > distances[0] * 1.5, `Ribbon failed to accelerate smoothly after release: ${distances}`);
+  await ribbonPage.mouse.click(ribbonBounds.x + 650, ribbonBounds.y + ribbonBounds.height / 2);
+  const tapStart = await ribbonX();
+  await ribbonPage.waitForTimeout(500);
+  assert.ok(await ribbonX() < tapStart - 3, 'A simple tap left the ribbon paused');
+  await ribbonPage.screenshot({ path: path.join(artifacts, 'awards-ribbon.png') });
+  await ribbonContext.close();
+  report.push('Awards ribbon keeps moving on hover, tracks dragging, accelerates after release and resumes after a tap');
 
   const silentContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const silentPage = await silentContext.newPage(); track(silentPage);
@@ -236,6 +301,50 @@ try {
     for (const route of ['/', '/meineangebote-preise', '/about', '/contact', '/massage-buxtehude-faq', '/th', '/en/treatments-prices', '/linkinbio', '/en', '/es', '/pt', '/it']) {
       await view.goto(preview.url(encodeURI(route))); await settled(view);
       await noOverflow(view, `${width}px ${route}`);
+      if (width >= 768 && ['/meineangebote-preise', '/en/treatments-prices'].includes(route)) {
+        const cards = await view.locator('.cards > .card, .localized-treatment').evaluateAll((elements) => elements.map((card) => {
+          const bounds = card.getBoundingClientRect();
+          const action = card.querySelector('.card__cta, .card__content > .pill').getBoundingClientRect();
+          const more = card.querySelector('.treatment-details__trigger')?.getBoundingClientRect();
+          return { top: bounds.top, bottom: bounds.bottom, action: action.top, more: more?.top };
+        }));
+        assert.equal(cards.length, 9, `${route}: missing treatment cards`);
+        for (const card of cards) {
+          const row = cards.filter((other) => Math.abs(other.top - card.top) < 1);
+          assert.ok(row.every((other) => Math.abs(other.bottom - card.bottom) < 1 && Math.abs(other.action - card.action) < 1), `${width}px ${route}: booking actions do not share a baseline`);
+          if (card.more !== undefined) assert.ok(row.every((other) => Math.abs(other.more - card.more) < 1), `${width}px ${route}: More info actions do not align`);
+        }
+      }
+      if (route === '/en') {
+        assert.match(await view.locator('h1').evaluate((el) => getComputedStyle(el).fontFamily), /Cormorant Garamond/);
+        const frame = await view.evaluate(() => {
+          const photo = document.querySelector('.hero-winner .media').getBoundingClientRect();
+          const rim = document.querySelector('.lotus-rim').getBoundingClientRect();
+          return {
+            x: Math.abs(photo.x + photo.width / 2 - rim.x - rim.width / 2),
+            y: Math.abs(photo.y + photo.height / 2 - rim.y - rim.height / 2),
+            round: Math.abs(rim.width - rim.height),
+            widthRatio: rim.width / photo.width,
+          };
+        });
+        assert.ok(frame.x < .25 && frame.y < .25 && frame.round < .25 && Math.abs(frame.widthRatio - 1.05) < .005, `${width}px portrait rim lost its shared centre: ${JSON.stringify(frame)}`);
+        assert.equal(await view.locator('.lotus-scatter').count(), 0, 'Separate lotus badge returned');
+        assert.ok(await view.locator('.portal-brand__sub').evaluate((el) => parseFloat(getComputedStyle(el).fontSize) >= 14), `${width}px portal branding is too small`);
+        await view.locator('[data-portal-open]').click();
+        const branding = await view.locator('.portal-brand__sub').boundingBox();
+        const panel = await view.locator('.language-dialog__inner').boundingBox();
+        assert.ok(branding.x >= panel.x && branding.x + branding.width < panel.x + panel.width - 10 && branding.height <= 24, `${width}px portal subtitle wraps or clips`);
+        if (width === 390 || width === 1440) await view.screenshot({ path: path.join(artifacts, `${width}-language-portal.png`) });
+        await view.keyboard.press('Escape');
+        if (width === 1440) {
+          const footerGap = await view.evaluate(() => {
+            const brand = document.querySelector('.footer__brand').getBoundingClientRect();
+            const menu = document.querySelector('.footer__col').getBoundingClientRect();
+            return { gap: menu.left - brand.right, lift: brand.top - menu.top };
+          });
+          assert.ok(footerGap.gap >= 40 && footerGap.lift >= 24, 'Footer columns crowd the wordmark');
+        }
+      }
       if (width === 390 || width === 1440) await view.screenshot({ path: path.join(artifacts, `${width}-${route.replaceAll('/', '_') || 'home'}.png`) });
       if (width === 390 && !['/en', '/es', '/pt', '/it'].includes(route)) {
         const audit = await new AxeBuilder({ page: view }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
@@ -265,7 +374,7 @@ try {
   }
   fs.writeFileSync(path.join(artifacts, 'accessibility.json'), JSON.stringify(axeResults, null, 2));
   assert.deepEqual(axeResults.filter((r) => r.violations.length).map((r) => ({ route: r.route, violations: r.violations.map((v) => v.id) })), []);
-  report.push('48 responsive page checks at 360, 390, 768 and 1440 pixels; eight axe WCAG audits; fixed social links stay reachable and clear the menu');
+  report.push('48 responsive page checks at 360, 390, 768 and 1440 pixels; treatment booking actions align in each row; concentric portrait rim and readable portal branding; eight axe WCAG audits; fixed social links stay reachable and clear the menu');
 
   const galleryContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   await galleryContext.addInitScript(savedWelcome);
@@ -314,10 +423,16 @@ try {
   assert.equal(await reducedPage.locator('[data-gallery-track]').evaluate((track) => track.scrollLeft), 0);
   assert.equal(await reducedPage.locator('.lotus-fall').count(), 0);
   assert.equal(await reducedPage.locator('[data-lotus-scatter]').isVisible(), false);
+  await reducedPage.locator('.strip__viewport').evaluate((el) => { el.scrollLeft = 180; });
+  assert.ok(await reducedPage.locator('.strip__viewport').evaluate((el) => el.scrollLeft > 100), 'Reduced-motion awards cannot be scrolled');
   await reducedPage.goto(preview.url('/meineangebote-preise'));
   await reducedPage.locator('[data-price-counter]').first().scrollIntoViewIfNeeded();
   assert.equal(await reducedPage.locator('.is-price-complete').count(), 0);
   assert.deepEqual(motionRequests, []);
+  await reducedPage.locator('.nav-burger').click();
+  await reducedPage.locator('.nav__link').last().click();
+  await reducedPage.waitForURL(preview.url('/contact'));
+  assert.equal(await reducedPage.locator('[data-page-curtain]').isVisible(), false);
   await reduced.close();
 
   const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
@@ -337,6 +452,8 @@ try {
   await staticPage.goto(preview.url('/linkinbio'));
   assert.equal(await staticPage.locator('.loc noscript a').count(), 2);
   assert.equal(await staticPage.locator('[data-bio-action]').count(), 8);
+  await staticPage.goto(preview.url('/en/about'));
+  assert.match(await staticPage.locator('[data-award-video-open]').getAttribute('href'), /june-awarded-2026\.mp4$/);
   await noJS.close();
   report.push('Reduced motion keeps static prices and skips GSAP; no-JavaScript navigation and contact remain usable');
 
@@ -454,8 +571,10 @@ try {
     await petalsPage.locator('[data-lotus-scatter]').waitFor({ state: 'visible' });
     assert.equal(await petalsPage.evaluate(() => window.motionPermissionCalls), 0, 'Motion permission was requested without a tap');
     await petalsPage.waitForFunction(() => window.petalFrames > 5);
-    // The control floats with its portrait, so tap its current on-screen centre.
+    // The photograph itself accepts the gesture, with no separate icon badge.
+    const photoBounds = await petalsPage.locator('.hero-winner .media').boundingBox();
     const target = await petalsPage.locator('[data-lotus-scatter]').boundingBox();
+    assert.ok(Math.abs(target.width - photoBounds.width) < 1 && Math.abs(target.x - photoBounds.x) < 1, 'Petal gesture no longer follows the photograph');
     await petalsPage.mouse.click(target.x + target.width / 2, target.y + target.height / 2);
     await petalsPage.waitForFunction(() => document.querySelector('[data-lotus-garden]').dataset.petalState === 'scattering');
     assert.equal(await petalsPage.evaluate(() => window.motionPermissionCalls), permission === 'unavailable' ? 0 : 1);

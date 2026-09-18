@@ -1,23 +1,58 @@
 ---
-// Fine botanical metalwork, drawn around the photograph rather than over it.
-const angles = [15, 55, 95, 135, 175, 215, 255, 295, 335];
+import { Image } from 'astro:assets';
+import relief from '../assets/lotus-gold-relief.webp';
+// Each blossom is mounted on the same circular rim, not on a separate badge.
+const blossoms = [-90, 42, 138].map((angle, index) => ({
+  x: 50 + Math.cos(angle * Math.PI / 180) * 50,
+  y: 50 + Math.sin(angle * Math.PI / 180) * 50,
+  rotation: angle + 90,
+  size: index === 0 ? 15 : 12,
+}));
 ---
-<svg class="lotus-rim" viewBox="0 0 600 600" fill="none" aria-hidden="true">
-  <defs>
-    <linearGradient id="lotus-gold" x1="50" y1="20" x2="530" y2="570" gradientUnits="userSpaceOnUse"><stop stop-color="#fff3c9"/><stop offset=".27" stop-color="#b79450"/><stop offset=".5" stop-color="#f9e9b5"/><stop offset=".76" stop-color="#8e794d"/><stop offset="1" stop-color="#e7cea0"/></linearGradient>
-    <linearGradient id="lotus-pearl" x1="288" y1="35" x2="310" y2="3" gradientUnits="userSpaceOnUse"><stop stop-color="#b69359" stop-opacity=".25"/><stop offset=".65" stop-color="#ebd8b2" stop-opacity=".85"/><stop offset="1" stop-color="#fff7df"/></linearGradient>
-  </defs>
-  <circle cx="300" cy="300" r="273" stroke="url(#lotus-gold)" stroke-width="1.15"/>
-  <circle cx="300" cy="300" r="278" stroke="url(#lotus-gold)" stroke-width=".55" stroke-dasharray="160 34 2 34" opacity=".65"/>
-  {angles.map((angle) => <g transform={`rotate(${angle} 300 300)`} class="lotus-rim__bloom">
-    <path d="M300 30C285 22 290 10 300 1C310 10 315 22 300 30Z" fill="url(#lotus-pearl)" stroke="url(#lotus-gold)" stroke-width=".8"/>
-    <path d="M300 30C284 32 276 23 274 12C291 13 297 20 300 30ZM300 30C316 32 324 23 326 12C309 13 303 20 300 30Z" fill="url(#lotus-pearl)" stroke="url(#lotus-gold)" stroke-width=".8"/>
-    <path d="M300 29V9M297 28L281 18M303 28L319 18" stroke="#ffedbd" stroke-width=".55" opacity=".8"/>
-  </g>)}
-</svg>
+<div class="lotus-rim" aria-hidden="true">
+  <span class="lotus-rim__bevel"></span>
+  {blossoms.map(({ x, y, rotation, size }) => <span class="lotus-rim__flower" style={`left:${x}%;top:${y}%;width:${size}%;rotate:${rotation}deg`}>
+    <Image src={relief} width={240} widths={[96, 144, 192, 240]} sizes="(max-width: 760px) 58px, 96px" format="webp" quality={80} alt="" decoding="async" fetchpriority="low" />
+  </span>)}
+</div>
 <style>
-  .lotus-rim { position: absolute; inset: -5%; width: 110%; height: 110%; z-index: 1; overflow: visible; pointer-events: none; filter: drop-shadow(0 1px 2px #0d201c80); }
-  @media (prefers-reduced-motion: no-preference) { :global(.motion-ready) .lotus-rim__bloom { animation: lotus-lustre 7s ease-in-out infinite alternate; } .lotus-rim__bloom:nth-of-type(3n) { animation-delay: -4s; } .lotus-rim__bloom:nth-of-type(3n + 1) { animation-delay: -2s; } }
-  @keyframes lotus-lustre { from { opacity: .65; } to { opacity: 1; } }
-  :global(.is-offscreen) .lotus-rim__bloom, :global(body[data-ambient-sleep]) .lotus-rim__bloom { animation-play-state: paused; }
+  /* The photograph and its rim share one square. Inset positions both edges,
+     avoiding the global max-width rule that used to squeeze only the SVG width. */
+  .lotus-rim {
+    position: absolute; inset: -2.5%; width: auto; height: auto; max-width: none;
+    border-radius: 50%; z-index: 1; pointer-events: none; isolation: isolate;
+    box-shadow: 0 2px 3px #0a1c1780, 0 12px 24px #071b2038;
+  }
+  .lotus-rim::before, .lotus-rim::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 2.45%;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  .lotus-rim::before {
+    background: conic-gradient(from 32deg, #8f682d, #b78d42 6%, #f8e2a3 14%, #fff4cb 18%, #c6a15a 22%, #695029 31%, #ac853f 40%, #efd595 48%, #fff1c4 53%, #b39250 62%, #76552b 71%, #d7b576 81%, #fff2c5 89%, #b08741 95%, #8f682d);
+    box-shadow: inset 0 1px 1px #fff3bd, inset 0 -2px 2px #765627;
+  }
+  .lotus-rim::after {
+    background: conic-gradient(from 0deg, transparent 0 68%, #fff9de00 71%, #fff9dea6 74%, #fffef3 75%, #fff9de70 76%, transparent 79%);
+    opacity: .65;
+  }
+  .lotus-rim__bevel {
+    position: absolute; inset: 1.1%; border: 1px solid #f5dca485; border-radius: inherit;
+    box-shadow: 0 1px 1px #51371580, inset 0 1px 1px #fff4cf99;
+  }
+  .lotus-rim__bevel::after {
+    content: ''; position: absolute; inset: 1.25%; border-radius: inherit;
+    border: 1px solid #30281da6; box-shadow: 0 -1px 1px #fce1a894, inset 0 1px 3px #10291d99;
+  }
+  .lotus-rim__flower { position: absolute; max-width: 96px; aspect-ratio: 1; translate: -50% -50%; filter: drop-shadow(0 2px 2px #20180980); }
+  /* Shift the relief outwards in its own rotated coordinates. Its base rests
+     on the outer gold lip while the petals extend away from the photograph. */
+  .lotus-rim__flower img { width: 100%; height: 100%; object-fit: contain; transform: translateY(-28%); }
+  @media (max-width: 760px) { .lotus-rim__flower { max-width: 58px; } }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.motion-ready) .lotus-rim::after { animation: rim-reflection 16s linear infinite; }
+  }
+  @keyframes rim-reflection { to { transform: rotate(360deg); } }
+  :global(.is-offscreen) .lotus-rim::after,
+  :global(body[data-ambient-sleep]) .lotus-rim::after { animation-play-state: paused; }
 </style>

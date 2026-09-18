@@ -43,13 +43,17 @@ animated prices, Google reviews and a native Instagram landing page.
 - [x] A larger forest-green awards ribbon with generated gold, silver and bronze
   placement medals. The owner's corrected record in `src/lib/awards.ts` is
   shared by every language, the ribbon, About and structured data.
+- [x] A readable portal signature, a classical Cormorant Garamond display face,
+  and a concentric gold portrait rim with smaller outer-edge lotus reliefs.
 
 ## Phase 2: depth throughout the website
 
 - [x] Editorial treatment stories, a dark portrait feature, eight supplied
-  gallery photographs, full-frame viewing and five additional original films.
-  The supplied 2026 awards film leads the homepage collection and joins the
-  passion film on About. The new Penzberg group photograph illustrates the
+  gallery photographs, full-frame viewing and four distinct additional films.
+  The supplied 2026 awards film leads the homepage collection and opens from
+  the photography story's See Video link on Home and About. About's film pair
+  shows June's story and her technique. The older duplicate export is excluded
+  from the collection. The new Penzberg group photograph illustrates the
   championship story on all six About pages.
 - [x] Three verified Google Maps review excerpts in horizontal glass cards.
   Author attribution, individual source links, an explicit Maps icon and label,
@@ -59,7 +63,8 @@ animated prices, Google reviews and a native Instagram landing page.
   Horizontal film collections use the same hint.
 - [x] The mobile photo gallery uses the same once-only horizontal hint.
 - [x] Redesigned treatment cards, a signature treatment, a useful index,
-  clear prices and accessible full descriptions.
+  clear prices and accessible full descriptions. Cards in each row share a
+  bottom action baseline, regardless of description length or number of prices.
 - [x] Localized More info dialogs keep visitors on translated treatment pages,
   with an upper-left close button, focus return and a booking action. Without
   JavaScript, the same details expand in place.
@@ -79,6 +84,10 @@ animated prices, Google reviews and a native Instagram landing page.
   Screen readers and reduced-motion visitors receive the actual amount at once.
 - [x] Page transitions, pointer reflections, restrained review-card depth,
   button feedback and ambient gleams, with cleanup during navigation.
+- [x] The floral curtain covers main-page navigation and opens onto the new
+  page. Rapid taps clean up correctly; browser history and reduced motion skip it.
+- [x] Freely draggable awards with momentum and a gradual return to cruising
+  speed. Hover and taps never leave the ribbon permanently paused.
 - [x] The `/linkinbio` page shares LUMA's materials and typography. It contains
   every original TapLink action, a downloadable contact card, telephone,
   treatments and the Contact page's detailed map with Google Maps / Apple Maps
@@ -90,6 +99,9 @@ animated prices, Google reviews and a native Instagram landing page.
 - [x] A lotus-embellished winner portrait with bounded falling petals that settle
   above the recognition button. Tap scatters them; compatible phones can use
   shaking after permission. Reduced motion keeps a static floral frame.
+  The revised frame has a concentric beveled gold rim and three realistic relief
+  ornaments. The portrait itself accepts the gesture without a separate badge.
+  Petals fall from the upper rim across the picture before settling on the card.
 - [x] A personal greeting with the ninth supplied portrait after 20 seconds
   of visible homepage time. Animated text and booking action, six languages,
   dismissible, once per session, with no focus theft or welcome interruption.
@@ -102,6 +114,11 @@ animated prices, Google reviews and a native Instagram landing page.
   dialogs. Native link buttons share those richer colors.
 - [x] A clearer local street map identifies Hauptstraße 19, nearby streets,
   north and the studio, with explicit Google Maps access and the route chooser.
+- [x] A custom 1200×630 sharing cover with the approved portrait and all-gold
+  brand emblem, plus original-symbol browser and touch icons. Metadata is
+  consistent across all canonical pages.
+- [x] Lifted desktop footer columns and a wordmark sized to avoid collisions.
+  The contact form uses a clean typographic heading without a star ornament.
 
 ## Phase 4: reproducible evidence and release
 

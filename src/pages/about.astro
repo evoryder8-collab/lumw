@@ -37,7 +37,6 @@ const path = '/about';
 const heroSizes = '(max-width: 900px) 76vw, 38vw';
 const preloadImage = await heroPreload(junePortrait, [400, 600, 860], heroSizes);
 
-const ogImage = await socialImageUrl(junePortrait, Astro.site);
 
 const schema = graph([
   businessNode(),
@@ -55,7 +54,7 @@ const schema = graph([
 ]);
 ---
 
-<Layout {title} {description} {path} schema={schema} {ogImage} ogType="profile" {preloadImage}>
+<Layout {title} {description} {path} schema={schema} ogType="profile" {preloadImage}>
   <section class="hero">
     <div class="shell hero__inner">
       <div>

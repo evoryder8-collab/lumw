@@ -1,26 +1,30 @@
 ---
 import type { Locale } from '../i18n/locales';
-const { locale = 'de' } = Astro.props as { locale?: Locale };
+const { locale = 'de', mode = 'welcome' } = Astro.props as { locale?: Locale; mode?: 'welcome' | 'page' };
+const pageTransition = mode === 'page';
+const Tag = pageTransition ? 'div' : 'dialog';
 const label = { de: 'Willkommen bei LUMA', en: 'Welcome to LUMA', es: 'Bienvenido a LUMA', pt: 'Bem-vindo à LUMA', it: 'Benvenuto da LUMA', th: 'ยินดีต้อนรับสู่ LUMA' }[locale];
 const petals = Array.from({ length: 24 }, (_, i) => ({ x: 44 + (i % 5) * 3, y: 8 + (i * 17 % 70), dx: (i % 2 ? 1 : -1) * (28 + i * 4), turn: (i % 2 ? 1 : -1) * (100 + i * 25), delay: 160 + (i * 59 % 480) }));
 ---
-<dialog class="welcome-curtain" data-welcome-curtain aria-label={label}>
+<Tag class:list={['welcome-curtain', pageTransition && 'page-curtain']} data-welcome-curtain={pageTransition ? undefined : ''} data-page-curtain={pageTransition ? '' : undefined} aria-label={pageTransition ? undefined : label} aria-hidden={pageTransition ? 'true' : undefined} hidden={pageTransition} transition:persist={pageTransition ? 'luma-page-curtain' : undefined}>
   <div class="welcome-curtain__panels" aria-hidden="true">
     {[0, 1].map((side) => <div class:list={['welcome-curtain__panel', side ? 'welcome-curtain__panel--right' : 'welcome-curtain__panel--left']}>
       <svg viewBox="0 0 600 1200" preserveAspectRatio="none" class="welcome-curtain__botanical">
-        <defs><linearGradient id={`curtain-thread-${side}`}><stop stop-color="#a99158"/><stop offset=".5" stop-color="#f2dfb1"/><stop offset="1" stop-color="#bba16a"/></linearGradient></defs>
-        <path d="M490-20C430 150 540 220 470 380S530 650 465 820S525 1050 460 1230" fill="none" stroke={`url(#curtain-thread-${side})`} stroke-width="1.2"/>
-        {[95, 265, 445, 625, 805, 1000].map((y, i) => <g transform={`translate(${i % 2 ? 474 : 491} ${y}) rotate(${i % 2 ? 25 : -22})`} fill="#eddbb938" stroke={`url(#curtain-thread-${side})`} stroke-width="1.1">
+        <defs><linearGradient id={`curtain-thread-${mode}-${side}`}><stop stop-color="#a99158"/><stop offset=".5" stop-color="#f2dfb1"/><stop offset="1" stop-color="#bba16a"/></linearGradient></defs>
+        <path d="M490-20C430 150 540 220 470 380S530 650 465 820S525 1050 460 1230" fill="none" stroke={`url(#curtain-thread-${mode}-${side})`} stroke-width="1.2"/>
+        {[95, 265, 445, 625, 805, 1000].map((y, i) => <g transform={`translate(${i % 2 ? 474 : 491} ${y}) rotate(${i % 2 ? 25 : -22})`} fill="#eddbb938" stroke={`url(#curtain-thread-${mode}-${side})`} stroke-width="1.1">
           <path d="M0 25C-29 6-23-26 0-47C23-26 29 6 0 25Z"/><path d="M0 25C-35 29-51 4-49-24C-19-22-4 0 0 25ZM0 25C35 29 51 4 49-24C19-22 4 0 0 25Z"/><path d="M0 22V-30M-5 19L-38-14M5 19L38-14" fill="none" stroke-width=".7"/>
         </g>)}
       </svg>
     </div>)}
     <div class="welcome-curtain__petals">{petals.map((p) => <i style={`--x:${p.x}%;--y:${p.y}%;--dx:${p.dx}px;--turn:${p.turn}deg;--delay:${p.delay}ms`}></i>)}</div>
   </div>
-</dialog>
+</Tag>
 <style>
   .welcome-curtain { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; padding: 0; border: 0; background: transparent; overflow: hidden; }
   .welcome-curtain::backdrop { background: transparent; }
+  .page-curtain { z-index: 10000; pointer-events: none; }
+  .page-curtain[hidden] { display: none; }
   .welcome-curtain__panels { position: absolute; inset: 0; overflow: hidden; perspective: 1200px; }
   .welcome-curtain__panel { position: absolute; top: -3%; bottom: -3%; width: 51%; overflow: hidden; background: repeating-linear-gradient(92deg, #102b23 0%, #294b3c 8%, #62715a 14%, #284b3b 19%, #153328 24%, #0b231d 29%, #325240 36%, #5e7057 40%, #1c3b2e 48%); box-shadow: 0 0 35px #00160ab3, inset -2px 0 3px #f2df9f55; }
   .welcome-curtain__panel::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #b7c29614, transparent 30%, #031b1466), repeating-linear-gradient(0deg, transparent 0 2px, #e9e4cc08 2px 3px); }
@@ -33,6 +37,12 @@ const petals = Array.from({ length: 24 }, (_, i) => ({ x: 44 + (i % 5) * 3, y: 8
   .is-opening .welcome-curtain__panel--left { animation: curtain-left 1750ms cubic-bezier(.3,.01,.19,1) both; }
   .is-opening .welcome-curtain__panel--right { animation: curtain-right 1750ms cubic-bezier(.3,.01,.19,1) 60ms both; }
   .is-opening .welcome-curtain__petals i { animation: curtain-petal 1500ms cubic-bezier(.34,.01,.74,.57) var(--delay) both; }
+  .page-curtain.is-closing .welcome-curtain__panel--left { animation: curtain-close-left 400ms cubic-bezier(.3,.01,.3,1) both; }
+  .page-curtain.is-closing .welcome-curtain__panel--right { animation: curtain-close-right 400ms cubic-bezier(.3,.01,.3,1) both; }
+  .page-curtain.is-opening .welcome-curtain__panel { animation-duration: 1050ms; animation-delay: 0ms; }
+  .page-curtain.is-opening .welcome-curtain__petals i { animation-duration: 850ms; animation-delay: calc(var(--delay) * .6); }
+  @keyframes curtain-close-left { from { transform: translateX(-111%) skewY(-3deg) scaleX(.8); } to { transform: none; } }
+  @keyframes curtain-close-right { from { transform: translateX(111%) skewY(3deg) scaleX(.8); } to { transform: none; } }
   @keyframes curtain-left { 0%, 8% { transform: none; } 50% { transform: translateX(-47%) skewY(4deg) scaleX(.88); } 80% { transform: translateX(-93%) skewY(-1deg) scaleX(.76); } 100% { transform: translateX(-111%) scaleX(.8); } }
   @keyframes curtain-right { 0%, 8% { transform: none; } 50% { transform: translateX(47%) skewY(-4deg) scaleX(.88); } 80% { transform: translateX(93%) skewY(1deg) scaleX(.76); } 100% { transform: translateX(111%) scaleX(.8); } }
   @keyframes curtain-petal { 0% { opacity: 0; transform: translate(0, -8px) rotate(-15deg); } 12% { opacity: .9; } 60% { opacity: .9; } 100% { opacity: 0; transform: translate(var(--dx), 52vh) rotate(var(--turn)) rotateY(220deg); } }

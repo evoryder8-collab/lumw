@@ -24,9 +24,7 @@ const lotus = {
     <Photo src={winner} alt={u.portrait} widths={[360, 480, 720, 1000, 1400]}
       sizes="(max-width: 760px) calc(100vw - 80px), 44vw" variant="fill" dissolve={false} priority />
     <LotusRim />
-    <button class="lotus-scatter" type="button" data-lotus-scatter data-label-tap={lotus[0]} data-label-motion={lotus[1]} data-label-enabled={lotus[2]} aria-label={lotus[0]} title={lotus[0]} hidden>
-      <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M16 25C7 20 8 11 16 5C24 11 25 20 16 25Z"/><path d="M16 25C6 25 3 18 3 12C11 13 15 17 16 25ZM16 25C26 25 29 18 29 12C21 13 17 17 16 25Z"/><path d="M16 11V24"/></svg>
-    </button>
+    <button class="hero-winner__touch" type="button" data-lotus-scatter data-label-tap={lotus[0]} data-label-motion={lotus[1]} data-label-enabled={lotus[2]} aria-label={lotus[0]} hidden></button>
   </figure>
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="hero-orbit" aria-hidden="true"></div>
@@ -50,10 +48,9 @@ const lotus = {
   <span class="sr-only" data-lotus-status role="status"></span>
 </section>
 <style>
-  .lotus-scatter { position: absolute; bottom: 7%; right: 5%; z-index: 3; display: grid; place-items: center; width: 46px; height: 46px; color: #f1dbaa; background: linear-gradient(140deg, #59735de8, #1b352ceb); border: 1px solid #ecd3939c; border-radius: 50%; box-shadow: 0 5px 15px #071b2066, inset 0 1px 1px #fff4c966; cursor: pointer; transition: transform 250ms ease, background 250ms ease; }
-  .lotus-scatter[hidden] { display: none; }
-  .lotus-scatter:hover { background: #476651; transform: translateY(-2px); }
-  .lotus-scatter:active { transform: scale(.92); }
-  .lotus-scatter:focus-visible { outline: 2px solid #fff5d5; outline-offset: 4px; }
-  @media (prefers-reduced-motion: reduce) { .lotus-scatter { display: none; } }
+  /* The photograph itself accepts the optional gesture. No separate badge. */
+  .hero-winner__touch { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; padding: 0; appearance: none; background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+  .hero-winner__touch[hidden] { display: none; }
+  .hero-winner__touch:focus-visible { outline: 2px solid #fff5d5; outline-offset: 12px; }
+  @media (prefers-reduced-motion: reduce) { .hero-winner__touch { display: none; } }
 </style>

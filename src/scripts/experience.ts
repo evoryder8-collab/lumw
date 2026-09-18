@@ -7,6 +7,8 @@ import { mountBio } from './bio';
 import { mountLocation } from './location';
 import { mountInvitation } from './invitation';
 import { mountTreatmentDetails } from './treatment-details';
+import { mountAwardVideo } from './award-video';
+import './page-curtain';
 let activeBody: HTMLElement | undefined;
 let cleanup: (() => void) | undefined;
 
@@ -20,6 +22,7 @@ function bootExperience() {
   const disposeWelcome = mountWelcome(signal);
   const disposePrices = mountPrices();
   const disposeTreatmentDetails = mountTreatmentDetails(signal);
+  const disposeAwardVideo = mountAwardVideo(signal);
   mountReviews(signal);
   document.querySelectorAll<HTMLElement>('[data-gallery-track], [data-film-track]').forEach((track) => mountScrollHint(track, signal));
   mountBio(signal);
@@ -142,6 +145,7 @@ function bootExperience() {
     disposeWelcome();
     disposePrices();
     disposeTreatmentDetails();
+    disposeAwardVideo();
     activeBody = undefined;
     if (gallery?.open) { gallery.close(); document.body.style.overflow = galleryOverflow; }
     controller.abort(); observers.forEach((o) => o.disconnect());

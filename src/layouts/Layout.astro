@@ -27,7 +27,6 @@ interface Props {
   title: string;
   description: string;
   path: string;
-  ogImage?: string;
   ogType?: 'website' | 'article' | 'profile';
   schema?: unknown;
   /** srcset + sizes for the LCP image, so it starts downloading immediately. */
@@ -37,7 +36,7 @@ interface Props {
   compact?: boolean;
 }
 
-const { title, description, path, ogImage, ogType, schema, preloadImage, noindex, compact = false } = Astro.props;
+const { title, description, path, ogType, schema, preloadImage, noindex, compact = false } = Astro.props;
 const locale = localeForPath(path);
 const ui = labels(locale);
 const page = compact ? 'linkinbio' : routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'service' : 'legal');
@@ -54,7 +53,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <link
       rel="preload"
-      href={url('/fonts/fraunces-display-var.woff2')}
+      href={url('/fonts/cormorant-garamond-display-var.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
@@ -66,6 +65,13 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
       type="font/woff2"
       crossorigin
     />
+    {page === 'home' && locale === 'de' && <link
+      rel="preload"
+      href={url('/fonts/cormorant-garamond-display-italic.woff2')}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />}
 
     {
       preloadImage && (
@@ -82,9 +88,16 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <style is:inline set:html={`
       @font-face {
-        font-family: 'Fraunces';
-        src: url('${fontBase}/fonts/fraunces-display-var.woff2') format('woff2-variations');
+        font-family: 'Cormorant Garamond';
+        src: url('${fontBase}/fonts/cormorant-garamond-display-var.woff2') format('woff2-variations');
         font-weight: 300 700; font-style: normal; font-display: swap;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        src: url('${fontBase}/fonts/cormorant-garamond-display-italic.woff2') format('woff2');
+        font-weight: 300; font-style: italic; font-display: swap;
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
           U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
       }
@@ -98,13 +111,17 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
     `} />
 
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={url('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="shortcut icon" href={url('/favicon.ico')} />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} sizes="180x180" />
+    <link rel="manifest" href={url('/site.webmanifest')} />
     <link rel="sitemap" href={url('/sitemap.xml')} />
 
     {/* View Transitions. Fallback is instant navigation, which is what a
         browser without support already does. */}
     <ClientRouter fallback="none" />
 
-    <Meta {title} {description} {path} {ogImage} {ogType} {noindex} />
+    <Meta {title} {description} {path} {ogType} {noindex} />
     {schema && <JsonLd data={schema} />}
   </head>
 
@@ -121,6 +138,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="grain" aria-hidden="true"></div>
 
     {!compact && <><LanguagePortal {path} {locale} /><WelcomeCurtain {locale} /></>}
+    <WelcomeCurtain {locale} mode="page" />
 
     {/* Standing disclaimer. June works by appointment only, and that is the
         single fact a visitor most needs before anything else on the page. It

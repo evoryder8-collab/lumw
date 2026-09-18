@@ -1,5 +1,5 @@
 /** A bounded, optional portrait detail. No sensor readings are stored or sent. */
-type Petal = { x: number; y: number; vx: number; vy: number; rotation: number; spin: number; size: number; phase: number; settled: boolean; age: number; burst: boolean };
+type Petal = { x: number; y: number; vx: number; vy: number; rotation: number; spin: number; size: number; phase: number; settled: boolean; age: number; burst: boolean; bounces: number };
 type MotionPermission = typeof DeviceMotionEvent & { requestPermission?: () => Promise<string> };
 
 export function mountLotus(garden: HTMLElement) {
@@ -38,7 +38,7 @@ export function mountLotus(garden: HTMLElement) {
   let lastPeak = 0, lastSign = 0, cooldown = 0;
   let gravity: number[] | undefined;
   const Motion = window.DeviceMotionEvent as MotionPermission | undefined;
-  const label = (value?: string) => { if (value) { button.ariaLabel = value; button.title = value; } };
+  const label = (value?: string) => { if (value) button.ariaLabel = value; };
   label(Motion?.requestPermission ? button.dataset.labelMotion : button.dataset.labelTap);
   button.hidden = false;
   garden.dataset.petalState = 'falling';
@@ -60,13 +60,14 @@ export function mountLotus(garden: HTMLElement) {
 
   function release() {
     const g = garden.getBoundingClientRect(), p = portrait!.getBoundingClientRect();
-    const angle = Math.random() < .5 ? .4 + Math.random() * .65 : Math.PI - .4 - Math.random() * .65;
+    // Release along the upper arc, so the petals travel over the photograph.
+    const angle = -Math.PI * (.18 + Math.random() * .64);
     const x = p.left - g.left - left + p.width / 2 + Math.cos(angle) * p.width * .5;
     const y = p.top - g.top - top + p.height / 2 + Math.sin(angle) * p.height * .5;
     const target = ledgeLeft + ledgeWidth * (.1 + Math.random() * .8);
     const fallTime = Math.max(1, Math.sqrt(Math.max(1, floor - y) / 12));
-    petals.push({ x, y: Math.min(y, floor - 20), vx: (target - x) / fallTime, vy: 8, rotation: Math.random() * 6.28, spin: (Math.random() - .5) * 1.8, size: 13 + Math.random() * 9, phase: Math.random() * 6.28, settled: false, age: 0, burst: false });
-    if (petals.length > 32) petals.shift();
+    petals.push({ x, y: Math.min(y, floor - 20), vx: (target - x) / fallTime, vy: 5, rotation: Math.random() * 6.28, spin: (Math.random() - .5) * 1.5, size: 19 + Math.random() * 10, phase: Math.random() * 6.28, settled: false, age: 0, burst: false, bounces: 0 });
+    if (petals.length > 48) petals.shift();
   }
 
   function scatter() {
@@ -129,16 +130,20 @@ export function mountLotus(garden: HTMLElement) {
     if (!document.querySelector('dialog[open]')) {
       elapsed += dt;
       if (elapsed >= scatterUntil && garden.dataset.petalState === 'scattering') garden.dataset.petalState = 'falling';
-      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .9 + Math.random() * .6; }
+      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .38 + Math.random() * .28; }
       ctx!.clearRect(0, 0, width, height);
       for (let i = petals.length - 1; i >= 0; i--) {
         const p = petals[i]; p.age += dt;
         if (!p.settled) {
           p.vy += (p.burst ? 40 : 24) * dt;
-          p.x += (p.vx + (p.burst ? 0 : Math.sin(elapsed * 2 + p.phase) * 7)) * dt;
+          p.x += (p.vx + (p.burst ? 0 : Math.sin(elapsed * 1.7 + p.phase) * 12)) * dt;
           p.y += p.vy * dt; p.rotation += p.spin * dt;
-          if (!p.burst && p.y >= floor && p.x > ledgeLeft + 10 && p.x < ledgeLeft + ledgeWidth - 10) {
-            p.settled = true; p.y = floor - Math.random() * 7; p.rotation = -.4 + Math.random() * .8; p.age = 0;
+          if (!p.burst && p.y >= floor && p.vy > 0 && p.x > ledgeLeft + 10 && p.x < ledgeLeft + ledgeWidth - 10) {
+            if (p.bounces < 2 && p.vy > 14) {
+              p.y = floor; p.vy *= -.2; p.vx *= .4; p.spin *= .5; p.bounces++;
+            } else {
+              p.settled = true; p.y = floor - Math.random() * 7; p.rotation = -.4 + Math.random() * .8; p.age = 0;
+            }
           }
         }
         if (p.y > height + 30 || p.x < -30 || p.x > width + 30 || (p.burst && p.age > 2.8)) { petals.splice(petals.indexOf(p), 1); continue; }

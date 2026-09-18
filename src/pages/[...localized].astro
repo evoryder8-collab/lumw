@@ -57,7 +57,7 @@ const schema = graph([
   }) : []),
 ]);
 ---
-<Layout {title} {description} {path} {schema} {ogImage} {preloadImage}>
+<Layout {title} {description} {path} {schema} {preloadImage}>
   {pageKey === 'home' && <IntroFilm {locale} />}
   {pageKey === 'home' ? <HomeHero {locale} heading={page.heading} lead={page.lead} /> : <section class="hero"><div class="shell"><p class="eyebrow">{page.eyebrow}</p><h1>{page.heading}</h1><p class="lede localized-lead">{page.lead}</p></div></section>}
 

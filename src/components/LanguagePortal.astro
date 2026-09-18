@@ -1,4 +1,5 @@
 ---
+import { readFileSync } from 'node:fs';
 import { AVAILABLE, LOCALE_META, routeKeyForPath, routePath, type Locale } from '../i18n/locales';
 import { labels } from '../i18n/content';
 import { url } from '../lib/site';
@@ -7,17 +8,20 @@ import BrandMark from './BrandMark.astro';
 const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: string };
 const u = labels(locale);
 const flagCodes: Record<Locale, string> = { de: 'de', en: 'gb', th: 'th', es: 'es', pt: 'pt', it: 'it' };
+// These six tiny originals total 4.4 KB. Embed them so the portal's flags
+// appear with its HTML and do not compete with the portrait for connections.
+const flags = Object.fromEntries(Object.entries(flagCodes).map(([locale, code]) => [locale, `data:image/webp;base64,${readFileSync(`public/flags/${code}.webp`).toString('base64')}`]));
 const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'services' : 'home');
 ---
 <dialog class="language-dialog" data-language-dialog aria-labelledby="language-title">
   <div class="portal-atmosphere" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
   <div class="language-dialog__inner">
     <button type="button" class="language-dialog__close" data-language-close aria-label={u.close}><Icon name="close" /></button>
-    <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA<span class="portal-brand__sub">WELLNESS BY JUNE SAURIN</span></span></div>
+    <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA<span class="portal-brand__sub">Wellness by June Saurin</span></span></div>
     <h2 id="language-title">{u.language}</h2>
     <div class="language-dialog__choices">
       {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-language-pick lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
-        <span class="language-choice__flag"><img src={url(`/flags/${flagCodes[code]}.webp`)} width="36" height="27" alt="" loading="eager" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong></span><Icon size={20} />
+        <span class="language-choice__flag"><img src={flags[code]} width="36" height="27" alt="" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong></span><Icon size={20} />
       </a>)}
     </div>
     <div class="portal-footer"><span>BUXTEHUDE, DE</span><span class="portal-footer__line" aria-hidden="true"></span><span>JUNE SAURIN</span></div>

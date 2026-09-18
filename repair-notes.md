@@ -61,7 +61,7 @@ The portal uses finer bevels, a smaller typographic hierarchy and real flags,
 with no decorative corner brackets or repeated welcome text.
 
 **Portrait petals must stay bounded and respect the device.** `lotus.ts` uses
-at most 32 particles, a capped settled pile and a small 30 fps canvas. It pauses
+at most 48 particles, a capped settled pile and a small 30 fps canvas. It pauses
 offscreen and when hidden, handles reduced-motion changes, and tears down on
 navigation. Tap always provides the scatter action. Motion permission is
 requested only from that tap on platforms that require it. Synthetic browser
@@ -475,3 +475,89 @@ initial welcome. Fullscreen welcome backdrops no longer blur the hidden page.
 The circular portrait and its matching preload now declare their actual rendered
 width and include a 360px candidate for small screens. The moving light inside
 the language portal remains visible, and no performance threshold was relaxed.
+
+## Portrait rim and portal branding, 18 September 2026
+
+**A global SVG width cap broke the floral frame's alignment.** The old frame
+requested 110% width and height, but the global `max-width: 100%` squeezed only
+its width. Its centre moved left. The replacement uses one inset-positioned
+square around the portrait, a beveled metallic rim and three small gold relief
+ornaments. Browser checks measure both centres, roundness and proportional size
+at four viewport widths. The original medal photograph is unchanged.
+
+**Branding text was below a readable size.** Conflicting portal overrides reduced
+the subtitle to 5.92px on phones. It now uses 14px on phones and 15px on larger
+screens, with normal word spacing. Browser checks verify size and containment.
+
+**The extra lotus badge was unnecessary.** It is removed. The photograph itself
+accepts the optional petal tap, keeping keyboard access and the existing
+permission-based motion enhancement. No separate icon obscures the portrait.
+
+## Final visual and media refinements, 18 September 2026
+
+**Treatment actions followed paragraphs of different lengths.** Equal outer
+cards alone did not align their contents. Translated cards now stretch their
+content column and let spare space sit above the price table, keeping the last
+price, appointment button and More info on common baselines within each row.
+The German grid also stretches its cards so its existing bottom-anchored
+action works. No fixed text heights or clipped descriptions are used. Browser
+checks measure card bottoms and action positions at tablet and desktop widths.
+
+**Different filenames hid duplicate footage.** `IMG_4046.mp4` and
+`June Awarded rev2 2026.mp4` are two exports of the same photography-award film.
+Side-by-side frames confirmed matching footage despite different file hashes.
+The older export remains available at its original URL, but is removed from
+the visible collection. Home has four distinct films; About pairs June's story
+with the technique film. The photograph's story opens the current award film
+through a localized See Video link with a green play cue and breathing gold
+edge. Its player loads on request, respects the sound choice, pauses on close,
+returns focus and restores scrolling immediately. The direct video link still
+works without JavaScript.
+
+**A tap must not latch the awards banner into a paused state.** Hover/focus
+pause rules are removed. A pointer-controlled, duplicated track wraps seamlessly.
+Dragging follows the pointer; release velocity decays towards normal speed
+with exponential damping. Vertical touch scrolling passes through. Hidden and
+offscreen animation stops; reduced motion provides native horizontal scrolling.
+Browser tests observe displacement while hovering, drag distance, acceleration
+after a held release, and recovery after a tap.
+
+**Main-page navigation now shares the floral entrance.** A persistent decorative
+curtain closes while Astro fetches the destination, covers the DOM swap, then
+opens. Native crossfade is skipped to avoid a second captured curtain. Abort,
+rapid navigation and a timeout all release the overlay. Back/Forward, open
+dialogs and reduced motion bypass it. SVG gradient IDs distinguish the welcome
+and page instances. Browser checks cover navigation, Back and rapid taps.
+
+**The owner rejected Fraunces' distinctive J.** Display typography now uses
+self-hosted Cormorant Garamond, with genuine italic artwork for signatures.
+Hanken Grotesk remains the interface/wordmark family, and Thai retains its
+existing readable sans-serif fallback. Original SEO text is unchanged. The
+footer wordmark scales to its column; desktop menu, social and contact columns
+are raised together and have a larger horizontal gap. The contact form's
+decorative star is removed in every language.
+
+**The portrait decoration should sit outside the photograph.** Smaller relief
+lotuses are anchored to the outer rim. Clearer petals now fall from the upper
+arc across the portrait, bounce softly and settle on the recognition card.
+The mobile composition reserves headroom for the top flower. Existing bounded
+canvas, motion permission and reduced-motion behaviour remain intact.
+
+**Sharing artwork requires its own quality check.** The generated cover initially
+distorted the black-centred logo and left an irregular cutout above June's hair.
+The owner selected the original all-gold logo as reference. Targeted image edits
+corrected the emblem and repaired the background. The exported 1200×630 JPEG
+is shared by Open Graph and Twitter metadata on all 51 pages. The favicon and
+touch icons instead use the exact existing transparent site mark. Asset paths,
+prompts and font provenance are recorded in the media documentation.
+
+**The new display face added a second critical font request.** Delivery subsets
+preserve the normal variable face and use a true weight-300 italic. The German
+headline's italic is preloaded, and the gold reliefs now use responsive images.
+The six small flag originals are embedded in the portal HTML, removing six
+competing connections. A stored welcome choice no longer starts the motion
+engine before the primary photograph and fonts have had two paint frames.
+The affected cold three-run medians pass at 2.482 seconds for welcome and 2.489
+seconds for returning Home, scoring 97 with zero CLS. The full browser suite
+passes, including row alignment at tablet and desktop widths; a separate
+desktop check confirms alignment in all five translations. No budget changed.

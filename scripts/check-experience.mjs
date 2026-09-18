@@ -40,6 +40,11 @@ check(documents.size === 51, `Expected 25 original German, 25 translated pages, 
 
 for (const [route, { document }] of documents) {
   const locale = document.documentElement.lang;
+  const shareImage = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
+  check(shareImage?.startsWith(`${canonicalHost}/`) && shareImage.endsWith('/social/luma-wellness-cover.jpg'), `${route}: missing sharing cover`);
+  check(document.querySelector('meta[property="og:image:width"]')?.getAttribute('content') === '1200' && document.querySelector('meta[property="og:image:height"]')?.getAttribute('content') === '630', `${route}: sharing dimensions are wrong`);
+  check(document.querySelector('meta[name="twitter:card"]')?.getAttribute('content') === 'summary_large_image', `${route}: missing large sharing preview`);
+  check(!!document.querySelector('link[rel="apple-touch-icon"]') && !!document.querySelector('link[rel="icon"][type="image/png"]'), `${route}: missing brand icons`);
   check(document.querySelectorAll('h1').length === 1, `${route}: expected one H1`);
   check(!!document.querySelector('meta[name="description"]')?.getAttribute('content'), `${route}: missing description`);
   const robots = document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
@@ -111,7 +116,12 @@ for (const [route, { document }] of documents) {
     check(record.querySelector('[data-award="paris-photo-gold"]')?.textContent.includes('2026'), `${route}: photography award year is missing`);
     if (locale === 'en') check(record.textContent.includes('Swiss Massage Championship') && !record.textContent.includes('Schweizer'), `${route}: untranslated Swiss event`);
   }
-  if (document.querySelector('.photo-award')) check(document.querySelector('.photo-award__image img')?.getAttribute('alt')?.length > 20, `${route}: winning image requires descriptive alternative text`);
+  if (document.querySelector('.photo-award')) {
+    check(document.querySelector('.photo-award__image img')?.getAttribute('alt')?.length > 20, `${route}: winning image requires descriptive alternative text`);
+    check(document.querySelector('[data-award-video-open]')?.getAttribute('href')?.endsWith('/media/june-awarded-2026.mp4'), `${route}: photography story must link its award film`);
+  }
+  const filmSources = [...document.querySelectorAll('.film-section source')].map((source) => source.getAttribute('src'));
+  check(new Set(filmSources).size === filmSources.length && !filmSources.some((src) => src.endsWith('/june-passion.mp4')), `${route}: duplicate award-film export in the collection`);
   if (document.querySelector('.hero--immersive')) {
     check(!!document.querySelector('.lotus-rim'), `${route}: static floral portrait fallback missing`);
     const sections = [...document.querySelectorAll('main section')];

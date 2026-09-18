@@ -10,7 +10,7 @@ const prepare = { de: 'Nachricht vorbereiten', en: 'Prepare your message', es: '
 const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje con ventosas', pt: 'Massagem com ventosas', it: 'Massaggio con coppettazione', th: 'นวดครอบแก้ว' }[locale];
 ---
 <div class="enquiry-panel liquid-glass" id="enquiry">
-  <div class="enquiry-panel__heading"><Icon name="spark" size={28} /><span>LUMA · {u.book}</span></div>
+  <div class="enquiry-panel__heading"><span>LUMA · {u.book}</span></div>
   <form class="enquiry-form" data-enquiry hidden data-greeting={u.greeting} data-phone={BUSINESS.phoneE164.replace('+', '')} data-email={BUSINESS.email}>
     <div class="enquiry-form__row">
       <label class="enquiry-field"><span>{u.firstName}</span><input name="firstName" autocomplete="given-name" required maxlength="80" placeholder=" " /></label>

@@ -26,7 +26,7 @@ const links = [
 ];
 const schema = graph([businessNode(), personNode(), websiteNode(), webPageNode({title, description, path, imageUrl: ogImage, hasBreadcrumb: true}), breadcrumbNode(path, [{name:'LUMA Wellness', path:'/'}, {name:'Kontakt & Links', path}])]);
 ---
-<Layout {title} {description} {path} {ogImage} {schema} compact>
+<Layout {title} {description} {path} {schema} compact>
   <div class="bio-ambient" aria-hidden="true"><span></span><span></span></div>
   <div class="bio-shell">
     <header class="bio-nav">

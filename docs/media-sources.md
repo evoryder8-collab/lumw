@@ -33,7 +33,7 @@ to that original file.
 | `June Awarded rev2 2026.mp4` | `public/media/june-awarded-2026.mp4` | 33.15 seconds, 720×1280 H.264, AAC, fast start; first film on Home and featured on About |
 | `VIDEO 4 WEB & YOUT.MOV` | `public/media/june-intro.mp4` | 34.5 seconds, 1920×1080 H.264, AAC, fast start |
 | `6b17a993-3d4d-4b7a-b4a9-d43e309d5a7b.mov` | `public/media/june-in-motion.mp4` | 13.9 seconds, original 480×848 H.264 remux, fast start |
-| `IMG_4046.mp4` | `public/media/june-passion.mp4` | 33.2 seconds, 720×1280 H.264, AAC, fast start |
+| `IMG_4046.mp4` | `public/media/june-passion.mp4` | Earlier export of the same 2026 photography-award film. URL retained, removed from visible collections to avoid duplicate footage. |
 | `june subs lake.mov` | `public/media/june-story.mp4` | 41 seconds, 720×1280 H.264, AAC, fast start |
 | `8676f941-593f-47af-8ac4-e6f8fd6b67ff.MP4` | `public/media/june-touch-and-technique.mp4` | 51.3 seconds, original 480×848 H.264 / AAC remux, fast start |
 
@@ -97,6 +97,22 @@ not redrawn or altered.
 
 ## Display font
 
+The owner requested a more classical display face on 18 September. Headings,
+signatures and display numbers now use **Cormorant Garamond**, self-hosted as
+Latin variable normal and italic WOFF2 files, weights 300 to 700. Source:
+[Cormorant project](https://github.com/CatharsisFonts/Cormorant), distributed
+through Google Fonts. The SIL Open Font License is retained in
+`public/fonts/Cormorant-Garamond-OFL.txt`. No visitor request goes to Google Fonts.
+Delivery subsets retain standard kerning, ligatures, number styles and the
+site's Latin characters. The normal variable face is 30.7 KB; the true italic
+is instantiated at the site's used weight 300 and is 18.3 KB. This removes
+about 28 KB from the initial typography download without changing its
+letterforms. Reproduce with `python3 scripts/prepare-display-fonts.py` using
+FontTools 4.60.2. The normal face preloads; the German homepage also preloads
+its italic headline face. Elsewhere, the italic loads where used. Thai
+keeps the existing sans-serif treatment. The earlier files described below
+remain archived, but Fraunces is no longer referenced by the site.
+
 `fraunces-display-var.woff2` is derived from the existing local Fraunces font,
 with optical size set to 48 and the used weight range 300 to 700 preserved.
 This reduces its transfer from about 67 KB to 35 KB while retaining the display
@@ -130,3 +146,11 @@ The gold, silver and bronze placement illustrations are generated metal assets,
 not championship logos. The award text and event names continue to use the
 existing award record. Original PNGs, exact prompts and delivery details are
 documented in [medal-artwork.md](medal-artwork.md).
+
+## Sharing cover and icons
+
+The all-gold brand asset was selected by the owner as the cover reference.
+The final generated cover and exact prompts are documented in
+[social-artwork.md](social-artwork.md). The original transparent site symbol is
+used directly for the favicon, ICO fallback and Apple touch icon. These exports
+are reproducible with `node scripts/prepare-brand-assets.mjs`.
