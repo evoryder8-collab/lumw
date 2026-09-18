@@ -13,6 +13,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import MotionIsland from '../components/motion/MotionIsland.astro';
 import SocialDock from '../components/SocialDock.astro';
+import WelcomeCurtain from '../components/WelcomeCurtain.astro';
 import LanguagePortal from '../components/LanguagePortal.astro';
 import JuneInvitation from '../components/JuneInvitation.astro';
 import { ClientRouter } from 'astro:transitions';
@@ -58,6 +59,13 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
       type="font/woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      href={url('/fonts/hankengrotesk-ui-var.woff2')}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     {
       preloadImage && (
@@ -82,8 +90,8 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
       }
       @font-face {
         font-family: 'Hanken Grotesk';
-        src: url('${fontBase}/fonts/hankengrotesk-latin-var.woff2') format('woff2-variations');
-        font-weight: 100 900; font-style: normal; font-display: swap;
+        src: url('${fontBase}/fonts/hankengrotesk-ui-var.woff2') format('woff2-variations');
+        font-weight: 300 700; font-style: normal; font-display: swap;
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
           U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
       }
@@ -112,7 +120,7 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
     </div>
     <div class="grain" aria-hidden="true"></div>
 
-    {!compact && <LanguagePortal {path} {locale} />}
+    {!compact && <><LanguagePortal {path} {locale} /><WelcomeCurtain {locale} /></>}
 
     {/* Standing disclaimer. June works by appointment only, and that is the
         single fact a visitor most needs before anything else on the page. It

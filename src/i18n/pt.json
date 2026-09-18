@@ -1,26 +1,244 @@
 {
-  "nav":["Massagens e preços","Conheça a June","Perguntas","Contacto"],
-  "ui":{"home":"Início","book":"Pedir uma marcação","appointment":"Apenas por marcação","language":"Escolha o seu idioma","close":"Fechar","skip":"Ir para o conteúdo","menu":"Menu","phone":"Telefonar","email":"Email","address":"Morada","follow":"Siga a June","privacy":"Privacidade (alemão)","terms":"Condições (alemão)","all":"Descubra as massagens","details":"Descrição completa em alemão","minutes":"min","from":"desde","awards":"Reconhecimento internacional","directions":"Como chegar","firstName":"Nome próprio","lastName":"Apelido","preferred":"Data ou horário preferido","message":"A sua mensagem","select":"Escolha uma massagem","optional":"Opcional","requestTitle":"O seu momento começa aqui.","requestIntro":"Diga à June o que procura. Juntos encontrarão a massagem e o horário adequados.","whatsapp":"Continuar no WhatsApp","sendEmail":"Continuar por email","enquiryNote":"É preparada uma mensagem na aplicação escolhida. É o visitante quem a envia; a June confirma pessoalmente a marcação.","prepared":"A mensagem está pronta. Envie-a na aplicação escolhida para pedir uma marcação.","unsure":"Gostaria de uma recomendação","back":"Voltar às massagens","legal":"A informação legal está disponível em alemão.","journey":"A sua visita, ao seu ritmo","signature":"A experiência Signature","studio":"Um refúgio pessoal em Buxtehude","scroll":"Descubra a LUMA","portrait":"June Saurin, fundadora da LUMA Wellness","gold":"Ouro · Wellness & Spa","greeting":"Olá June, gostaria de pedir uma marcação na LUMA Wellness."},
-  "pages":{
-    "home":{"title":"Massagens em Buxtehude | LUMA Wellness","description":"Descubra as massagens de June Saurin em Buxtehude. Atenção pessoal, experiência internacional e um momento de bem-estar só seu.","heading":"Massagens premiadas internacionalmente","eyebrow":"LUMA Wellness · By June Saurin","lead":"Um pouco de tranquilidade. Uma sensação de bem-estar. Uma experiência pensada para si."},
-    "about":{"title":"Conheça June Saurin | LUMA Wellness","description":"Conheça June Saurin, a profissional de massagem com prémios internacionais que criou a LUMA Wellness em Buxtehude.","heading":"Um toque pessoal. Um percurso extraordinário.","eyebrow":"Conheça a June","lead":"Raízes tailandesas, experiência internacional e atenção verdadeiramente pessoal."},
-    "services":{"title":"Massagens e preços | LUMA Wellness Buxtehude","description":"Explore as massagens e os preços da LUMA Wellness, da Aroma-Luxus à experiência Signature Gold Medalie.","heading":"Encontre a sua forma de relaxar.","eyebrow":"Massagens e preços","lead":"Dos óleos aromáticos suaves ao trabalho corporal mais específico. Escolha o seu momento."},
-    "faq":{"title":"Perguntas sobre massagens | LUMA Wellness","description":"Saiba mais sobre as massagens, a primeira visita, os vales de oferta e as marcações na LUMA Wellness.","heading":"Tudo esclarecido, antes de relaxar.","eyebrow":"Perguntas frequentes","lead":"O que pode querer saber antes da visita. Para questões pessoais, fale diretamente com a June."},
-    "contact":{"title":"Contacto e marcações | LUMA Wellness","description":"Peça uma marcação com June Saurin. A LUMA Wellness fica na HAUTNAH, Hauptstraße 19, Buxtehude.","heading":"Reserve tempo para si.","eyebrow":"A sua marcação","lead":"Uma receção pessoal espera por si na Hauptstraße 19, dentro da HAUTNAH em Buxtehude. Todas as visitas são combinadas previamente."}
+  "nav": [
+    "Massagens e preços",
+    "Conheça a June",
+    "Perguntas",
+    "Contacto"
+  ],
+  "ui": {
+    "home": "Início",
+    "book": "Pedir uma marcação",
+    "appointment": "Apenas por marcação",
+    "language": "Escolha o seu idioma",
+    "close": "Fechar",
+    "skip": "Ir para o conteúdo",
+    "menu": "Menu",
+    "phone": "Telefonar",
+    "email": "Email",
+    "address": "Morada",
+    "follow": "Siga a June",
+    "privacy": "Privacidade (alemão)",
+    "terms": "Condições (alemão)",
+    "all": "Descubra as massagens",
+    "details": "Mais informações",
+    "minutes": "min",
+    "from": "desde",
+    "awards": "Reconhecimento internacional",
+    "directions": "Como chegar",
+    "firstName": "Nome próprio",
+    "lastName": "Apelido",
+    "preferred": "Data ou horário preferido",
+    "message": "A sua mensagem",
+    "select": "Escolha uma massagem",
+    "optional": "Opcional",
+    "requestTitle": "Escreva à June.",
+    "requestIntro": "Diga à June o que procura. Juntos encontrarão a massagem e o horário adequados.",
+    "whatsapp": "Continuar no WhatsApp",
+    "sendEmail": "Continuar por email",
+    "enquiryNote": "É preparada uma mensagem na aplicação escolhida. É o visitante quem a envia; a June confirma pessoalmente a marcação.",
+    "prepared": "A mensagem está pronta. Envie-a na aplicação escolhida para pedir uma marcação.",
+    "unsure": "Gostaria de uma recomendação",
+    "back": "Voltar às massagens",
+    "legal": "A informação legal está disponível em alemão.",
+    "journey": "A sua visita, ao seu ritmo",
+    "signature": "A experiência Signature",
+    "studio": "O estúdio em Buxtehude",
+    "scroll": "Descubra a LUMA",
+    "portrait": "June Saurin, fundadora da LUMA Wellness",
+    "gold": "Ouro · Wellness & Spa",
+    "greeting": "Olá June, gostaria de pedir uma marcação na LUMA Wellness."
   },
-  "intro":{"title":"Cuidado e atenção. Só para si.","body":["Na LUMA Wellness, a June combina técnicas de inspiração tailandesa com abordagens contemporâneas de massagem. Cada sessão respeita as suas preferências, com tempo para chegar, conversar e descansar.","Nascida na Tailândia e hoje a viver em Buxtehude, a June traz a experiência de competições internacionais para um estúdio tranquilo e pessoal. Descubra nove propostas e encontre a sua."]},
-  "about":["June Saurin nasceu na Tailândia e cresceu perto de profissionais de massagem experientes. Esse contacto cedo despertou o seu interesse pelo bem-estar e pelo cuidado individual.","Em 2023 conquistou a prata no Campeonato Suíço de Massagem em Zurique e no Intercontinental Massage Championship em Atenas. No Universal Massage Championship em Penzberg ganhou ouro em Wellness & Spa, prata em Freestyle Eastern e o terceiro lugar em Champ of the Champs.","Hoje recebe os seus visitantes na LUMA Wellness, em Buxtehude. A sua abordagem reúne influências tailandesas, técnicas contemporâneas e uma escuta atenta de cada pessoa."],
-  "treatments":{
-    "aroma-luxus":{"name":"Massagem LUMA Aroma-Luxus","description":"Uma experiência clássica LUMA que combina movimentos fluidos com óleos aromáticos de jojoba biológica. Para quem aprecia aromas acolhedores, cuidado suave e tempo para relaxar."},
-    "balance-stone":{"name":"Massagem Balance Stone e bambu","description":"Pedras de granito Balance Stone e instrumentos de bambu dão calor e um toque distinto à massagem. A June adapta a pressão às suas preferências."},
-    "thai-solution":{"name":"Massagem LUMA Thai Solution","description":"Nuad Benja Phaki combina alongamentos de inspiração tailandesa e pressão localizada, sem óleo. A intensidade pode ser suave, média ou mais profunda."},
-    "schwangerschaft":{"name":"Massagem LUMA na gravidez","description":"Uma experiência suave pensada para o conforto das futuras mães. Fale com a June antes da marcação para discutir as suas necessidades individuais."},
-    "gold-medalie":{"name":"LUMA Gold Medalie Signature","description":"A experiência de assinatura da June reúne técnicas reconhecidas em competições internacionais. Balance Stones, massagem clássica, ventosas e aromaterapia encontram uma paisagem sonora criada à medida."},
-    "stark-ball":{"name":"Massagem Stark Ball","description":"Um método desenvolvido pela campeã mundial Nadine Stark Chognon. Bolas de massagem específicas permitem trabalhar grupos musculares com uma abordagem própria de relaxamento e consciência corporal."},
-    "gesicht-kopf":{"name":"Massagem de rosto e cabeça com Gua Sha","description":"Um momento tranquilo dedicado ao rosto e à cabeça. Técnicas manuais suaves são complementadas por um instrumento Gua Sha."},
-    "schulter-nacken-ruecken":{"name":"Massagem de ombros, pescoço e costas","description":"Atenção às zonas que frequentemente acumulam tensão. A June adapta a massagem e combina consigo a pressão utilizada."},
-    "fuss":{"name":"Massagem de pés LUMA","description":"Uma pausa reconfortante para pés cansados. Pressão localizada e cuidado atento convidam ao descanso depois de um dia de atividade."}
+  "pages": {
+    "home": {
+      "title": "Massagens em Buxtehude | LUMA Wellness",
+      "description": "Descubra as massagens de June Saurin em Buxtehude. Atenção pessoal, experiência internacional e um momento de bem-estar só seu.",
+      "heading": "Massagens premiadas internacionalmente",
+      "eyebrow": "LUMA Wellness · By June Saurin",
+      "lead": "Raízes tailandesas. Experiência internacional. Uma massagem adaptada pela June, no seu estúdio em Buxtehude."
+    },
+    "about": {
+      "title": "Conheça June Saurin | LUMA Wellness",
+      "description": "Conheça June Saurin, a profissional de massagem com prémios internacionais que criou a LUMA Wellness em Buxtehude.",
+      "heading": "Conheça June Saurin.",
+      "eyebrow": "Conheça a June",
+      "lead": "Raízes tailandesas e uma prática aperfeiçoada em competições internacionais."
+    },
+    "services": {
+      "title": "Massagens e preços | LUMA Wellness Buxtehude",
+      "description": "Explore as massagens e os preços da LUMA Wellness, da Aroma-Luxus à experiência Signature Gold Medalie.",
+      "heading": "Encontre a sua forma de relaxar.",
+      "eyebrow": "Massagens e preços",
+      "lead": "Dos óleos aromáticos suaves ao trabalho corporal mais específico. Encontre a massagem que melhor se adapta a si."
+    },
+    "faq": {
+      "title": "Perguntas sobre massagens | LUMA Wellness",
+      "description": "Saiba mais sobre as massagens, a primeira visita, os vales de oferta e as marcações na LUMA Wellness.",
+      "heading": "Tudo esclarecido, antes de relaxar.",
+      "eyebrow": "Perguntas frequentes",
+      "lead": "O que pode querer saber antes da visita. Para questões pessoais, fale diretamente com a June."
+    },
+    "contact": {
+      "title": "Contacto e marcações | LUMA Wellness",
+      "description": "Peça uma marcação com June Saurin. A LUMA Wellness fica na HAUTNAH, Hauptstraße 19, Buxtehude.",
+      "heading": "Reserve tempo para si.",
+      "eyebrow": "A sua marcação",
+      "lead": "Uma receção pessoal espera por si na Hauptstraße 19, dentro da HAUTNAH em Buxtehude. Todas as visitas são combinadas previamente."
+    }
   },
-  "faq":[["O que distingue a LUMA Wellness?","A June combina técnicas tailandesas, abordagens contemporâneas e experiência em competições internacionais. Cada visitante recebe atenção pessoal."],["Que massagem devo escolher?","Explore as nove propostas. A Gold Medalie Signature reúne várias técnicas e uma paisagem sonora própria. A June pode ajudar a escolher."],["O que é a Thai Solution?","Uma massagem sem óleo que combina alongamentos, pressão localizada e trabalho corporal, com intensidade adaptada às suas preferências."],["Como é a primeira visita?","Uma receção pessoal num ambiente tranquilo. A June explica a sessão e conversa consigo sobre as suas preferências."],["Há opções para necessidades específicas?","Existem massagens na gravidez e para ombros, pescoço, costas e pés. Fale com a June sobre a sua situação."],["Qual a diferença entre Aroma-Luxus e Gold Medalie?","A Aroma-Luxus centra-se em massagem clássica e óleos de jojoba. A Gold Medalie reúne várias técnicas, incluindo Balance Stones e ventosas, com uma paisagem sonora própria."],["Como faço uma marcação?","Prepare uma mensagem de WhatsApp ou email através do formulário, ou telefone. Contactar com alguns dias de antecedência ajuda. A June confirma pessoalmente o horário."],["Quais são os cuidados de higiene?","A June indica a utilização de roupa e toalhas limpas, instrumentos higienizados e higiene cuidada das mãos, num espaço limpo e ventilado. Fale com ela sobre qualquer preocupação."],["Posso oferecer um vale?","Contacte a June para conhecer os vales de oferta, pacotes e propostas disponíveis."],["Onde fica o estúdio?","Dentro da HAUTNAH, na Hauptstraße 19, 21614 Buxtehude. As visitas são apenas por marcação."],["Onde leio as condições de cancelamento?","As condições aplicáveis estão disponíveis em alemão no rodapé. Peça esclarecimentos à June antes de confirmar a sua marcação."]],
-  "journey":[["Chegar","Uma receção pessoal e tempo para se instalar."],["Conversar","Partilhe as suas preferências e escolha a pressão."],["Relaxar","Uma massagem pensada para si."],["Sem pressa","Regresse ao seu dia ao seu próprio ritmo."]]
+  "intro": {
+    "title": "Uma boa massagem começa por ouvir.",
+    "body": [
+      "As suas preferências orientam a sessão: as zonas a trabalhar, a pressão que aprecia e como se sente durante a massagem. June combina tradições tailandesas e técnicas contemporâneas com atenção a esses detalhes.",
+      "Descubra nove tratamentos, desde aromaterapia com movimentos fluidos a trabalho corporal específico. Se não souber por onde começar, June ajuda a escolher."
+    ]
+  },
+  "about": [
+    "June nasceu na Tailândia e cresceu perto de profissionais de massagem experientes. Essa ligação ao toque e ao movimento continua a orientar o seu trabalho.",
+    "Em 2023, ganhou prata em Freestyle Eastern no Swiss Massage Championship em Zurique e prata em Wellness & Spa na competição da World Massage Federation em Atenas. Em Penzberg, conquistou três medalhas, incluindo bronze em Champ of the Champs, a classificação geral entre os campeões das diferentes categorias.",
+    "Na LUMA Wellness, essa experiência traduz-se num cuidado individual. June conversa consigo antes da sessão e adapta a pressão e as técnicas às suas preferências."
+  ],
+  "treatments": {
+    "aroma-luxus": {
+      "name": "Massagem LUMA Aroma-Luxus",
+      "description": "Uma experiência clássica LUMA que combina movimentos fluidos com óleos aromáticos de jojoba biológica. Para quem aprecia aromas acolhedores, cuidado suave e tempo para relaxar.",
+      "details": [
+        "Movimentos fluidos e ritmados combinam-se com óleos aromáticos de jojoba biológica. Antes de começar, June conversa consigo sobre as zonas a trabalhar e a pressão que prefere.",
+        "Ao marcar a visita, indique qualquer sensibilidade a óleos ou fragrâncias."
+      ]
+    },
+    "balance-stone": {
+      "name": "Massagem Balance Stone e bambu",
+      "description": "Pedras de granito Balance Stone e instrumentos de bambu dão calor e um toque distinto à massagem. A June adapta a pressão às suas preferências.",
+      "details": [
+        "As pedras de granito Balance Stones e os instrumentos de bambu permitem movimentos amplos e trabalho mais localizado. As diferentes superfícies dão a esta massagem um toque próprio.",
+        "June combina consigo a temperatura e a pressão. Pode pedir menos calor ou um toque mais suave a qualquer momento."
+      ]
+    },
+    "thai-solution": {
+      "name": "Massagem LUMA Thai Solution",
+      "description": "Nuad Benja Phaki combina alongamentos de inspiração tailandesa e pressão localizada, sem óleo. A intensidade pode ser suave, média ou mais profunda.",
+      "details": [
+        "Nuad Benja Phaki reúne alongamentos de tradição tailandesa e pressão localizada numa sessão sem óleo.",
+        "Pode escolher uma intensidade suave, média ou mais profunda. June adapta os alongamentos e a pressão às suas indicações ao longo da sessão."
+      ]
+    },
+    "schwangerschaft": {
+      "name": "Massagem LUMA na gravidez",
+      "description": "Uma experiência suave pensada para o conforto das futuras mães. Fale com a June antes da marcação para discutir as suas necessidades individuais.",
+      "details": [
+        "Técnicas suaves e uma posição confortável estão no centro desta massagem para grávidas. Fale com June sobre a gravidez e as suas preferências antes de marcar.",
+        "Se tiver sintomas ou dúvidas de saúde, consulte o profissional que acompanha a gravidez para saber se a massagem é adequada."
+      ]
+    },
+    "gold-medalie": {
+      "name": "LUMA Gold Medalie Signature",
+      "description": "A experiência de assinatura da June reúne técnicas reconhecidas em competições internacionais. Balance Stones, massagem clássica, ventosas e aromaterapia encontram uma paisagem sonora criada à medida.",
+      "details": [
+        "Esta sessão reúne técnicas com as quais June conquistou o ouro em Wellness & Spa no Universal Massage Championship de Penzberg, em 2023. Combina Balance Stones, massagem clássica, ventosas e aromaterapia.",
+        "Uma composição sonora criada para a sessão acompanha o tratamento. June explica as técnicas e combina consigo a abordagem antes de começar.",
+        "As ventosas podem deixar marcas visíveis. Informe sobre gravidez, medicação anticoagulante ou outras questões de saúde antes de marcar e procure aconselhamento médico se tiver dúvidas."
+      ]
+    },
+    "stark-ball": {
+      "name": "Massagem Stark Ball",
+      "description": "Um método desenvolvido pela campeã mundial Nadine Stark Chognon. Bolas de massagem específicas permitem trabalhar grupos musculares com uma abordagem própria de relaxamento e consciência corporal.",
+      "details": [
+        "Desenvolvido por Nadine Stark Chognon, este método utiliza bolas de massagem com formas específicas para trabalhar grupos musculares individuais.",
+        "June ajusta a posição e a pressão dos instrumentos às suas sensações. Pode perguntar-lhe como esta técnica difere de uma massagem realizada apenas com as mãos."
+      ]
+    },
+    "gesicht-kopf": {
+      "name": "Massagem de rosto e cabeça com Gua Sha",
+      "description": "Técnicas manuais suaves para o rosto e a cabeça, complementadas por um instrumento Gua Sha. Uma sessão dedicada a estas zonas.",
+      "details": [
+        "A sessão concentra-se no rosto e na cabeça, combinando massagem manual suave com um instrumento de Gua Sha.",
+        "Mencione previamente problemas de pele, lesões ou tratamentos médicos em curso para avaliar a adequação com o seu profissional de saúde, se necessário."
+      ]
+    },
+    "schulter-nacken-ruecken": {
+      "name": "Massagem de ombros, pescoço e costas",
+      "description": "Atenção às zonas que frequentemente acumulam tensão. A June adapta a massagem e combina consigo a pressão utilizada.",
+      "details": [
+        "Uma sessão dedicada aos ombros, pescoço e costas. Antes de começar, June pergunta quais as zonas a que gostaria de dar mais atenção.",
+        "A pressão é combinada consigo e pode ser ajustada a qualquer momento. As opções de 30 e 60 minutos permitem escolher o tempo a dedicar a estas zonas."
+      ]
+    },
+    "fuss": {
+      "name": "Massagem de pés LUMA",
+      "description": "Uma pausa reconfortante para pés cansados. Pressão localizada e cuidado atento convidam ao descanso depois de um dia de atividade.",
+      "details": [
+        "Movimentos de massagem e pressão localizada para dar atenção aos pés depois de estar de pé ou caminhar.",
+        "Indique a June qualquer zona sensível antes da sessão. A pressão é ajustada em conjunto e pode escolher entre 30 e 60 minutos."
+      ]
+    }
+  },
+  "faq": [
+    [
+      "O que distingue a LUMA Wellness?",
+      "A June combina técnicas tailandesas, abordagens contemporâneas e experiência em competições internacionais. Cada visitante recebe atenção pessoal."
+    ],
+    [
+      "Que massagem devo escolher?",
+      "Explore as nove propostas. A Gold Medalie Signature reúne várias técnicas e uma paisagem sonora própria. A June pode ajudar a escolher."
+    ],
+    [
+      "O que é a Thai Solution?",
+      "Uma massagem sem óleo que combina alongamentos, pressão localizada e trabalho corporal, com intensidade adaptada às suas preferências."
+    ],
+    [
+      "Como é a primeira visita?",
+      "Uma receção pessoal num ambiente tranquilo. A June explica a sessão e conversa consigo sobre as suas preferências."
+    ],
+    [
+      "Há opções para necessidades específicas?",
+      "Existem massagens na gravidez e para ombros, pescoço, costas e pés. Fale com a June sobre a sua situação."
+    ],
+    [
+      "Qual a diferença entre Aroma-Luxus e Gold Medalie?",
+      "A Aroma-Luxus centra-se em massagem clássica e óleos de jojoba. A Gold Medalie reúne várias técnicas, incluindo Balance Stones e ventosas, com uma paisagem sonora própria."
+    ],
+    [
+      "Como faço uma marcação?",
+      "Prepare uma mensagem de WhatsApp ou email através do formulário, ou telefone. Contactar com alguns dias de antecedência ajuda. A June confirma pessoalmente o horário."
+    ],
+    [
+      "Quais são os cuidados de higiene?",
+      "A June indica a utilização de roupa e toalhas limpas, instrumentos higienizados e higiene cuidada das mãos, num espaço limpo e ventilado. Fale com ela sobre qualquer preocupação."
+    ],
+    [
+      "Posso oferecer um vale?",
+      "Contacte a June para conhecer os vales de oferta, pacotes e propostas disponíveis."
+    ],
+    [
+      "Onde fica o estúdio?",
+      "Dentro da HAUTNAH, na Hauptstraße 19, 21614 Buxtehude. As visitas são apenas por marcação."
+    ],
+    [
+      "Onde leio as condições de cancelamento?",
+      "As condições aplicáveis estão disponíveis em alemão no rodapé. Peça esclarecimentos à June antes de confirmar a sua marcação."
+    ]
+  ],
+  "journey": [
+    [
+      "Chegar",
+      "Uma receção pessoal e tempo para se instalar."
+    ],
+    [
+      "Conversar",
+      "Partilhe as suas preferências e escolha a pressão."
+    ],
+    [
+      "Relaxar",
+      "Uma massagem pensada para si."
+    ],
+    [
+      "Sem pressa",
+      "Regresse ao seu dia ao seu próprio ritmo."
+    ]
+  ],
+  "closing": "Vamos planear a sua visita.",
+  "feature": [
+    "Raízes tailandesas. Um toque preciso.",
+    "As competições internacionais e anos de prática deram forma ao trabalho da June. Conheça a pessoa por trás da LUMA e a atenção que dedica a cada tratamento."
+  ]
 }

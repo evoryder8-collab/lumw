@@ -7,6 +7,61 @@ a real browser ; which is the point of recording them.
 
 Format: **what** · *how it was found* · why · guard.
 
+## 18 September: editorial, awards and welcome experience
+
+**The refined entrance initially missed the mobile LCP budget.** The first
+three-run median was 2.635 seconds. The new wordmark needed the body font early,
+and a treatment photograph far below the introduction was still eager. Both
+font faces now preload, the Hanken derivative retains only the used weights,
+the introduction poster is smaller, and lower treatment images stay lazy.
+Three new cold measurements put welcome and returning-home medians at 2.258
+and 2.259 seconds, both scoring 98 with zero CLS and blocking time. The original
+1080p film and winner portrait are unchanged. No performance budget was relaxed.
+
+**The award list lost the category behind each placement.** It used Roman
+numerals for lower placements and a German Swiss title on translated pages.
+The owner supplied the correct six-entry record. `src/lib/awards.ts` now feeds
+the ribbon, About and schema. Browser and build checks verify the category,
+placement and English event name. Best Massage Photo is distinct from massage
+competition credentials, and its 2023 photograph has a separate 2026 award story.
+
+**The owner requested a full editorial rewrite.** This supersedes the original
+paragraph freeze for public editorial pages. The migration archive remains
+untouched. Original URLs, SEO metadata, prices, service names, durations and
+legal texts remain guarded, including a separate commercial-facts snapshot.
+Repeated slogans, redundant video labels and unsupported health promises were
+removed. The malformed historical Luka quotation was omitted rather than
+rewritten as a new testimonial; the verified Google excerpts are unchanged.
+Conservative massage-health wording was checked against
+[NCCIH's massage overview](https://www.nccih.nih.gov/health/massage-therapy-what-you-need-to-know).
+
+**Translated treatment cards sent visitors to German details.** More info now
+opens a native dialog containing the selected language's full description.
+The close button is at the upper left. Escape, focus return and the selected
+treatment's booking link work without leaving the page to read. The original
+details element provides an in-place fallback without JavaScript.
+
+**The sound question belongs over the language portal, before the curtains.**
+Both dialogs remain stacked until Yes or No. The answer calls `play()` inside
+the original gesture, then opens the curtains. Scroll locking is idempotent
+across the stacked dialogs. Completion and the delayed greeting start after
+the reveal. Timers, frames, media and dialogs are cleaned up during navigation.
+Reduced motion skips the curtains; an explicit No keeps audio muted.
+
+**The brand and portal carried unnecessary frames.** The shared mark now has
+no surrounding rectangle, and its gold shine is masked to the original shape.
+The portal uses finer bevels, a smaller typographic hierarchy and real flags,
+with no decorative corner brackets or repeated welcome text.
+
+**Portrait petals must stay bounded and respect the device.** `lotus.ts` uses
+at most 32 particles, a capped settled pile and a small 30 fps canvas. It pauses
+offscreen and when hidden, handles reduced-motion changes, and tears down on
+navigation. Tap always provides the scatter action. Motion permission is
+requested only from that tap on platforms that require it. Synthetic browser
+tests cover allowed, denied and unavailable permission; these do not substitute
+for testing physical motion on an iPhone. API reference:
+[Device Orientation and Motion](https://w3c.github.io/deviceorientation/).
+
 ## September interaction refinements
 
 **Enabling sound could leave a blocked video paused.** The sound control used

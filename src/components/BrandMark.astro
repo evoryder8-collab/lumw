@@ -3,11 +3,14 @@ import symbol from '../assets/logo-luma-symbol-display.webp';
 const { class: className = '' } = Astro.props as { class?: string };
 ---
 <span class:list={['brand-symbol', className]} aria-hidden="true">
-  <img src={symbol.src} width={symbol.width} height={symbol.height} alt="" decoding="async" />
+  <span class="brand-symbol__art">
+    <img src={symbol.src} width={symbol.width} height={symbol.height} alt="" decoding="async" />
+    <span class="brand-symbol__light" style={`mask-image:url(${symbol.src});-webkit-mask-image:url(${symbol.src})`}><i></i></span>
+  </span>
 </span>
 
 <style>
-  /* Frame the original artwork's ink bounds, without changing its shape. */
+  /* Crop the source's transparent margins. The artwork itself remains intact. */
   .brand-symbol {
     position: relative;
     display: inline-block;
@@ -15,19 +18,23 @@ const { class: className = '' } = Astro.props as { class?: string };
     width: 48px;
     height: 58px;
     overflow: hidden;
-    border: 1px solid #c7b484;
-    border-radius: 16px;
-    background: linear-gradient(145deg, #fffffc, #e9e7d9);
-    box-shadow: inset 0 1px 1px #fff, inset 0 -2px 3px #baa76d33, 0 3px 9px #0a211c24;
+    filter: drop-shadow(0 0 0.7px #fff) drop-shadow(0 2px 3px #97743a35);
   }
-  .brand-symbol img {
+  .brand-symbol__art {
     position: absolute;
     left: 50%;
     top: 50%;
     width: 215%;
-    height: auto;
-    max-width: none;
     transform: translate(-51%, -44.7%);
-    filter: drop-shadow(0 0.35px 0.3px #795e3880);
   }
+  .brand-symbol img { display: block; width: 100%; height: auto; max-width: none; }
+  .brand-symbol__light { position: absolute; inset: 0; mask-size: 100% 100%; -webkit-mask-size: 100% 100%; overflow: hidden; pointer-events: none; }
+  .brand-symbol__light i { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 32%, #e9bd5880 42%, #fff6c7 49%, #ffe29b 52%, #d7a33888 59%, transparent 69%); transform: translateX(-110%); }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.motion-ready) .brand-symbol__light i,
+    :global(.language-dialog[open]) .brand-symbol__light i { animation: brand-gold-sweep 5.6s ease-in-out infinite; }
+  }
+  @keyframes brand-gold-sweep { 0% { transform: translateX(-110%); } 55%, 100% { transform: translateX(110%); } }
+  :global(body[data-ambient-sleep]) .brand-symbol__light i,
+  .brand-symbol.is-offscreen .brand-symbol__light i { animation-play-state: paused; }
 </style>

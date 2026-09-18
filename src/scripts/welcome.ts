@@ -6,6 +6,7 @@ const write = (key: string, value: string) => { memory.set(key, value); try { se
 export function mountWelcome(signal: AbortSignal) {
   const language = document.querySelector<HTMLDialogElement>('[data-language-dialog]');
   const sound = document.querySelector<HTMLDialogElement>('[data-sound-dialog]');
+  const curtain = document.querySelector<HTMLDialogElement>('[data-welcome-curtain]');
   const intro = document.querySelector<HTMLVideoElement>('[data-intro-film]');
   const play = document.querySelector<HTMLButtonElement>('[data-intro-play]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-intro-sound]');
@@ -23,10 +24,20 @@ export function mountWelcome(signal: AbortSignal) {
   films.filter((film) => film.dataset.lazyPoster).forEach((film) => posters.observe(film));
   let welcoming = false;
   let previousOverflow = '';
+  let locked = false;
   let disposed = false;
+  let curtainTimer: ReturnType<typeof setTimeout> | undefined;
+  let curtainFrame = 0;
 
-  const lock = () => { previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; };
-  const unlock = () => { document.body.style.overflow = previousOverflow; };
+  const lock = () => {
+    if (locked) return;
+    previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden'; locked = true;
+  };
+  const unlock = () => {
+    if (!locked) return;
+    document.body.style.overflow = previousOverflow; locked = false;
+  };
   const setSound = (enabled: boolean) => {
     write('luma-sound', enabled ? 'yes' : 'no');
     films.forEach((film) => { film.muted = !enabled; if (enabled && film.volume === 0) film.volume = 1; });
@@ -55,24 +66,42 @@ export function mountWelcome(signal: AbortSignal) {
     const started = intro.play();
     started?.catch(() => { if (!disposed) syncPlayer(); });
   };
-  const finish = (enabled: boolean) => {
-    write('luma-welcome-done', 'yes');
+  const finishCurtain = () => {
+    clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame);
+    curtain?.close(); curtain?.classList.remove('is-opening');
+    if (disposed) return;
     document.documentElement.dataset.welcomeComplete = 'true';
     document.dispatchEvent(new Event('luma:welcome-complete'));
-    welcoming = false;
-    setSound(enabled);
-    if (enabled || !matchMedia('(prefers-reduced-motion: reduce)').matches) playIntro();
-    sound?.close();
     unlock();
-    window.scrollTo({ top: 0, behavior: 'instant' });
     document.querySelector<HTMLElement>('[data-intro-frame]')?.focus({ preventScroll: true });
     syncPlayer();
+  };
+  const openCurtain = () => {
+    if (!curtain || matchMedia('(prefers-reduced-motion: reduce)').matches) { finishCurtain(); return; }
+    curtain.showModal();
+    // Paint the closed fabric before opening its separate folds onto the film.
+    curtainFrame = requestAnimationFrame(() => {
+      curtainFrame = requestAnimationFrame(() => curtain.classList.add('is-opening'));
+    });
+    // A cancelled animation must never leave the entrance blocking the page.
+    curtainTimer = setTimeout(finishCurtain, 2150);
+  };
+  const finish = (enabled: boolean) => {
+    write('luma-welcome-done', 'yes');
+    welcoming = false;
+    setSound(enabled);
+    // Playback must happen in this tap, before any animation or awaited work.
+    if (enabled || !matchMedia('(prefers-reduced-motion: reduce)').matches) playIntro();
+    sound?.close(); language?.close();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    openCurtain();
   };
   const askSound = () => {
     if (!sound || sound.open || disposed) return;
     lock();
     sound.showModal();
   };
+  curtain?.addEventListener('cancel', (event) => { event.preventDefault(); finishCurtain(); }, { signal });
   const showLanguage = (firstVisit = false) => {
     if (!language || language.open) return;
     welcoming = firstVisit;
@@ -84,10 +113,17 @@ export function mountWelcome(signal: AbortSignal) {
     button.hidden = false;
     button.addEventListener('click', () => showLanguage(), { signal });
   });
-  language?.querySelector('[data-language-close]')?.addEventListener('click', () => language.close(), { signal });
+  const confirmCurrentLanguage = () => {
+    write('luma-welcome-language', 'yes'); askSound();
+  };
+  language?.querySelector('[data-language-close]')?.addEventListener('click', () => {
+    if (welcoming) confirmCurrentLanguage(); else language.close();
+  }, { signal });
+  language?.addEventListener('cancel', (event) => {
+    if (welcoming) { event.preventDefault(); confirmCurrentLanguage(); }
+  }, { signal });
   language?.addEventListener('close', () => {
-    unlock();
-    if (welcoming && !disposed) { welcoming = false; write('luma-welcome-language', 'yes'); askSound(); }
+    if (!sound?.open && !curtain?.open) unlock();
   }, { signal });
   language?.addEventListener('click', (event) => {
     if (event.target === language && !welcoming) {
@@ -99,9 +135,12 @@ export function mountWelcome(signal: AbortSignal) {
     link.addEventListener('click', (event) => {
       const samePage = new URL(link.href).pathname === location.pathname;
       if (samePage) event.preventDefault();
-      if (welcoming) write('luma-welcome-language', 'yes');
-      if (!samePage) welcoming = false;
-      language.close();
+      if (welcoming) {
+        write('luma-welcome-language', 'yes');
+        // Keep the selected-language portal behind the sound question. Across
+        // locales the new page reopens that same stack after Astro swaps it in.
+        if (samePage) askSound();
+      } else language.close();
     }, { signal });
   });
   sound?.querySelector('[data-sound-yes]')?.addEventListener('click', () => finish(true), { signal });
@@ -146,14 +185,15 @@ export function mountWelcome(signal: AbortSignal) {
     }
     syncPlayer();
   } else if (intro && !read('luma-welcome-done')) {
+    showLanguage(true);
     if (read('luma-welcome-language')) askSound();
-    else showLanguage(true);
   }
 
   return () => {
     disposed = true;
+    clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame); curtain?.close();
     posters.disconnect();
     films.forEach((film) => film.pause());
-    if (language?.open || sound?.open) { language?.close(); sound?.close(); unlock(); }
+    language?.close(); sound?.close(); unlock();
   };
 }

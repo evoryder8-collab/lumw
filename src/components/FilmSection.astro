@@ -9,25 +9,25 @@ import techniquePoster from '../assets/film-touch-and-technique.webp';
 import awardedPoster from '../assets/film-june-awarded-2026.webp';
 const { locale = 'de', featured = false } = Astro.props as { locale?: Locale; featured?: boolean };
 const text = {
-  de: ['LUMA in Bewegung', 'Mehr als ein Moment.', 'Einblicke in Junes Arbeit, ihre Erfolge und das, was sie bewegt.', 'Die Kunst der Berührung', 'June. Ihr Weg. Ihre Motivation.', 'Originalvideos · Wiedergabe mit Ton auf Wunsch', 'Video abspielen', 'Video öffnen'],
-  en: ['LUMA in motion', 'More than a moment.', 'A glimpse of June’s work, her achievements, and what keeps her moving.', 'The art of touch', 'June. Her journey. Her motivation.', 'Original films · Sound when you choose', 'Play video', 'Open video'],
-  es: ['LUMA en movimiento', 'Más que un momento.', 'Una mirada al trabajo de June, sus logros y lo que la inspira.', 'El arte del contacto', 'June. Su camino. Su motivación.', 'Vídeos originales · Tú eliges cuándo escuchar', 'Reproducir vídeo', 'Abrir vídeo'],
-  pt: ['LUMA em movimento', 'Mais do que um momento.', 'Um olhar sobre o trabalho da June, as suas conquistas e o que a inspira.', 'A arte do toque', 'June. O seu percurso. A sua motivação.', 'Vídeos originais · Som quando quiser', 'Reproduzir vídeo', 'Abrir vídeo'],
-  it: ['LUMA in movimento', 'Più di un momento.', 'Uno sguardo al lavoro di June, ai suoi traguardi e a ciò che la ispira.', 'L’arte del tocco', 'June. Il suo percorso. La sua motivazione.', 'Video originali · Scegli tu quando ascoltare', 'Riproduci video', 'Apri video'],
-  th: ['LUMA ในทุกการเคลื่อนไหว', 'มากกว่าช่วงเวลาหนึ่ง', 'ชมการทำงาน ความสำเร็จ และแรงบันดาลใจของจูน', 'ศิลปะแห่งการสัมผัส', 'จูน เส้นทางและแรงบันดาลใจ', 'วิดีโอต้นฉบับ · เลือกฟังเสียงได้เมื่อพร้อม', 'เล่นวิดีโอ', 'เปิดวิดีโอ'],
+  de: ['LUMA in Bewegung', 'June bei der Arbeit.', 'Einblicke in Junes Arbeit, ihre Erfolge und das, was sie bewegt.', 'Die Kunst der Berührung', 'June erzählt.', '', 'Video abspielen', 'Video öffnen'],
+  en: ['LUMA in motion', 'Watch June at work.', 'A glimpse of June’s work, her achievements, and what keeps her moving.', 'The art of touch', 'In June’s own words.', '', 'Play video', 'Open video'],
+  es: ['LUMA en movimiento', 'June en acción.', 'Una mirada al trabajo de June, sus logros y lo que la inspira.', 'El arte del contacto', 'June. Su camino. Su motivación.', '', 'Reproducir vídeo', 'Abrir vídeo'],
+  pt: ['LUMA em movimento', 'June em ação.', 'Um olhar sobre o trabalho da June, as suas conquistas e o que a inspira.', 'A arte do toque', 'June. O seu percurso. A sua motivação.', '', 'Reproduzir vídeo', 'Abrir vídeo'],
+  it: ['LUMA in movimento', 'June al lavoro.', 'Uno sguardo al lavoro di June, ai suoi traguardi e a ciò che la ispira.', 'L’arte del tocco', 'June. Il suo percorso. La sua motivazione.', '', 'Riproduci video', 'Apri video'],
+  th: ['LUMA ในทุกการเคลื่อนไหว', 'ชมจูนขณะทำงาน', 'ชมการทำงาน ความสำเร็จ และแรงบันดาลใจของจูน', 'ศิลปะแห่งการสัมผัส', 'จูน เส้นทางและแรงบันดาลใจ', '', 'เล่นวิดีโอ', 'เปิดวิดีโอ'],
 }[locale];
 const films = [
   { src: '/media/june-awarded-2026.mp4', poster: (await getImage({src: awardedPoster, width: 720, format: 'webp'})).src, title: {de:'Ausgezeichnet. June 2026.', en:'Awarded. June 2026.', es:'Premiada. June 2026.', pt:'Premiada. June 2026.', it:'Premiata. June 2026.', th:'ช่วงเวลาแห่งรางวัล จูน 2026'}[locale], duration:'00:33', width:720, height:1280 },
   { src: '/media/june-in-motion.mp4', poster: (await getImage({src: motionPoster, width: 480, format: 'webp'})).src, title: text[3], duration: '00:14', width:480, height:848 },
   { src: '/media/june-story.mp4', poster: (await getImage({src: storyPoster, width: 720, format: 'webp'})).src, title: text[4], duration: '00:41', width:720, height:1280 },
-  { src: '/media/june-passion.mp4', poster: (await getImage({src: passionPoster, width: 720, format: 'webp'})).src, title: {de:'Leidenschaft, die bewegt.', en:'Passion in every movement.', es:'Pasión en cada movimiento.', pt:'Paixão em cada movimento.', it:'Passione in ogni movimento.', th:'ความทุ่มเทในทุกการเคลื่อนไหว'}[locale], duration:'00:33', width:720, height:1280 },
-  { src: '/media/june-touch-and-technique.mp4', poster: (await getImage({src: techniquePoster, width: 480, format: 'webp'})).src, title: {de:'Mit Gefühl. Mit Präzision.', en:'Care in every detail.', es:'Cuidado en cada detalle.', pt:'Cuidado em cada detalhe.', it:'Cura in ogni dettaglio.', th:'ใส่ใจในทุกรายละเอียด'}[locale], duration:'00:51', width:480, height:848 },
+  { src: '/media/june-passion.mp4', poster: (await getImage({src: passionPoster, width: 720, format: 'webp'})).src, title: {de:'Leidenschaft, die bewegt.', en:'Precision and movement.', es:'Pasión en cada movimiento.', pt:'Paixão em cada movimento.', it:'Passione in ogni movimento.', th:'ความทุ่มเทในทุกการเคลื่อนไหว'}[locale], duration:'00:33', width:720, height:1280 },
+  { src: '/media/june-touch-and-technique.mp4', poster: (await getImage({src: techniquePoster, width: 480, format: 'webp'})).src, title: {de:'Mit Gefühl. Mit Präzision.', en:'Touch and technique.', es:'Cuidado en cada detalle.', pt:'Cuidado em cada detalhe.', it:'Cura in ogni dettaglio.', th:'ใส่ใจในทุกรายละเอียด'}[locale], duration:'00:51', width:480, height:848 },
 ];
 const selection = featured ? films.filter((film) => ['/media/june-awarded-2026.mp4', '/media/june-passion.mp4'].includes(film.src)) : films;
 ---
 <section class:list={['film-section', 'section', featured ? 'film-section--featured' : 'film-section--collection']} aria-labelledby="film-title">
   <div class="shell film-section__inner">
-    <div class="film-section__intro"><p class="eyebrow">{text[0]}</p><h2 id="film-title">{text[1]}</h2><p>{text[2]}</p><span class="film-section__note">{text[5]}</span></div>
+    <div class="film-section__intro"><p class="eyebrow">{text[0]}</p><h2 id="film-title">{text[1]}</h2><p>{text[2]}</p></div>
     <div class="film-section__films" data-film-track tabindex="0" role="region" aria-label={text[0]}>{selection.map((film, i) => <figure class="film-card">
       <div class="film-card__screen">
         <video controls playsinline preload="none" data-lazy-poster={film.poster} width={film.width} height={film.height} aria-label={film.title} data-film>

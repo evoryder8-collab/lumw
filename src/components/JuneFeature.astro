@@ -7,8 +7,7 @@ import { type Locale, routePath } from '../i18n/locales';
 import { url } from '../lib/site';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const u = labels(locale);
-const heading = locale === 'de' ? 'In guten Händen.' : translations[locale].pages.about.heading;
-const text = locale === 'de' ? 'June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger therapeutischer Erfahrung. Ursprünglich in Thailand geboren und heute in Deutschland ansässig, wuchs sie in unmittelbarer Nähe von Elite-Massagetherapeuten auf.' : translations[locale].about[0];
+const [heading, text] = locale === 'de' ? ['Thailändische Wurzeln. Präzise Hände.', 'Internationale Wettbewerbe und langjährige Praxis prägen Junes Arbeit. Lernen Sie die Gründerin von LUMA kennen und erfahren Sie, was ihr bei einer Massage wichtig ist.'] : translations[locale].feature;
 ---
 <section class="june-feature">
   <figure class="june-feature__portrait"><Photo src={portrait} alt="June Saurin" widths={[480,720,1000,1400]} sizes="(max-width: 760px) 100vw, 50vw" variant="fill" dissolve={false} /></figure>

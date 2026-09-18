@@ -12,7 +12,12 @@
  * All CSS. It pauses on hover, freezes flat under reduced motion, and needs no
  * JavaScript to run.
  */
-import { AWARDS } from '../lib/site';
+import { awardsFor } from '../lib/awards';
+import { labels } from '../i18n/content';
+import type { Locale } from '../i18n/locales';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const AWARDS = awardsFor(locale);
+const u = labels(locale);
 import Medal from './Medal.astro';
 
 /** Two identical passes. The second is hidden from assistive tech so the
@@ -23,9 +28,9 @@ const passes = [
 ];
 ---
 
-<section class="strip" aria-label="Internationale Auszeichnungen">
-  <p class="strip__heading"><span></span> International ausgezeichnet <span></span></p>
-  <div class="strip__viewport" tabindex="0" role="region" aria-label="Auszeichnungen durchblättern">
+<section class="strip" aria-label={u.awards}>
+  <p class="strip__heading"><span></span> {u.awards} <span></span></p>
+  <div class="strip__viewport" tabindex="0" role="region" aria-label={u.awards}>
     <div class="strip__track">
       {
         passes.map((pass) => (
@@ -35,7 +40,7 @@ const passes = [
                 <Medal metal={a.metal} size={88} />
                 <span class="strip__text">
                   <span class="strip__award">{a.short}</span>
-                  <span class="strip__meta">{a.event} · {a.place}</span>
+                  <span class="strip__meta">{a.event} · {a.place} · {a.year}</span>
                 </span>
               </li>
             ))}

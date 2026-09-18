@@ -1,0 +1,307 @@
+{
+  "treatments": [
+    {
+      "id": "aroma-luxus",
+      "name": "| (KLASSIKER) LUMA AROMA-LUXUS MASSAGE",
+      "priceLine": "PREIS: 60min. 79€ | 90min. 120€ | 120min. 160€",
+      "prices": [
+        {
+          "durationMin": 60,
+          "priceEur": 79
+        },
+        {
+          "durationMin": 90,
+          "priceEur": 120
+        },
+        {
+          "durationMin": 120,
+          "priceEur": 160
+        }
+      ]
+    },
+    {
+      "id": "balance-stone",
+      "name": "| BALANCE STONE / BAMBUS MASSAGE",
+      "priceLine": "PREIS: 60min. 90€ | 90min. 135€ | 120min. 175€",
+      "prices": [
+        {
+          "durationMin": 60,
+          "priceEur": 90
+        },
+        {
+          "durationMin": 90,
+          "priceEur": 135
+        },
+        {
+          "durationMin": 120,
+          "priceEur": 175
+        }
+      ]
+    },
+    {
+      "id": "thai-solution",
+      "name": "| LUMA THAI SOLUTION MASSAGE (NUAD BENJA PHAKI)",
+      "priceLine": "PREIS: 90min. 149€ | 120min. 199€",
+      "prices": [
+        {
+          "durationMin": 90,
+          "priceEur": 149
+        },
+        {
+          "durationMin": 120,
+          "priceEur": 199
+        }
+      ]
+    },
+    {
+      "id": "schwangerschaft",
+      "name": "| LUMA SCHWANGERSCHAFTSMASSAGE",
+      "priceLine": "PREIS: 60min. 75€ | 90min. 115€ | 120min. 150€",
+      "prices": [
+        {
+          "durationMin": 60,
+          "priceEur": 75
+        },
+        {
+          "durationMin": 90,
+          "priceEur": 115
+        },
+        {
+          "durationMin": 120,
+          "priceEur": 150
+        }
+      ]
+    },
+    {
+      "id": "gold-medalie",
+      "name": "| SIGNATURE - LUMA GOLD MEDALIE MASSAGE",
+      "priceLine": "PREIS: 90min. 350€",
+      "prices": [
+        {
+          "durationMin": 90,
+          "priceEur": 350
+        }
+      ]
+    },
+    {
+      "id": "stark-ball",
+      "name": "| STARK BALL MASSAGE",
+      "priceLine": "PREIS: 90min. 149€ | 120min. 199€",
+      "prices": [
+        {
+          "durationMin": 90,
+          "priceEur": 149
+        },
+        {
+          "durationMin": 120,
+          "priceEur": 199
+        }
+      ]
+    },
+    {
+      "id": "gesicht-kopf",
+      "name": "| LUMA GESICHTS UND KOPF MASSAGE INCL. GUA SHA",
+      "priceLine": "PREIS: 60min. 75€",
+      "prices": [
+        {
+          "durationMin": 60,
+          "priceEur": 75
+        }
+      ]
+    },
+    {
+      "id": "schulter-nacken-ruecken",
+      "name": "| LUMA SCHULTER-NACKEN-RÜCKEN MASSAGE",
+      "priceLine": "PREIS: 30min. 45€ | 60min. 89€",
+      "prices": [
+        {
+          "durationMin": 30,
+          "priceEur": 45
+        },
+        {
+          "durationMin": 60,
+          "priceEur": 89
+        }
+      ]
+    },
+    {
+      "id": "fuss",
+      "name": "LUMA FUß MASSAGE",
+      "priceLine": "PREIS: 30min. 40€ | 60min. 79€",
+      "prices": [
+        {
+          "durationMin": 30,
+          "priceEur": 40
+        },
+        {
+          "durationMin": 60,
+          "priceEur": 79
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "60min-signature-luma-gold-medalie",
+      "slug": "60min-signature-luma-gold-medalie",
+      "name": "60min. SIGNATURE - LUMA GOLD MEDALIE",
+      "durationMin": 90,
+      "priceEur": 350,
+      "seoTitle": "60min. SIGNATURE - LUMA GOLD MEDALIE | LUMA Wellness",
+      "seoDescription": "Die LUMA-Gold-Medalie-Massage ist eine einzigartige Mischung von Massagetechniken, die im Jahr 2023 internationale Anerkennung und Goldauszeichnungen erhalten hat. Diese charakteristische Sitzung beginnt mit der Anwendung von aus Granit hergestellten Balance-Steinen, bekannt als \"The Balance-Stone\". Diese Steine sind dafür bekannt, dass sie die Wärme speichern und nicht porös sind. Dadurch sind sie hygienischer und können tiefer in die Muskeln eindringen, um ein besseres therapeutisches Ergebnis zu erzielen. Es folgt eine klassische Massage, um Muskelverspannungen zu lösen und die Entspannung zu fördern. Die Sitzung umfasst dann die Schröpftherapie, eine traditionelle Technik, die die Durchblutung anregt, den Selbstheilungsprozess des Körpers anregt und Giftstoffe ausleitet. Das Erlebnis endet mit einer Aromatherapie-Massage, bei der ätherische Öle verwendet werden, um Ihre Stimmung zu verbessern und die Entspannung weiter zu fördern."
+    },
+    {
+      "id": "60min-luma-aroma-luxus-massage",
+      "slug": "60min-luma-aroma-luxus-massage",
+      "name": "60min. LUMA Aroma-Luxus Massage",
+      "durationMin": 60,
+      "priceEur": 79,
+      "seoTitle": "60min. LUMA Aroma-Luxus Massage | LUMA Wellness",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion."
+    },
+    {
+      "id": "90min-luma-aroma-luxus-massage",
+      "slug": "90min-luma-aroma-luxus-massage",
+      "name": "90min. LUMA Aroma-Luxus Massage",
+      "durationMin": 90,
+      "priceEur": 120,
+      "seoTitle": "90min. LUMA Aroma-Luxus Massage | LUMA Wellness",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion."
+    },
+    {
+      "id": "120min-luma-aroma-luxus-massage",
+      "slug": "120min-luma-aroma-luxus-massage",
+      "name": "120min. LUMA Aroma-Luxus Massage",
+      "durationMin": 120,
+      "priceEur": 160,
+      "seoTitle": "120min. LUMA Aroma-Luxus Massage | LUMA Wellness",
+      "seoDescription": "Wir verwenden essentielle und erlesende Bio-Öle um Körper und Geist in Einklang und absolutes Wohlbefinden zu bringen. Die Düfte der Öle versprechen Entspannung, reduzieren Stress und garantieren eine fokussiertere Hirnfunktion."
+    },
+    {
+      "id": "60min-balance-stone-bambus-massage",
+      "slug": "60min-balance-stone-bambus-massage",
+      "name": "60min BALANCE-STONE / BAMBUS MASSAGE",
+      "durationMin": 60,
+      "priceEur": 90,
+      "seoTitle": "60min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert."
+    },
+    {
+      "id": "90min-balance-stone-bambus-massage",
+      "slug": "90min-balance-stone-bambus-massage",
+      "name": "90min BALANCE-STONE / BAMBUS MASSAGE",
+      "durationMin": 90,
+      "priceEur": 135,
+      "seoTitle": "90min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert."
+    },
+    {
+      "id": "120min-balance-stone-bambus-massage",
+      "slug": "120min-balance-stone-bambus-massage",
+      "name": "120min BALANCE-STONE / BAMBUS MASSAGE",
+      "durationMin": 120,
+      "priceEur": 175,
+      "seoTitle": "120min BALANCE-STONE / BAMBUS MASSAGE | LUMA Wellness",
+      "seoDescription": "Verwendet werden sehr hochwertige und seltene Granitsteine mit speziellen Form, sowie Bambus Werkzeuge. Eine verbesserte Durchblutung und Stressabbau sind garantiert. Muskelverspannungen werden gezielt behandelt und eliminiert."
+    },
+    {
+      "id": "60min-luma-thai-massage",
+      "slug": "60min-luma-thai-massage",
+      "name": "60min. LUMA-THAI MASSAGE",
+      "durationMin": 60,
+      "priceEur": 75,
+      "seoTitle": "60min. LUMA-THAI MASSAGE | LUMA Wellness",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:"
+    },
+    {
+      "id": "90min-luma-thai-massage",
+      "slug": "90min-luma-thai-massage",
+      "name": "90min. LUMA-THAI MASSAGE",
+      "durationMin": 90,
+      "priceEur": 115,
+      "seoTitle": "90min. LUMA-THAI MASSAGE | LUMA Wellness",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:"
+    },
+    {
+      "id": "120min-luma-thai-massage",
+      "slug": "120min-luma-thai-massage",
+      "name": "120min. LUMA-THAI MASSAGE",
+      "durationMin": 120,
+      "priceEur": 150,
+      "seoTitle": "120min. LUMA-THAI MASSAGE | LUMA Wellness",
+      "seoDescription": "Tauchen Sie ein in die Welt der Entspannung mit der charakteristischen \"LUMA THAI MASSAGE\". Diese traditionelle Thai-Massage ist eine einzigartige Mischung aus alten Techniken, die eine Vielzahl von Vorteilen bieten:"
+    },
+    {
+      "id": "60min-luma-schwangerschaftsmassage",
+      "slug": "60min-luma-schwangerschaftsmassage",
+      "name": "60min. LUMA SCHWANGERSCHAFTSMASSAGE",
+      "durationMin": 60,
+      "priceEur": 75,
+      "seoTitle": "60min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit."
+    },
+    {
+      "id": "90min-luma-schwangerschaftsmassage",
+      "slug": "90min-luma-schwangerschaftsmassage",
+      "name": "90min. LUMA SCHWANGERSCHAFTSMASSAGE",
+      "durationMin": 90,
+      "priceEur": 115,
+      "seoTitle": "90min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit."
+    },
+    {
+      "id": "120min-luma-schwangerschaftsmassage",
+      "slug": "120min-luma-schwangerschaftsmassage",
+      "name": "120min. LUMA SCHWANGERSCHAFTSMASSAGE",
+      "durationMin": 120,
+      "priceEur": 150,
+      "seoTitle": "120min. LUMA SCHWANGERSCHAFTSMASSAGE | LUMA Wellness",
+      "seoDescription": "Erleben Sie die wohltuende Berührung der \"LUMA SCHWANGERSCHAFTSMASSAGE\". Diese von mir entwickelte Behandlung ist eine Oase der Entspannung, die speziell für werdende Mütter entwickelt wurde. Es ist eine Reise des Komforts und der Ruhe während dieser besonderen Zeit."
+    },
+    {
+      "id": "90min-luma-schroepfkopf-massage",
+      "slug": "90min-luma-schröpfkopf-massage",
+      "name": "90min. LUMA SCHRÖPFKOPF MASSAGE",
+      "durationMin": 90,
+      "priceEur": 135,
+      "seoTitle": "90min. LUMA SCHRÖPFKOPF MASSAGE | LUMA Wellness",
+      "seoDescription": "Tauchen Sie ein in die revitalisierende Erfahrung der \"LUMA SCHRÖPFKOPF MASSAGE\". Diese von mir entwickelte Behandlung nutzt die uralte Technik des Schröpfens, um Giftstoffe auszusaugen und die Heilung anzuregen. Es ist eine Reise der Verjüngung und Entspannung, bei der Sie sich erfrischt und revitalisiert fühlen."
+    },
+    {
+      "id": "120min-luma-schroepfkopf-massage",
+      "slug": "120min-luma-schröpfkopf-massage",
+      "name": "120min. LUMA SCHRÖPFKOPF MASSAGE",
+      "durationMin": 120,
+      "priceEur": 180,
+      "seoTitle": "120min. LUMA SCHRÖPFKOPF MASSAGE | LUMA Wellness",
+      "seoDescription": "Tauchen Sie ein in die revitalisierende Erfahrung der \"LUMA SCHRÖPFKOPF MASSAGE\". Diese von mir entwickelte Behandlung nutzt die uralte Technik des Schröpfens, um Giftstoffe auszusaugen und die Heilung anzuregen. Es ist eine Reise der Verjüngung und Entspannung, bei der Sie sich erfrischt und revitalisiert fühlen."
+    },
+    {
+      "id": "60min-luma-gesichts-und-kopf-massage",
+      "slug": "60min-luma-gesichts-und-kopf-massage",
+      "name": "60min. LUMA GESICHTS UND KOPF MASSAGE",
+      "durationMin": 60,
+      "priceEur": 75,
+      "seoTitle": "60min. LUMA GESICHTS UND KOPF MASSAGE | LUMA Wellness",
+      "seoDescription": "Erleben Sie die belebende Wirkung meiner charakteristischen Gesichts- und Kopfmassage, die durch die uralte Technik des Gua Sha ergänzt wird. Diese Behandlung ist eine Reise der Entspannung und Verjüngung, die Ihren Teint erfrischt, die Durchblutung anregt und Verspannungen verschwinden lässt. Spüren Sie die sanfte Pflege meiner Hände und das wohltuende Kratzen des Gua Sha-Werkzeugs und fühlen Sie sich revitalisiert und strahlend. Lassen Sie sich noch heute vom LUMA-Unterschied überzeugen!"
+    },
+    {
+      "id": "30min-luma-schulter-nacken-ruecken",
+      "slug": "30min-luma-schulter-nacken-rücken",
+      "name": "30min. LUMA SCHULTER-NACKEN-RÜCKEN",
+      "durationMin": 60,
+      "priceEur": 45,
+      "seoTitle": "30min. LUMA SCHULTER-NACKEN-RÜCKEN | LUMA Wellness",
+      "seoDescription": "Diese Behandlung zielt auf Verspannungen in diesen Schlüsselbereichen ab und sorgt für Linderung und Entspannung. Spüren Sie, wie der Stress unter meinen geschickten Händen dahinschmilzt und Sie sich erfrischt und verjüngt fühlen."
+    },
+    {
+      "id": "30min-luma-fuss-massage",
+      "slug": "30min-luma-fuß-massage",
+      "name": "30min. LUMA FUß MASSAGE",
+      "durationMin": 30,
+      "priceEur": 45,
+      "seoTitle": "30min. LUMA FUß MASSAGE | LUMA Wellness",
+      "seoDescription": "Die \"LUMA-FUß MASSAGE\" ist eine besondere Behandlung, bei der Spannungen an den wichtigsten Druckpunkten der Fuße gekonnt gelöst werden. Durch meine fachkundigen Techniken wird das Gleichgewicht wiederhergestellt und der Körper mit Energie versorgt. Sie erleben eine wohltuende Berührung und fühlen sich erfrischt und revitalisiert. Der LUMA-Unterschied wird in jeder Sitzung spürbar."
+    }
+  ]
+}

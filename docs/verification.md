@@ -1,5 +1,50 @@
 # Redesign verification
 
+## 18 September 2026 release
+
+Production artifact: `PUBLIC_BASE=/`, `PUBLIC_INDEXABLE=true`.
+
+- `npm run verify` passes: 51 pages, original German metadata and URLs,
+  unchanged commercial facts and legal content, six corrected awards, valid
+  structured data, reciprocal languages, working assets, and no em dashes.
+- Browser journeys pass across 360, 390, 768 and 1440px. Eight page accessibility
+  audits and the new treatment-dialog audit report no WCAG A/AA violations.
+- Language confirmation leaves the portal behind the animated sound popup.
+  Both Yes and No then open the floral curtains. Yes plays actual audible
+  media from the consent gesture; No remains muted. Reduced motion skips the
+  curtains. Closing the entrance restores scrolling, and navigation pauses audio.
+- All nine treatment dialogs in all five translations keep their language and
+  page URL. Tests cover upper-left close, Escape, keyboard reopening, focus
+  return, selected-treatment booking and readable details without JavaScript.
+- The welcome greeting waits until the reveal finishes plus 20 seconds. Both
+  normal and reduced-motion clocks pass, without stealing focus.
+- Lotus tests cover tap, radial scattering and restart, simulated permission
+  granted/denied/unavailable, offscreen pause, reduced-motion changes and cleanup.
+  Physical phone shaking and OS permission UI still need a real-device check.
+- All six About pages use the corrected categories and placements. The winning
+  lake photograph remains uncropped and is a distinct photography-award story
+  farther down the homepage. The circular medal portrait is unchanged.
+- Manual 390px inspection covered the new portal, stacked sound popup, curtains,
+  long signature-treatment popup, floral portrait and photography story.
+
+Three cold local mobile runs per scenario, median results:
+
+| Scenario | Performance | LCP | CLS | Blocking time |
+|---|---:|---:|---:|---:|
+| First welcome | 98 | 2.258 s | 0 | 0 ms |
+| Homepage after welcome | 98 | 2.259 s | 0 | 0 ms |
+| Treatments | 99 | 1.955 s | 0 | 0 ms |
+| Contact | 99 | 2.104 s | 0 | 0 ms |
+
+The initial opening-screen median missed LCP at 2.635 seconds. The wordmark's
+font now preloads, its derivative retains the used weights, the film poster
+is smaller, and the lower homepage treatment photo no longer loads eagerly.
+The two affected opening scenarios were then remeasured three times each.
+Their final host load was 4.98 / 6.67 / 7.58 on 12 cores. Treatments and Contact
+passed before the final font/poster reduction. Budgets remain unchanged.
+
+## 16 September 2026 baseline
+
 Local release checks, 16 September 2026, using the production build with
 `PUBLIC_BASE=/lumw` and `PUBLIC_INDEXABLE=false`.
 

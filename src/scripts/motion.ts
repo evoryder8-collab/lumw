@@ -820,6 +820,20 @@ function installRevealFailsafe() {
 function boot() {
   document.documentElement.classList.add('motion-ready');
 
+  // Botanical detail is optional and kept outside the main motion bundle.
+  const garden = document.querySelector<HTMLElement>('[data-lotus-garden]');
+  if (garden && !REDUCED) {
+    let active = true;
+    let disposeLotus: (() => void) | undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      void import('./lotus').then(({ mountLotus }) => { if (active && garden.isConnected) disposeLotus = mountLotus(garden); }).catch(() => { /* The static floral rim is the fallback. */ });
+    });
+    observer.observe(garden);
+    onCleanup(() => { active = false; observer.disconnect(); disposeLotus?.(); });
+  }
+
   initScroll();
   initScrollVelocity(); // after initScroll: it needs the Lenis instance
   initReveals();

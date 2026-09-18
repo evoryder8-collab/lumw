@@ -16,7 +16,16 @@ const canonicalHost = 'https://www.luma-wellness.com';
 const indexable = process.env.PUBLIC_INDEXABLE === 'true';
 const baseline = JSON.parse(fs.readFileSync('src/data/migration-content-baseline.json', 'utf8'));
 // Explicit owner request, 16 September 2026. Keep the original crawl intact.
-const approvedHeadings = { '/': 'International ausgezeichnete Massage' };
+const approvedHeadings = { '/': 'International ausgezeichnete Massage', '/about': 'Über June' };
+// Owner explicitly commissioned a site-wide editorial rewrite on 18 Sep 2026.
+// Keep the migration archive and metadata tests intact; freeze commercial facts
+// separately so polishing prose cannot silently change a price or service URL.
+const revisedPages = new Set(['/', '/about', '/contact', '/meineangebote-preise', '/massage-buxtehude-faq']);
+const facts = JSON.parse(fs.readFileSync('src/data/editorial-facts-baseline.json', 'utf8'));
+const treatments = JSON.parse(fs.readFileSync('src/content/treatments.json', 'utf8')).treatments;
+const services = JSON.parse(fs.readFileSync('src/content/services.json', 'utf8')).services;
+assert.deepEqual(treatments.map(({id,name,priceLine,prices}) => ({id,name,priceLine,prices})), facts.treatments, 'Treatment prices/names changed during editorial revision');
+assert.deepEqual(services.map(({id,slug,name,durationMin,priceEur,seoTitle,seoDescription}) => ({id,slug,name,durationMin,priceEur,seoTitle,seoDescription})), facts.services, 'Service facts changed during editorial revision');
 
 for (const file of files.filter((file) => file.endsWith('.html'))) {
   const { document } = parseHTML(fs.readFileSync(file, 'utf8'));
@@ -41,7 +50,7 @@ for (const [route, { document }] of documents) {
     const original = baseline.pages[route];
     check(normalize(document.querySelector('h1').textContent) === (approvedHeadings[route] ?? original.h1), `${route}: German H1 changed`);
     const body = normalize(document.querySelector('main').textContent);
-    for (const paragraph of original.paragraphs) check(body.includes(paragraph), `${route}: lost migration paragraph: ${paragraph.slice(0, 85)}`);
+    if (!revisedPages.has(route) && !route.startsWith('/service-page/')) for (const paragraph of original.paragraphs) check(body.includes(paragraph), `${route}: lost migration paragraph: ${paragraph.slice(0, 85)}`);
   }
   const alternates = [...document.querySelectorAll('link[rel="alternate"][hreflang]')];
   if (alternates.length) {
@@ -58,6 +67,14 @@ for (const [route, { document }] of documents) {
   if (locale !== 'de') {
     check(alternates.length === 7, `${route}: translated page has no hreflang cluster`);
     check(route.startsWith(`/${locale}`), `${route}: incorrect document language ${locale}`);
+    if (document.querySelector('.localized-treatments')) {
+      check(document.querySelectorAll('[data-treatment-details]').length === 9, `${route}: nine local treatment details required`);
+      check(!document.querySelector('.localized-original'), `${route}: obsolete German details link remains`);
+      for (const details of document.querySelectorAll('[data-treatment-details]')) {
+        check(details.querySelectorAll('.treatment-details__copy p').length >= 2, `${route}: treatment details are incomplete`);
+        check(!!details.querySelector('[data-treatment-close][aria-label]'), `${route}: treatment popup has no labelled close button`);
+      }
+    }
   }
   const brandHref = document.querySelector('.brand')?.getAttribute('href') ?? '/';
   const localeRoot = locale === 'de' ? '/' : `/${locale}`;
@@ -84,6 +101,26 @@ for (const [route, { document }] of documents) {
     check(video.getAttribute('preload') === 'none' && !video.hasAttribute('autoplay'), `${route}: unexpected eager video`);
     check(video.hasAttribute('controls') && video.hasAttribute('playsinline'), `${route}: film controls missing`);
   }
+  const record = document.querySelector('.award-record');
+  if (record) {
+    check(record.querySelectorAll('[data-award]').length === 6, `${route}: six distinct award records required`);
+    check(record.querySelector('[data-award="swiss-silver"]')?.textContent.includes('Freestyle Eastern'), `${route}: Swiss category is missing`);
+    check(record.querySelector('[data-award="athens-silver"]')?.textContent.includes('Wellness & Spa'), `${route}: Athens category is missing`);
+    check(record.querySelector('[data-award="penzberg-silver"]')?.textContent.includes('Freestyle Eastern'), `${route}: Penzberg silver category is missing`);
+    check(!!record.querySelector('[data-award="penzberg-bronze"] .award-record__note'), `${route}: overall ranking needs its explanation`);
+    check(record.querySelector('[data-award="paris-photo-gold"]')?.textContent.includes('2026'), `${route}: photography award year is missing`);
+    if (locale === 'en') check(record.textContent.includes('Swiss Massage Championship') && !record.textContent.includes('Schweizer'), `${route}: untranslated Swiss event`);
+  }
+  if (document.querySelector('.photo-award')) check(document.querySelector('.photo-award__image img')?.getAttribute('alt')?.length > 20, `${route}: winning image requires descriptive alternative text`);
+  if (document.querySelector('.hero--immersive')) {
+    check(!!document.querySelector('.lotus-rim'), `${route}: static floral portrait fallback missing`);
+    const sections = [...document.querySelectorAll('main section')];
+    check(sections.indexOf(document.querySelector('.photo-award')) > sections.indexOf(document.querySelector('.reviews')), `${route}: photography prize must follow reviews, not lead the homepage`);
+  }
+  check(!document.querySelector('.portal-corner'), `${route}: obsolete portal ornaments remain`);
+  check(!document.querySelector('.film-section__note'), `${route}: redundant film note remains`);
+  if (document.querySelector('.intro-film__caption')) check(document.querySelectorAll('.intro-film__caption span').length === 2, `${route}: redundant centre film caption`);
+  if (locale === 'en') check(!/More than a moment|A moment to remember|Your moment starts here|Book some time/.test(document.querySelector('main').textContent), `${route}: retired generic copy remains`);
   document.querySelectorAll('script,style').forEach((el) => el.remove());
   check(!document.documentElement.textContent.includes('\u2014'), `${route}: visible text contains an em dash`);
   for (const el of document.querySelectorAll('[aria-label],meta[content]')) {
@@ -112,5 +149,5 @@ if (indexable) {
   check(/^Disallow: \/$/m.test(robotsFile), 'Staging robots.txt must block crawling');
 }
 assert.equal(failures.length, 0, `Experience checks failed:\n${failures.join('\n')}`);
-console.log(`✓ 51 pages: content retention, locale links, hreflang, assets, sitemaps, ${indexable ? 'production indexing' : 'staging noindex'}, ownership verification, video loading, and no em dashes`);
+console.log(`✓ 51 pages: commercial facts, legal content retention, locale links, hreflang, assets, sitemaps, ${indexable ? 'production indexing' : 'staging noindex'}, ownership verification, video loading, and no em dashes`);
 console.log(`✓ JavaScript: ${(total / 1024).toFixed(1)} KiB gzip / 100 KiB budget`);

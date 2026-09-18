@@ -142,8 +142,8 @@ for (const file of files) {
   // so its absence is a failure and not a warning.
   const person = graph.find((n) => n['@type'] === 'Person');
   if (person) {
-    if (!Array.isArray(person.award) || person.award.length < 5) {
-      failures.push({ rel, why: `Person.award has ${person.award?.length ?? 0} entries, expected 5` });
+    if (!Array.isArray(person.award) || person.award.length !== 6) {
+      failures.push({ rel, why: `Person.award has ${person.award?.length ?? 0} entries, expected 6` });
     } else {
       sawAwards = true;
     }
@@ -200,5 +200,5 @@ if (failures.length) {
 
 console.log(`${GREEN}✓${OFF} ${pagesChecked} pages, ${nodesChecked} nodes, all expand cleanly`);
 console.log(`${GREEN}✓${OFF} one @graph per page, every node typed`);
-if (sawAwards) console.log(`${GREEN}✓${OFF} June's five competition awards present on the Person node`);
+if (sawAwards) console.log(`${GREEN}✓${OFF} June's five massage placements and separate photography prize present on the Person node`);
 console.log(`${GREEN}✓${OFF} no Review or AggregateRating markup anywhere\n`);

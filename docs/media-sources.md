@@ -18,6 +18,7 @@ for delivery. No generated portraits or invented awards are used.
 | `IMG_1109.jpg` | `june-swiss-championship.webp`, gallery |
 | `caa97595-1fc7-4e33-85e7-87101c66e8e8 2.JPG` | `about/june-penzberg-championship.webp`, full group photograph alongside the Penzberg story on About pages |
 | `3C35946F-8F87-47C1-BA03-AD1A1E635A74.JPG` | `june-welcome-portrait.webp`, circular portrait in the delayed homepage invitation |
+| `63f312c1-a642-4c85-9cb8-a6b56967873c 2.JPG` | `june-best-massage-photo-2026.webp`, uncropped landscape in the photography-award story on Home and About |
 
 These assets are under `src/assets`. Astro creates responsive AVIF and WebP
 variants. Full gallery views use a larger WebP and preserve the entire frame.
@@ -89,7 +90,8 @@ fields and the current Instagram `lumawellnessbyjune` and Facebook
 ## Original brand symbol
 
 The original flat logo is preserved as `logo-luma-symbol.webp`. Its painted
-area is framed with CSS inside a light badge. The 216px lossless WebP display
+area stands freely, with CSS cropping only the source's empty margins. A
+golden sheen is masked to the original silhouette. The 216px lossless WebP display
 derivative preserves sharp transparent edges at 8.3 KB. The symbol itself is
 not redrawn or altered.
 
@@ -100,12 +102,27 @@ with optical size set to 48 and the used weight range 300 to 700 preserved.
 This reduces its transfer from about 67 KB to 35 KB while retaining the display
 family and variable weights. The source font is kept alongside it.
 
-## Award wording to confirm before domain cutover
+`hankengrotesk-ui-var.woff2` retains the original Hanken Grotesk characters and
+the used weight range 300 to 700, including the wordmark's intermediate weight.
+It is 31.3 KB, derived from the preserved 34.7 KB original with FontTools 4.60.2.
+Both above-the-fold font families are preloaded. The introduction's WebP poster
+is delivered at 1280px and quality 72; its 1080p video is unchanged.
 
-The supplied Swiss certificate photograph reads “Free Style Massage (Eastern
-Inspired)”. The archived German About copy and historical award data instead
-say Wellness for that event. The migration copy is preserved in this redesign;
-June should confirm the category before an editorial correction and cutover.
+## Owner-confirmed award record, 18 September 2026
+
+The owner explicitly corrected the historical copy: Swiss silver was for
+Freestyle Eastern. Penzberg 2023 brought gold in Wellness & Spa, silver in
+Freestyle Eastern, and bronze in the Champ of the Champs overall division.
+Athens 2023 was WMF silver in Wellness & Spa. All six languages now use this
+record. The English event name is Swiss Massage Championship.
+
+The supplied lake photograph was taken at 6:30 am in mid-October 2023 on Lake
+Zurich and won Best Massage Photo at a 2026 international therapists' contest
+in Paris, according to the owner. No organizer name has been invented. This
+photography award is separate from the five hands-on competition placements
+and is excluded from massage credentials in structured data. The homepage
+story follows the gallery, films and reviews. The original medal-holding
+portrait remains unchanged, without assigning its medal to a particular event.
 
 ## Medal artwork
 

@@ -1,14 +1,15 @@
 # LUMA: the new website and native link-in-bio
 
-Revised 16 September 2026. The design is built around June's photography,
+Revised 18 September 2026. The design is built around June's photography,
 editorial type, deep forest green, warm porcelain and sculpted liquid glass.
 This roadmap incorporates the owner's later requests for sound onboarding,
 animated prices, Google reviews and a native Instagram landing page.
 
 ## Release principles
 
-- Preserve all 25 original German URLs, metadata and substantive paragraphs.
-  The owner requested the international-awards homepage H1 on 16 September 2026.
+- Preserve all 25 original German URLs and metadata, legal text and commercial
+  facts. On 18 September the owner authorized a full editorial rewrite and
+  supplied corrected award categories. The original migration archive stays intact.
 - Never invent reviews, prices, awards or appointment availability.
 - No em dashes in visible or accessible text.
 - Real flags, realistic gold, silver and bronze medal artwork, locally hosted media and fonts.
@@ -21,22 +22,27 @@ animated prices, Google reviews and a native Instagram landing page.
   Translated navigation, corresponding routes, reciprocal hreflang and sitemaps.
 - [x] Replace the disabled contact form with an appointment-enquiry composer.
   The visitor sends through WhatsApp or email. June confirms availability.
-- [x] Preserve German migration copy and automatically check built destinations,
-  image sources, locale coverage, punctuation and compressed JavaScript.
+- [x] Archive the migration copy and automatically check built destinations,
+  commercial facts, legal copy, image sources, locale coverage, punctuation
+  and compressed JavaScript.
 - [x] Keep the original German service details and legal pages accessible.
 
 ## Phase 1: a new first impression
 
 - [x] An animated language portal with actual flags, moving gradients, depth,
   fine glass edges and keyboard navigation.
-- [x] A simple sound question after the first language choice. The Yes tap
+- [x] A compact, animated sound popup over the selected-language portal. The Yes tap
   starts the introduction with sound; No starts muted, except under reduced
   motion. A visible play control handles browsers that decline playback.
+- [x] After either sound answer, embroidered forest-green curtains open from
+  the centre with falling petals. Playback starts within the answer tap;
+  welcome completion and the greeting timer wait for the reveal to finish.
 - [x] The supplied introduction at the top of every homepage in a glass frame.
 - [x] A floating circular winner portrait, an international-awards headline,
   oversized editorial type, sculpted navigation and a redesigned footer.
 - [x] A larger forest-green awards ribbon with generated gold, silver and bronze
-  placement medals. The archived award record remains the source of truth.
+  placement medals. The owner's corrected record in `src/lib/awards.ts` is
+  shared by every language, the ribbon, About and structured data.
 
 ## Phase 2: depth throughout the website
 
@@ -54,6 +60,16 @@ animated prices, Google reviews and a native Instagram landing page.
 - [x] The mobile photo gallery uses the same once-only horizontal hint.
 - [x] Redesigned treatment cards, a signature treatment, a useful index,
   clear prices and accessible full descriptions.
+- [x] Localized More info dialogs keep visitors on translated treatment pages,
+  with an upper-left close button, focus return and a booking action. Without
+  JavaScript, the same details expand in place.
+- [x] Six accurate award entries with placements, categories, cities and years.
+  Champ of the Champs explains the overall ranking. Best Massage Photo is
+  explicitly a photography award, with the full winning image and its story
+  below the homepage reviews and alongside June's About story.
+- [x] Editorial revision across all six locales: specific treatment descriptions,
+  distinct section headings and direct booking language. Remove redundant film
+  labels and unsupported medical promises. Retain authentic Google excerpts.
 - [x] Matching About, FAQ, Contact, service-detail and translated pages.
 - [x] Selected treatments carry through to the enquiry composer.
 
@@ -68,8 +84,12 @@ animated prices, Google reviews and a native Instagram landing page.
   treatments and the Contact page's detailed map with Google Maps / Apple Maps
   directions. Each action has a platform tint, frosted glass depth, a moving
   gleam, scroll reveal and touch feedback.
-- [x] A clearly framed original LUMA symbol in the header, portal, footer and
-  native link page. Its empty source margins no longer shrink the actual mark.
+- [x] A freestanding original LUMA symbol with a masked golden shine in the
+  header, portal, footer and native link page. Its empty source margins no
+  longer shrink the actual mark. A new restrained sans-serif wordmark accompanies it.
+- [x] A lotus-embellished winner portrait with bounded falling petals that settle
+  above the recognition button. Tap scatters them; compatible phones can use
+  shaking after permission. Reduced motion keeps a static floral frame.
 - [x] A personal greeting with the ninth supplied portrait after 20 seconds
   of visible homepage time. Animated text and booking action, six languages,
   dismissible, once per session, with no focus theft or welcome interruption.
@@ -90,7 +110,7 @@ checks accessibility, measures mobile performance and keeps its reports.
 
 - Browser coverage: all 51 canonical URLs; twelve representative pages at
   360, 390, 768 and 1440 pixels; keyboard, history, reduced motion and no JS.
-- Playback coverage: language then sound, audible Yes, muted No, navigation
+- Playback coverage: language, sound popup, curtains, audible Yes, muted No, navigation
   cleanup, and both allowed and blocked autoplay policies on `/linkinbio`.
 - Performance release budgets: score at least 95, LCP at most 2.5 seconds,
   CLS at most 0.02, blocking time at most 200 ms. Use cold contexts and record

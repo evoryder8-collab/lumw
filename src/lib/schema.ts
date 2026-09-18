@@ -1,3 +1,5 @@
+import { awardsFor } from './awards';
+import type { Locale } from '../i18n/locales';
 /**
  * One @graph per page, not scattered snippets (CLAUDE.md section 4).
  *
@@ -11,7 +13,7 @@
  * UWG, which means a competitor can send an abmahnung with costs attached.
  */
 
-import { SITE_URL, BUSINESS, AWARDS } from './site';
+import { SITE_URL, BUSINESS } from './site';
 import { localeForPath, LOCALE_META, AVAILABLE } from '../i18n/locales';
 
 type Node = Record<string, unknown>;
@@ -113,7 +115,8 @@ export function businessNode(imageUrls: string[] = [], catalog?: CatalogItem[]):
 }
 
 /** June. The award array is the point of this node. */
-export function personNode(imageUrl?: string): Node {
+export function personNode(imageUrl?: string, locale: Locale = 'de'): Node {
+  const AWARDS = awardsFor(locale);
   return {
     '@type': 'Person',
     '@id': ID.june,
@@ -128,7 +131,7 @@ export function personNode(imageUrl?: string): Node {
     worksFor: { '@id': ID.business },
     nationality: { '@type': 'Country', name: 'Thailand' },
     award: AWARDS.map((a) => a.award),
-    hasCredential: AWARDS.map((a) => ({
+    hasCredential: AWARDS.filter((a) => a.id !== 'paris-photo-gold').map((a) => ({
       '@type': 'EducationalOccupationalCredential',
       credentialCategory: 'award',
       name: a.award,

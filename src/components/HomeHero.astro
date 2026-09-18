@@ -2,6 +2,7 @@
 import Photo from './Photo.astro';
 import Icon from './Icon.astro';
 import Medal from './Medal.astro';
+import LotusRim from './LotusRim.astro';
 import winner from '../assets/june-winner.webp';
 import { labels } from '../i18n/content';
 import { routePath, type Locale } from '../i18n/locales';
@@ -9,17 +10,29 @@ import { url } from '../lib/site';
 interface Props { locale?: Locale; heading: string; lead: string; }
 const { locale = 'de', heading, lead } = Astro.props;
 const u = labels(locale);
+const lotus = {
+  de: ['Blütenblätter tanzen lassen', 'Tippen oder Schütteln aktivieren', 'Schütteln ist aktiviert. Sie können auch erneut tippen.'],
+  en: ['Scatter the petals', 'Tap or enable shake to scatter petals', 'Shake is enabled. You can also tap again.'],
+  es: ['Esparcir los pétalos', 'Toca o activa el movimiento para esparcir los pétalos', 'El movimiento está activado. También puedes volver a tocar.'],
+  pt: ['Espalhar as pétalas', 'Toque ou ative o movimento para espalhar as pétalas', 'O movimento está ativado. Também pode tocar novamente.'],
+  it: ['Spargi i petali', 'Tocca o attiva il movimento per spargere i petali', 'Il movimento è attivo. Puoi anche toccare di nuovo.'],
+  th: ['โปรยกลีบบัว', 'แตะหรือเปิดการเขย่าเพื่อโปรยกลีบบัว', 'เปิดการเขย่าแล้ว คุณสามารถแตะอีกครั้งได้เช่นกัน'],
+}[locale];
 ---
-<section class="hero hero--immersive">
+<section class="hero hero--immersive" data-lotus-garden>
   <figure class="hero-winner">
     <Photo src={winner} alt={u.portrait} widths={[360, 480, 720, 1000, 1400]}
       sizes="(max-width: 760px) calc(100vw - 80px), 44vw" variant="fill" dissolve={false} priority />
+    <LotusRim />
+    <button class="lotus-scatter" type="button" data-lotus-scatter data-label-tap={lotus[0]} data-label-motion={lotus[1]} data-label-enabled={lotus[2]} aria-label={lotus[0]} title={lotus[0]} hidden>
+      <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M16 25C7 20 8 11 16 5C24 11 25 20 16 25Z"/><path d="M16 25C6 25 3 18 3 12C11 13 15 17 16 25ZM16 25C26 25 29 18 29 12C21 13 17 17 16 25Z"/><path d="M16 11V24"/></svg>
+    </button>
   </figure>
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="hero-orbit" aria-hidden="true"></div>
   <div class="hero-editorial">
     <div class="hero-edition"><span class="edition-rule"></span><span>LUMA WELLNESS</span><span>BUXTEHUDE</span></div>
-    <p class="hero-kicker">{locale === 'de' ? 'Von June Saurin. Für Ihr Wohlbefinden.' : u.awards}</p>
+    <p class="hero-kicker">{{ de: 'Massage mit June Saurin', en: 'Massage with June Saurin', es: 'Masaje con June Saurin', pt: 'Massagem com June Saurin', it: 'Massaggio con June Saurin', th: 'การนวดกับจูน เซาริน' }[locale]}</p>
     <h1 class:list={['hero-headline', locale === 'de' && 'hero-headline--awarded']}>{locale === 'de' ? <><span class="hero-headline__international">International</span>{' '}<span class="hero-headline__accent">ausgezeichnete</span>{' '}<span>Massage</span></> : heading}</h1>
     <p class="hero-description">{lead}</p>
     <div class="hero-links">
@@ -34,4 +47,13 @@ const u = labels(locale);
     <Icon size={22} />
   </a>
   <div class="hero-coordinate" aria-hidden="true">53°28′ N &nbsp; 9°41′ E</div>
+  <span class="sr-only" data-lotus-status role="status"></span>
 </section>
+<style>
+  .lotus-scatter { position: absolute; bottom: 7%; right: 5%; z-index: 3; display: grid; place-items: center; width: 46px; height: 46px; color: #f1dbaa; background: linear-gradient(140deg, #59735de8, #1b352ceb); border: 1px solid #ecd3939c; border-radius: 50%; box-shadow: 0 5px 15px #071b2066, inset 0 1px 1px #fff4c966; cursor: pointer; transition: transform 250ms ease, background 250ms ease; }
+  .lotus-scatter[hidden] { display: none; }
+  .lotus-scatter:hover { background: #476651; transform: translateY(-2px); }
+  .lotus-scatter:active { transform: scale(.92); }
+  .lotus-scatter:focus-visible { outline: 2px solid #fff5d5; outline-offset: 4px; }
+  @media (prefers-reduced-motion: reduce) { .lotus-scatter { display: none; } }
+</style>

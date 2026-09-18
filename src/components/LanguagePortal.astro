@@ -12,13 +12,12 @@ const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'servi
 <dialog class="language-dialog" data-language-dialog aria-labelledby="language-title">
   <div class="portal-atmosphere" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
   <div class="language-dialog__inner">
-    <span class="portal-corner portal-corner--tl" aria-hidden="true"></span><span class="portal-corner portal-corner--tr" aria-hidden="true"></span><span class="portal-corner portal-corner--bl" aria-hidden="true"></span><span class="portal-corner portal-corner--br" aria-hidden="true"></span>
     <button type="button" class="language-dialog__close" data-language-close aria-label={u.close}><Icon name="close" /></button>
-    <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA</span><span class="portal-brand__sub">WELLNESS BY JUNE SAURIN</span><span class="portal-brand__light" aria-hidden="true"></span></div>
+    <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA<span class="portal-brand__sub">WELLNESS BY JUNE SAURIN</span></span></div>
     <h2 id="language-title">{u.language}</h2>
     <div class="language-dialog__choices">
       {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-language-pick lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
-        <span class="language-choice__flag"><img src={url(`/flags/${flagCodes[code]}.webp`)} width="36" height="27" alt="" loading="eager" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong><small>{LOCALE_META[code].greeting}</small></span><Icon size={20} />
+        <span class="language-choice__flag"><img src={url(`/flags/${flagCodes[code]}.webp`)} width="36" height="27" alt="" loading="eager" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong></span><Icon size={20} />
       </a>)}
     </div>
     <div class="portal-footer"><span>BUXTEHUDE, DE</span><span class="portal-footer__line" aria-hidden="true"></span><span>JUNE SAURIN</span></div>

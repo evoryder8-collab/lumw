@@ -11,6 +11,7 @@ import { getCollection } from 'astro:content';
 import Photo from '../components/Photo.astro';
 import HomeHero from '../components/HomeHero.astro';
 import IntroFilm from '../components/IntroFilm.astro';
+import PhotoAward from '../components/PhotoAward.astro';
 import JuneFeature from '../components/JuneFeature.astro';
 import PhotoGallery from '../components/PhotoGallery.astro';
 import FilmSection from '../components/FilmSection.astro';
@@ -46,44 +47,43 @@ const description =
   'Massage in Buxtehude bei LUMA Wellness – internationale Goldmedaillen-Massagen & ganzheitliche Entspannung in Hauptstraße 19. Jetzt Termin sichern & Wohlbefinden steigern!';
 const path = '/';
 
-// Chapter 3 of the scroll narrative. Same six items and the same verbatim copy
-// as the live page; the presentation becomes a pinned chapter per treatment.
+// Six treatment introductions, editorially reviewed on 18 September 2026.
 const angebote = [
   {
     image: imgAroma,
     alt: 'Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude',
     name: 'LUMA Aroma-Luxus Massage (Klassiker)',
-    text: 'Diese einzigartige Massage kombiniert die bewährten Techniken der klassischen Massage mit den therapeutischen Eigenschaften von Bio-Aromatherapie-Ölen.',
+    text: 'Klassische Massagegriffe mit Bio-Jojoba-Aromaölen. Fließende Bewegungen und feine Düfte begleiten die Behandlung.',
   },
   {
     image: imgGold,
     alt: 'June Saurin bei der goldprämierten Gold-Medalie Massage',
     name: 'LUMA Gold-Medalie Signature Massage',
-    text: 'Eine exklusive Massage, die preisgekrönte Techniken aus internationalen Wettbewerben vereint und durch eine maßgeschneiderte Klanglandschaft ergänzt wird. Die LUMA Gold-Medalie Signature Massage kombiniert Elemente aus verschiedenen Massagestilen, individuell auf Ihre Bedürfnisse abgestimmt, und entführt Sie mit beruhigender Musik und Naturklängen in eine Welt tiefster Entspannung. Ideal für alle, die ein einzigartiges, luxuriöses Wellness-Erlebnis suchen, das Körper und Geist harmonisch in Einklang bringt.',
+    text: 'Junes Signature vereint Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens abgestimmte Klanglandschaft begleitet die Kombination international ausgezeichneter Techniken.',
   },
   {
     image: imgThai,
     alt: 'June Saurin bei einer thailändischen Dehnungstechnik',
     name: 'LUMA THAI-Solution Massage (Nuad-Benja-Phaki)',
-    text: 'Traditionelle thailändische Techniken zur Verbesserung der Beweglichkeit und des Energieflusses. Diese Massageform kombiniert sanfte Dehnungen mit Druckpunkttherapie, um Verspannungen zu lösen und die Flexibilität zu erhöhen.',
+    text: 'Nuad Benja Phaki verbindet thailändische Dehnungen mit gezieltem Druck, ohne Öl. Die Intensität wählen Sie gemeinsam mit June.',
   },
   {
     image: imgPregnancy,
     alt: 'Sanfte Schwangerschaftsmassage für werdende Mütter',
     name: 'LUMA Schwangerschaftsmassage',
-    text: 'Sanfte, sichere Techniken zur Linderung von Schwangerschaftsbeschwerden. Diese speziell entwickelte Massage unterstützt werdende Mütter dabei, Schmerzen zu reduzieren, Stress abzubauen und das allgemeine Wohlbefinden zu steigern.',
+    text: 'Eine sanfte Massage, bei der Ihr Komfort im Mittelpunkt steht. Besprechen Sie Ihre Schwangerschaft und persönlichen Bedürfnisse vorab mit June.',
   },
   {
     image: imgStark,
     alt: 'June Saurin mit Weltmeisterin Nadine Stark Chognon',
     name: 'STARK BALL MASSAGE / Sportmassage',
-    text: 'Speziell für Athleten und körperlich aktive Personen zur Verbesserung der Flexibilität und zur Vorbeugung von Verletzungen. Diese Massage hilft, Muskelverspannungen zu lösen, die Regeneration zu fördern und die Leistungsfähigkeit zu steigern.',
+    text: 'Die von Nadine Stark Chognon entwickelte Methode nutzt spezielle Massagebälle für gezielte Arbeit an einzelnen Muskelgruppen.',
   },
   {
     image: imgFacial,
     alt: 'Gesichts- und Kopfmassage inklusive Gua Sha',
     name: 'Gesichts- und Kopfmassage inkl. Gua Sha',
-    text: 'Verjüngende Massagen, die die Haut straffen, die Durchblutung fördern und für ein erfrischtes Erscheinungsbild sorgen.',
+    text: 'Sanfte Massagegriffe für Gesicht und Kopf, ergänzt durch Gua Sha. Eine Behandlung für alle, die diesen Bereichen besondere Aufmerksamkeit schenken möchten.',
   },
 ];
 
@@ -123,7 +123,7 @@ const schema = graph([
 
 <Layout {title} {description} {path} schema={schema} {ogImage} {preloadImage}>
   <IntroFilm />
-  <HomeHero heading="International ausgezeichnete Massage" lead="LUMA Wellness by June Saurin, Ihre ausgezeichnete Therapeutin. Persönlich für Sie in Buxtehude." />
+  <HomeHero heading="International ausgezeichnete Massage" lead="Thailändische Wurzeln. Internationale Erfahrung. Eine Massage, die June auf Sie abstimmt, in ihrem Studio in Buxtehude." />
 
   <!-- Chapter 2. Credibility strip. -->
   <AwardStrip />
@@ -132,19 +132,14 @@ const schema = graph([
   <section class="section editorial-intro" id="discover">
     <div class="shell shell--mid">
       <h2 class="section__title" data-reveal>
-        Grosse Wirkung, kleiner Körper – erleben Sie LUMA Wellness in Buxtehude
+        Aufmerksam zuhören. Gezielt berühren.
       </h2>
       <div class="prose intro__body" data-fade>
         <p>
-          Trotz meines zierlichen Körpers übertreffe ich sämtliche Erwartungen mit Kraft und
-          Geschicklichkeit. Schon nach einer einzigen Sitzung spüren Sie die Qualität meiner Arbeit
-          und erleben positive Effekte. Mit einer Vielfalt an Techniken und Werkzeugen erschaffe ich
-          ein maßgeschneidertes Massageerlebnis, das Körper und Geist gleichermaßen anspricht.
+          Eine gute Massage beginnt für mich mit einem Gespräch. Was beschäftigt Ihren Körper? Welchen Druck mögen Sie? Aus Ihren Antworten entsteht eine Behandlung, die zu Ihnen passt.
         </p>
         <p>
-          Ich, June Saurin, bringe unermüdliche Entschlossenheit und ein tiefes Herz für
-          ganzheitliche Massagen nach Buxtehude. Diese Passion bescherte mir ein erfülltes Leben
-          voller Erfolge und höchster Kundenzufriedenheit.
+          Bei LUMA Wellness verbinde ich thailändische Massagetraditionen mit Techniken, die ich auf internationalen Wettbewerben vertieft habe. Neun Angebote geben Ihnen die Wahl, von sanfter Aromamassage bis zu gezielter Körperarbeit.
         </p>
         <p class="intro__link">
           <a href={url('/meineangebote-preise')} class="underline-gold">Alle Angebote &amp; Preise</a>
@@ -167,17 +162,11 @@ const schema = graph([
       </figure>
 
       <div class="holistic__copy">
-        <p class="eyebrow" data-fade>Wohlbefinden ist mehr als nur äusserlich</p>
-        <h2 data-reveal>Ganzheitliche Massagen in Buxtehude</h2>
+        <p class="eyebrow" data-fade>Meine Arbeitsweise</p>
+        <h2 data-reveal>Technik mit Feingefühl.</h2>
         <div class="prose" data-fade>
           <p>
-            Wohlbefinden geht über die rein physische Ebene hinaus. Bei LUMA Wellness by June Saurin in
-            Buxtehude ist sie nicht nur mit wissenschaftlicher und medizinischer Expertise verknüpft,
-            sondern kann auch spirituell von innen heraus erwachen. Ein gesunder Geist funktioniert
-            optimal in einem gesunden Körper – genau das fördern meine Massagen: tiefgreifende
-            körperliche Entspannung und geistiges Wohlbefinden. Durch die Kombination traditioneller
-            thailändischer Techniken mit modernen Wellnessansätzen schaffe ich eine harmonische
-            Balance, die Ihnen hilft, Stress abzubauen und Ihre innere Energie wiederzuentdecken.
+            Fließende Bewegungen, Dehnungen oder konzentrierter Druck: Jede Technik hat ihren Platz. Ich stimme Ablauf und Intensität mit Ihnen ab und achte während der Massage darauf, wie Sie sich fühlen. Sie dürfen jederzeit sagen, was angenehm ist und was sich ändern soll.
           </p>
         </div>
       </div>
@@ -188,7 +177,7 @@ const schema = graph([
   <section class="section">
     <div class="shell">
       <h2 class="section__title section__title--center" data-reveal>
-        Meine Massage und Wellnessangebote in Buxtehude
+        Welche Massage passt zu Ihnen?
       </h2>
     </div>
 
@@ -214,7 +203,6 @@ const schema = graph([
               widths={[900, 1400, 1920]}
               sizes="100vw"
               variant="fill"
-              priority={i === 0}
             />
           </figure>
 
@@ -243,12 +231,11 @@ const schema = graph([
       <div class="offers__foot">
         <p>
           <a href={url('/meineangebote-preise')} class="underline-gold">
-            Komplette Liste der Massage-Dienstleistungen hier.
+            Alle neun Massagen mit Preisen ansehen.
           </a>
         </p>
         <p class="offers__cta-text">
-          Kontaktieren Sie mich noch heute, um Ihren Termin zu buchen und die besten Massagen in
-          Buxtehude zu erleben!
+          Sie sind noch unentschlossen? Ich helfe Ihnen gerne bei der Auswahl.
         </p>
         <a href={url('/contact')} class="pill sheen" data-magnetic>
           <span data-magnetic-label>Buchen Sie eine Massage</span>
@@ -261,6 +248,7 @@ const schema = graph([
   <PhotoGallery />
   <FilmSection />
   <GoogleReviews />
+  <PhotoAward />
 
   <!-- Chapter 6. Hours and location. -->
   <section class="section hours" data-sunbeam>
@@ -308,7 +296,7 @@ const schema = graph([
 
     <div class="shell shell--narrow close__inner">
       <p class="eyebrow" data-fade>LUMA Wellness by June Saurin</p>
-      <h2 class="close__title" data-reveal>Beste Massage in Buxtehude</h2>
+      <h2 class="close__title" data-reveal>Wir finden Ihre passende Massage.</h2>
       <p class="lede close__lede" data-fade>Termine nur nach vorheriger Absprache.</p>
       <a href={url('/contact')} class="pill sheen halo" data-magnetic>
         <span data-magnetic-label>Buchen Sie eine Massage</span>

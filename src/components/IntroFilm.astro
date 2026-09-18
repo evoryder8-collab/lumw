@@ -5,14 +5,15 @@ import { url } from '../lib/site';
 import posterSource from '../assets/film-intro.webp';
 const { locale = 'de', bio = false } = Astro.props as { locale?: Locale; bio?: boolean };
 const words = {
-  de: ['Dürfen wir den Ton einschalten?', 'Ja - Empfohlen', 'Nein', 'Willkommen bei LUMA', 'Intro abspielen', 'Ton einschalten', 'Ton ausschalten', 'Der Film · 00:35'],
-  en: ['Would you like sound on this website?', 'Yes - Recommended', 'No', 'Welcome to LUMA', 'Play the introduction', 'Turn sound on', 'Turn sound off', 'The film · 00:35'],
-  es: ['¿Quieres activar el sonido?', 'Sí - Recomendado', 'No', 'Bienvenido a LUMA', 'Reproducir la presentación', 'Activar sonido', 'Silenciar', 'La película · 00:35'],
-  pt: ['Gostaria de ativar o som?', 'Sim - Recomendado', 'Não', 'Bem-vindo à LUMA', 'Reproduzir a apresentação', 'Ativar som', 'Desativar som', 'O filme · 00:35'],
-  it: ['Vuoi attivare l’audio?', 'Sì - Consigliato', 'No', 'Benvenuto da LUMA', 'Riproduci la presentazione', 'Attiva audio', 'Disattiva audio', 'Il film · 00:35'],
-  th: ['ต้องการเปิดเสียงบนเว็บไซต์ไหมคะ?', 'เปิดเสียง - แนะนำ', 'ไม่เปิดเสียง', 'ยินดีต้อนรับสู่ LUMA', 'เล่นวิดีโอแนะนำ', 'เปิดเสียง', 'ปิดเสียง', 'วิดีโอ · 00:35'],
+  de: ['Dürfen wir den Ton einschalten?', 'Ja - Empfohlen', 'Nein', 'Willkommen bei LUMA', 'Intro abspielen', 'Ton einschalten', 'Ton ausschalten'],
+  en: ['Would you like sound on this website?', 'Yes - Recommended', 'No', 'Welcome to LUMA', 'Play the introduction', 'Turn sound on', 'Turn sound off'],
+  es: ['¿Quieres activar el sonido?', 'Sí - Recomendado', 'No', 'Bienvenido a LUMA', 'Reproducir la presentación', 'Activar sonido', 'Silenciar'],
+  pt: ['Gostaria de ativar o som?', 'Sim - Recomendado', 'Não', 'Bem-vindo à LUMA', 'Reproduzir a apresentação', 'Ativar som', 'Desativar som'],
+  it: ['Vuoi attivare l’audio?', 'Sì - Consigliato', 'No', 'Benvenuto da LUMA', 'Riproduci la presentazione', 'Attiva audio', 'Disattiva audio'],
+  th: ['ต้องการเปิดเสียงบนเว็บไซต์ไหมคะ?', 'เปิดเสียง - แนะนำ', 'ไม่เปิดเสียง', 'ยินดีต้อนรับสู่ LUMA', 'เล่นวิดีโอแนะนำ', 'เปิดเสียง', 'ปิดเสียง'],
 }[locale];
-const poster = await getImage({src: posterSource, width: 1440, format: 'webp', quality: 82});
+// The delivery poster is independent of the unchanged 1080p film.
+const poster = await getImage({src: posterSource, width: 1280, format: 'webp', quality: 72});
 const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Reproducir con sonido', pt: 'Reproduzir com som', it: 'Riproduci con audio', th: 'เล่นพร้อมเสียง' }[locale];
 ---
 <section class="intro-film" aria-label={words[3]}>
@@ -30,7 +31,7 @@ const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Rep
         <span data-intro-sound-label>{words[5]}</span>
       </button>
     </div>
-    <div class="intro-film__caption"><span>LUMA WELLNESS</span><span>{words[7]}</span><span>JUNE SAURIN</span></div>
+    <div class="intro-film__caption"><span>LUMA WELLNESS</span><span>JUNE SAURIN</span></div>
   </div>
 </section>
 {!bio && <dialog class="sound-dialog" data-sound-dialog aria-labelledby="sound-question">

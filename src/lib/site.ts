@@ -6,10 +6,8 @@
  * one Maps position, so nothing here gets "tidied" without checking the profile
  * first.
  *
- * The live site spells the street three ways across pages (Hauptstraße,
- * Hauptstrasse, and with or without the trailing comma). Visible page copy stays
- * verbatim per the migration rule; structured data uses the one correct form
- * below so Google sees a single consistent NAP.
+ * The former site spelled the street three ways. Use this verified form for
+ * editorial copy and structured data; the legal archive remains untouched.
  */
 
 export const SITE_URL = 'https://www.luma-wellness.com';
@@ -66,48 +64,9 @@ export const OPENING_HOURS = [
  * and almost none mark it up. This is the single strongest E-E-A-T signal on the
  * site, so it goes in Person.award and gets rendered as text as well.
  */
-export const AWARDS = [
-  {
-    award: 'Goldmedaille, Universal Massage Championship 2023, Kategorie Wellness & Spa',
-    short: 'Gold, Wellness & Spa',
-    metal: 'gold' as const,
-    event: 'Universal Massage Championship 2023',
-    place: 'Penzberg, Deutschland',
-    year: '2023',
-  },
-  {
-    award: 'Silbermedaille, Universal Massage Championship 2023, Kategorie Freestyle Eastern',
-    short: 'Silber, Freestyle Eastern',
-    metal: 'silver' as const,
-    event: 'Universal Massage Championship 2023',
-    place: 'Penzberg, Deutschland',
-    year: '2023',
-  },
-  {
-    award: '3. Platz, Champ of the Champs Award, Universal Massage Championship 2023',
-    short: '3. Platz, Champ of Champs',
-    metal: 'bronze' as const,
-    event: 'Universal Massage Championship 2023',
-    place: 'Penzberg, Deutschland',
-    year: '2023',
-  },
-  {
-    award: 'Silbermedaille, Schweizer Massage-Meisterschaft Zürich 2023, Kategorie Wellness',
-    short: 'Silber, Zürich',
-    metal: 'silver' as const,
-    event: 'Schweizer Massage-Meisterschaft',
-    place: 'Zürich, Schweiz',
-    year: '2023',
-  },
-  {
-    award: 'Silbermedaille, Intercontinental Massage Championship Athen 2023',
-    short: 'Silber, Athen',
-    metal: 'silver' as const,
-    event: 'Intercontinental Massage Championship',
-    place: 'Athen, Griechenland',
-    year: '2023',
-  },
-] as const;
+export { awardsFor } from './awards';
+import { awardsFor } from './awards';
+export const AWARDS = awardsFor('de');
 
 /**
  * WhatsApp deep links, with the message already typed.
@@ -141,7 +100,7 @@ export function whatsappForService(name: string, durationMin?: number): string {
  *  in this release. */
 export const NAV = [
   { label: 'MEINE ANGEBOTE & PREISE', href: '/meineangebote-preise' },
-  { label: 'UBER MICH', href: '/about' },
+  { label: 'ÜBER JUNE', href: '/about' },
   { label: 'FAQ', href: '/massage-buxtehude-faq' },
   { label: 'KONTAKT', href: '/contact' },
 ] as const;

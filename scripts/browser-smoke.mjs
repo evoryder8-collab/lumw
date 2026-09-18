@@ -40,16 +40,26 @@ try {
   await page.locator('[data-language-pick][lang="en"]').click();
   await page.waitForURL(preview.url('/en'));
   await page.waitForFunction(() => document.querySelector('[data-sound-dialog]').open);
+  assert.equal(await page.locator('[data-language-dialog]').evaluate((d) => d.open), true, 'Language portal disappeared behind sound choice');
+  assert.equal(await page.locator('[data-welcome-curtain]').evaluate((d) => d.open), false, 'Curtains started before the sound choice');
+  assert.equal(mediaRequests.length, 0, 'Video downloaded before sound choice');
   assert.equal(await page.locator('[data-sound-dialog] button').count(), 2);
+  assert.ok((await page.locator('[data-sound-dialog]').boundingBox()).width <= 540);
   await page.screenshot({ path: path.join(artifacts, 'sound-question.png') });
   await page.locator('[data-sound-yes]').click();
+  await page.locator('[data-welcome-curtain].is-opening').waitFor({ state: 'visible' });
+  assert.equal(await page.locator('[data-sound-dialog]').evaluate((d) => d.open), false);
+  assert.equal(await page.locator('[data-language-dialog]').evaluate((d) => d.open), false);
+  await page.screenshot({ path: path.join(artifacts, 'floral-curtain.png') });
   await page.waitForFunction(() => { const v = document.querySelector('[data-intro-film]'); return !v.paused && !v.muted && v.currentTime > 0.1; });
+  await page.waitForFunction(() => !document.querySelector('[data-welcome-curtain]').open);
+  assert.equal(await page.locator('body').evaluate((b) => b.style.overflow), '');
   await page.screenshot({ path: path.join(artifacts, 'intro-playing.png') });
   const oldVideo = await page.locator('[data-intro-film]').elementHandle();
   await page.locator('.nav__link').first().click();
   await page.waitForURL(preview.url('/en/treatments-prices'));
   assert.equal(await oldVideo.evaluate((v) => v.paused), true, 'Navigation left audio playing');
-  report.push('Language, sound permission, actual audible playback, and navigation cleanup');
+  report.push('Language confirmation, sound popup over the portal, then curtain reveal with actual audible playback and navigation cleanup');
 
   // Watch actual number changes, then prove the final price and single glow.
   await page.goto(preview.url('/meineangebote-preise'));
@@ -88,6 +98,41 @@ try {
   await page.locator('[name="firstName"]').fill('Changed name');
   assert.equal(await page.locator('[data-enquiry-result]').isVisible(), false);
   report.push('Treatment choice, native form validation, safely encoded WhatsApp/email handoff; no message sent');
+
+  for (const [locale, route] of [['en', '/en/treatments-prices'], ['es', '/es/tratamientos-precios'], ['pt', '/pt/tratamentos-precos'], ['it', '/it/trattamenti-prezzi'], ['th', '/th/บริการและราคา']]) {
+    const copy = JSON.parse(fs.readFileSync(`src/i18n/${locale}.json`, 'utf8'));
+    await page.goto(preview.url(encodeURI(route)));
+    assert.equal(await page.locator('.treatment-dialog').count(), 9);
+    assert.equal(await page.locator('.localized-original').count(), 0);
+    const more = page.locator('.treatment-details__trigger').first();
+    assert.equal((await more.innerText()).trim(), copy.ui.details);
+    await more.click();
+    const detail = page.locator('.treatment-dialog[open]');
+    assert.equal(await detail.locator('h2').innerText(), copy.treatments['aroma-luxus'].name);
+    assert.equal(await detail.locator('.treatment-details__copy p').first().innerText(), copy.treatments['aroma-luxus'].details[0]);
+    assert.equal(new URL(page.url()).pathname, encodeURI(route));
+    const rect = await detail.boundingBox();
+    const close = await detail.locator('[data-treatment-close]').boundingBox();
+    assert.ok(close.x < rect.x + 40 && close.y < rect.y + 40, 'Details close button is not at the upper left');
+    if (locale === 'en') {
+      await page.screenshot({ path: path.join(artifacts, 'treatment-details.png') });
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+      assert.deepEqual(audit.violations.map((v) => v.id), []);
+    }
+    await page.keyboard.press('Escape');
+    assert.equal(await more.evaluate((el) => document.activeElement === el), true);
+    await page.keyboard.press('Enter');
+    await detail.locator('[data-treatment-close]').click();
+    assert.equal(await more.evaluate((el) => document.activeElement === el), true);
+    assert.equal(await page.locator('body').evaluate((b) => b.style.overflow), '');
+  }
+  await page.goto(preview.url('/en/treatments-prices'));
+  await page.locator('#gold-medalie .treatment-details__trigger').click();
+  await page.locator('.treatment-dialog[open] .pill').click();
+  await page.waitForURL(/en\/contact\?treatment=gold-medalie/);
+  assert.equal(await page.locator('select[name="treatment"]').inputValue(), 'gold-medalie');
+  assert.equal(await page.locator('body').evaluate((b) => b.style.overflow), '');
+  report.push('Nine localized treatment dialogs in all five translations, upper-left close, keyboard focus, accessible content and booking handoff');
 
   await page.goto(preview.url());
   assert.equal(await page.locator('[data-gallery-open]').count(), 8);
@@ -160,6 +205,22 @@ try {
   await page.locator('[data-enquiry]').waitFor({ state: 'visible' });
   report.push('Cancelled native page animation still completes navigation without an unhandled rejection');
   await context.close();
+
+  const silentContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const silentPage = await silentContext.newPage(); track(silentPage);
+  await silentPage.goto(preview.url('/en'));
+  await silentPage.locator('[data-language-pick][lang="en"]').click();
+  await silentPage.locator('[data-sound-dialog]').waitFor({ state: 'visible' });
+  assert.equal(await silentPage.locator('[data-language-dialog]').evaluate((d) => d.open), true);
+  await noOverflow(silentPage, 'Sound popup on a 390px portal');
+  await silentPage.screenshot({ path: path.join(artifacts, 'sound-question-mobile.png') });
+  await silentPage.locator('[data-sound-no]').click();
+  await silentPage.locator('[data-welcome-curtain].is-opening').waitFor({ state: 'visible' });
+  await silentPage.waitForFunction(() => { const v = document.querySelector('[data-intro-film]'); return !v.paused && v.muted; });
+  await silentPage.waitForFunction(() => !document.querySelector('[data-welcome-curtain]').open);
+  assert.equal(await silentPage.locator('body').evaluate((b) => b.style.overflow), '');
+  await silentContext.close();
+  report.push('Same-language confirmation and No preserve the portal-to-curtain order with muted playback on mobile');
 
   const axeResults = [];
   for (const width of [360, 390, 768, 1440]) {
@@ -236,6 +297,7 @@ try {
   reducedPage.on('request', (r) => { if (/\/motion\..*\.js/.test(r.url())) motionRequests.push(r.url()); });
   await reducedPage.goto(preview.url());
   await reducedPage.locator('[data-language-pick][lang="de"]').click();
+  assert.equal(await reducedPage.locator('[data-welcome-curtain]').evaluate((d) => d.open), false);
   await reducedPage.locator('[data-sound-no]').click();
   assert.equal(await reducedPage.locator('[data-intro-film]').evaluate((v) => v.paused && v.muted), true);
   await reducedPage.locator('[data-reviews-track]').scrollIntoViewIfNeeded();
@@ -244,6 +306,8 @@ try {
   await reducedPage.locator('[data-gallery-track]').scrollIntoViewIfNeeded();
   assert.equal(await reducedPage.locator('[data-gallery-track]').getAttribute('data-nudge'), null);
   assert.equal(await reducedPage.locator('[data-gallery-track]').evaluate((track) => track.scrollLeft), 0);
+  assert.equal(await reducedPage.locator('.lotus-fall').count(), 0);
+  assert.equal(await reducedPage.locator('[data-lotus-scatter]').isVisible(), false);
   await reducedPage.goto(preview.url('/meineangebote-preise'));
   await reducedPage.locator('[data-price-counter]').first().scrollIntoViewIfNeeded();
   assert.equal(await reducedPage.locator('.is-price-complete').count(), 0);
@@ -260,6 +324,10 @@ try {
   assert.equal(await staticPage.locator('.nav').isVisible(), true);
   await staticPage.goto(preview.url('/contact'));
   assert.equal(await staticPage.locator('noscript a').count(), 4);
+  await staticPage.goto(preview.url('/en/treatments-prices'));
+  await staticPage.locator('.treatment-details__trigger').first().click();
+  assert.equal(await staticPage.locator('[data-treatment-panel]').first().isVisible(), true);
+  assert.match(await staticPage.locator('[data-treatment-panel]').first().innerText(), /jojoba/);
   await staticPage.goto(preview.url('/linkinbio'));
   assert.equal(await staticPage.locator('.loc noscript a').count(), 2);
   assert.equal(await staticPage.locator('[data-bio-action]').count(), 8);
@@ -335,6 +403,11 @@ try {
   assert.equal(await invitation.locator('[data-june-invitation]').isVisible(), false, 'Greeting covered the welcome choices');
   await invitation.locator('[data-language-pick][lang="de"]').click();
   await invitation.locator('[data-sound-no]').click();
+  if (motion === 'no-preference') {
+    assert.equal(await invitation.locator('[data-june-invitation]').isVisible(), false);
+    await invitation.clock.fastForward(2200);
+  }
+  await invitation.waitForFunction(() => document.documentElement.dataset.welcomeComplete === 'true');
   await invitation.clock.fastForward(19_000);
   assert.equal(await invitation.locator('[data-june-invitation]').isVisible(), false, 'Greeting appeared too early');
   await invitation.clock.fastForward(1100);
@@ -355,6 +428,62 @@ try {
   await invitationContext.close();
   }
   report.push('June greeting waits for welcome plus 20 seconds, offers booking without taking focus, and stays dismissed for the session');
+
+  // Permission outcomes are simulated; physical accelerometer behavior still
+  // needs a real device. Clicks, animation state and lifecycle run in-browser.
+  for (const permission of ['granted', 'denied', 'unavailable']) {
+    const petalsContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await petalsContext.addInitScript(savedWelcome);
+    await petalsContext.addInitScript((permission) => {
+      window.motionPermissionCalls = 0;
+      if (permission === 'unavailable') Object.defineProperty(window, 'DeviceMotionEvent', { value: undefined, configurable: true });
+      else Object.defineProperty(window.DeviceMotionEvent, 'requestPermission', { configurable: true, value: () => { window.motionPermissionCalls++; return Promise.resolve(permission); } });
+      window.petalFrames = 0;
+      const clear = CanvasRenderingContext2D.prototype.clearRect;
+      CanvasRenderingContext2D.prototype.clearRect = function(...args) { if (this.canvas.classList.contains('lotus-fall')) window.petalFrames++; return clear.apply(this, args); };
+    }, permission);
+    const petalsPage = await petalsContext.newPage(); track(petalsPage);
+    await petalsPage.goto(preview.url('/en'));
+    await petalsPage.locator('[data-lotus-garden]').scrollIntoViewIfNeeded();
+    await petalsPage.locator('[data-lotus-scatter]').waitFor({ state: 'visible' });
+    assert.equal(await petalsPage.evaluate(() => window.motionPermissionCalls), 0, 'Motion permission was requested without a tap');
+    await petalsPage.waitForFunction(() => window.petalFrames > 5);
+    // The control floats with its portrait, so tap its current on-screen centre.
+    const target = await petalsPage.locator('[data-lotus-scatter]').boundingBox();
+    await petalsPage.mouse.click(target.x + target.width / 2, target.y + target.height / 2);
+    await petalsPage.waitForFunction(() => document.querySelector('[data-lotus-garden]').dataset.petalState === 'scattering');
+    assert.equal(await petalsPage.evaluate(() => window.motionPermissionCalls), permission === 'unavailable' ? 0 : 1);
+    await petalsPage.waitForFunction(() => document.querySelector('[data-lotus-garden]').dataset.petalState === 'falling');
+    await petalsPage.evaluate(async () => {
+      const impulse = (x) => { const event = new Event('devicemotion'); Object.defineProperty(event, 'acceleration', { value: { x, y: 0, z: 0 } }); window.dispatchEvent(event); };
+      impulse(18); await new Promise((r) => setTimeout(r, 100)); impulse(-19);
+    });
+    assert.equal(await petalsPage.locator('[data-lotus-garden]').getAttribute('data-petal-state'), permission === 'granted' ? 'scattering' : 'falling');
+    if (permission === 'granted') {
+      await petalsPage.locator('.footer').scrollIntoViewIfNeeded();
+      await petalsPage.waitForTimeout(250);
+      const pausedAt = await petalsPage.evaluate(() => window.petalFrames);
+      await petalsPage.waitForTimeout(250);
+      assert.equal(await petalsPage.evaluate(() => window.petalFrames), pausedAt, 'Offscreen petals kept drawing');
+      await petalsPage.locator('[data-lotus-garden]').scrollIntoViewIfNeeded();
+      await petalsPage.waitForFunction((count) => window.petalFrames > count, pausedAt);
+      await petalsPage.emulateMedia({ reducedMotion: 'reduce' });
+      assert.equal(await petalsPage.locator('[data-lotus-scatter]').isVisible(), false);
+      await petalsPage.emulateMedia({ reducedMotion: 'no-preference' });
+      const oldCanvas = await petalsPage.locator('.lotus-fall').elementHandle();
+      await petalsPage.locator('.winner-caption').click();
+      await petalsPage.waitForURL(preview.url('/en/about'));
+      assert.equal(await oldCanvas.evaluate((el) => el.isConnected), false, 'Petal canvas survived navigation');
+      assert.equal(await petalsPage.locator('[data-award]').count(), 6);
+      await petalsPage.locator('.photo-award__image').scrollIntoViewIfNeeded();
+      await petalsPage.waitForFunction(() => { const img = document.querySelector('.photo-award__image img'); return img.complete && img.naturalWidth > 0; });
+      const ratio = await petalsPage.locator('.photo-award__image img').evaluate((img) => img.clientWidth / img.clientHeight);
+      assert.ok(Math.abs(ratio - 3579 / 2008) < .02, 'Award photograph is cropped');
+      await petalsPage.screenshot({ path: path.join(artifacts, 'winning-photograph.png') });
+    }
+    await petalsContext.close();
+  }
+  report.push('Petals: tap scatter, restart, simulated granted/denied/unavailable motion, offscreen pause, reduced-motion change and navigation teardown; six awards and uncropped winning photo');
   assert.deepEqual([...new Set(failures)], [], 'Browser errors');
   fs.writeFileSync(path.join(artifacts, 'summary.json'), JSON.stringify({ base: preview.base, checks: report }, null, 2));
   report.forEach((line) => console.log(`✓ ${line}`));

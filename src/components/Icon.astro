@@ -1,8 +1,9 @@
 ---
-interface Props { name?: 'arrow' | 'spark' | 'pin' | 'close' | 'globe' | 'phone' | 'mail' | 'instagram' | 'facebook' | 'contact' | 'chat' | 'whatsapp'; size?: number; }
+interface Props { name?: 'arrow' | 'plus' | 'spark' | 'pin' | 'close' | 'globe' | 'phone' | 'mail' | 'instagram' | 'facebook' | 'contact' | 'chat' | 'whatsapp'; size?: number; }
 const { name = 'arrow', size = 24 } = Astro.props;
 const paths = {
   arrow: 'M4 12h15M13 5l7 7-7 7',
+  plus: 'M12 5v14M5 12h14',
   spark: 'M12 2c0 6-4 10-10 10 6 0 10 4 10 10 0-6 4-10 10-10-6 0-10-4-10-10Z',
   pin: 'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0ZM14.5 10a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z',
   close: 'm6 6 12 12M18 6 6 18',

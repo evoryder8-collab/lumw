@@ -1,0 +1,21 @@
+---
+import Medal from './Medal.astro';
+import { awardsFor } from '../lib/awards';
+import type { Locale } from '../i18n/locales';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+---
+<ol class="award-record">
+  {awardsFor(locale).map((award) => <li data-award={award.id}>
+    <Medal metal={award.metal} size={64} />
+    <div><h3>{award.event}</h3><p class="award-record__result">{award.placement} · {award.category}</p><p class="award-record__place">{award.place} · {award.year}</p>{award.note && <p class="award-record__note">{award.note}</p>}</div>
+  </li>)}
+</ol>
+<style>
+  .award-record { list-style: none; margin: 0; padding: 0; }
+  .award-record li { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 1.25rem; padding: 1.6rem 0; border-bottom: 1px solid #b9ad8b66; }
+  .award-record h3 { font-family: var(--font-body); font-weight: 450; font-size: clamp(1.1rem, 1.8vw, 1.5rem); line-height: 1.3; }
+  .award-record p { margin: 0.45rem 0 0; }
+  .award-record__result { color: var(--gold-text); font-size: 1rem; line-height: 1.5; }
+  .award-record__place, .award-record__note { font-size: 0.85rem; line-height: 1.55; color: var(--ink-soft); }
+  @media (max-width: 480px) { .award-record li { grid-template-columns: 50px 1fr; gap: 0.8rem; } .award-record :global(.medal) { width: 50px; height: 50px; } }
+</style>

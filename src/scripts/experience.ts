@@ -6,6 +6,7 @@ import { mountScrollHint } from './scroll-hint';
 import { mountBio } from './bio';
 import { mountLocation } from './location';
 import { mountInvitation } from './invitation';
+import { mountTreatmentDetails } from './treatment-details';
 let activeBody: HTMLElement | undefined;
 let cleanup: (() => void) | undefined;
 
@@ -18,6 +19,7 @@ function bootExperience() {
   const observers: IntersectionObserver[] = [];
   const disposeWelcome = mountWelcome(signal);
   const disposePrices = mountPrices();
+  const disposeTreatmentDetails = mountTreatmentDetails(signal);
   mountReviews(signal);
   document.querySelectorAll<HTMLElement>('[data-gallery-track], [data-film-track]').forEach((track) => mountScrollHint(track, signal));
   mountBio(signal);
@@ -130,7 +132,7 @@ function bootExperience() {
     });
   }
   // Ambient movement pauses on phones too, and while the tab is in the background.
-  const ambient = document.querySelectorAll<HTMLElement>('.hero-winner, .winner-caption, .way, .strip, .loc');
+  const ambient = document.querySelectorAll<HTMLElement>('.hero-winner, .winner-caption, .way, .strip, .loc, .brand-symbol');
   const ambientObserver = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => target.classList.toggle('is-offscreen', !isIntersecting)));
   ambient.forEach((el) => ambientObserver.observe(el)); observers.push(ambientObserver);
   const syncAmbient = () => document.body.toggleAttribute('data-ambient-sleep', document.hidden);
@@ -139,6 +141,7 @@ function bootExperience() {
   cleanup = () => {
     disposeWelcome();
     disposePrices();
+    disposeTreatmentDetails();
     activeBody = undefined;
     if (gallery?.open) { gallery.close(); document.body.style.overflow = galleryOverflow; }
     controller.abort(); observers.forEach((o) => o.disconnect());

@@ -1,7 +1,7 @@
 ---
 /**
- * UBER MICH. Title, description and H1 copied exactly from the live page,
- * including the missing umlaut in "UBER MICH" (inconsistency 7, fixed later).
+ * Owner-approved editorial revision, 18 September 2026.
+ * Original title and description retained for continuity after migration.
  *
  * This is the E-E-A-T page. The award record is rendered as text and marked up
  * in Person.award, and the competition photographs are the evidence.
@@ -9,11 +9,12 @@
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
-import Medal from '../components/Medal.astro';
+import AwardRecord from '../components/AwardRecord.astro';
+import PhotoAward from '../components/PhotoAward.astro';
 import FilmSection from '../components/FilmSection.astro';
 import PenzbergPhoto from '../components/PenzbergPhoto.astro';
 import { heroPreload } from '../lib/heroPreload';
-import { AWARDS, url } from '../lib/site';
+import { url } from '../lib/site';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
 } from '../lib/schema';
@@ -58,11 +59,10 @@ const schema = graph([
   <section class="hero">
     <div class="shell hero__inner">
       <div>
-        <p class="eyebrow">Weltweit ausgezeichnete Massage</p>
-        <h1 data-reveal>UBER MICH</h1>
+        <p class="eyebrow">June Saurin · Gründerin von LUMA</p>
+        <h1 data-reveal>Über June</h1>
         <p class="lede hero__lede" data-fade>
-          June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
-          therapeutischer Erfahrung.
+          In Thailand verwurzelt, auf internationalen Bühnen ausgezeichnet und in Buxtehude für Sie da.
         </p>
       </div>
 
@@ -83,20 +83,10 @@ const schema = graph([
     <div class="shell shell--mid">
       <div class="prose story" data-fade>
         <p>
-          June Saurin ist eine international ausgezeichnete Massage-Expertin mit langjähriger
-          therapeutischer Erfahrung. Ursprünglich in Thailand geboren und heute in Deutschland
-          ansässig, wuchs sie in unmittelbarer Nähe von Elite-Massagetherapeuten auf – der
-          Grundstein für ihre herausragende Karriere in der Wellness-Branche war damit gelegt.
+          June wurde in Thailand geboren und wuchs in der Nähe erfahrener Massagefachkräfte auf. Die Aufmerksamkeit für Berührung und Bewegung begleitet sie seit dieser Zeit und prägt bis heute ihre Arbeit.
         </p>
         <p>
-          Im Jahr 2023 demonstrierte June Saurin ihr Können erstmals auf internationaler Ebene: Bei
-          der Schweizer Massage-Meisterschaft in Zürich (12. März 2023) gewann sie eine
-          Silbermedaille in der Kategorie Wellness und setzte sich gegen einige der besten
-          Therapeuten weltweit durch. Weniger als einen Monat später sicherte sie sich bei der
-          Intercontinental Massage Championship 2023 in Athen eine weitere Silbermedaille. Darüber
-          hinaus nahm sie an einem einzigartigen 1-vs-1 Massage Battle (M1 Massage Gala/Damen
-          Division) teil, schaffte es ins Finale und verließ den Wettbewerb mit Dankbarkeit und
-          Stolz.
+          2023 gewann June Silber in Freestyle Eastern bei der Schweizer Massage-Meisterschaft in Zürich und Silber in Wellness &amp; Spa beim Wettbewerb der World Massage Federation in Athen. Im selben Jahr erreichte sie das Finale der Damen-Division des M1 Massage Gala Battles.
         </p>
       </div>
     </div>
@@ -107,18 +97,8 @@ const schema = graph([
     <div class="shell">
       <div class="record">
         <div class="record__list">
-          <p class="eyebrow">Die Bilanz 2023</p>
-          <ol>
-            {
-              AWARDS.map((a) => (
-                <li class="record__item float">
-                  <Medal metal={a.metal} size={38} label={a.award} />
-                  <span class="record__award">{a.short}</span>
-                  <span class="record__meta">{a.event} · {a.place}</span>
-                </li>
-              ))
-            }
-          </ol>
+          <h2 class="eyebrow">Auszeichnungen · 2023 bis 2026</h2>
+          <AwardRecord />
         </div>
 
         <figure class="record__figure float float--slow" data-drift>
@@ -138,13 +118,7 @@ const schema = graph([
     <div class="shell shell--mid">
       <div class="prose story" data-fade>
         <p>
-          Im September 2023 trat June bei der Universal Massage Championship in Penzberg,
-          Deutschland an, um ihre Fähigkeiten in den Kategorien Wellness &amp; Spa sowie Freestyle
-          Eastern erneut unter Beweis zu stellen. Hier gelang ihr der Durchbruch: Sie gewann ihre
-          erste Goldmedaille in der Kategorie Wellness &amp; Spa, eine Silbermedaille in Freestyle
-          Eastern und wurde mit dem 3. Platz beim prestigeträchtigen "Champ of the Champs Award"
-          ausgezeichnet. Somit verließ sie zum ersten Mal einen internationalen Wettbewerb mit mehr
-          als einer Medaille und bewies erneut ihr Elite-Niveau.
+          Drei Medaillen in Penzberg: Bei der Universal Massage Championship 2023 gewann June Gold in Wellness &amp; Spa und Silber in Freestyle Eastern. Im Champ of the Champs, der Gesamtwertung gegen die Champions der anderen Massagekategorien, erreichte sie den dritten Platz. Das Gruppenfoto zeigt sie bei der gemeinsamen Feier auf der Bühne.
         </p>
       </div>
     </div>
@@ -193,49 +167,27 @@ const schema = graph([
   <section class="section--tight">
     <div class="shell shell--mid">
       <div class="prose story" data-fade>
-        <p>
-          Die Kunden von LUMA Wellness by June Saurin sind von ihrem Talent regelrecht fasziniert.
-          Bereits nach einer einzigen Sitzung sind viele überzeugt, weitere Termine zu buchen – ein
-          klares Zeichen für ihre herausragende Massagekompetenz.
-        </p>
-        <p>
-          Gönnen Sie sich Selbstfürsorge auf höchstem Niveau: Bei LUMA WELLNESS by June Saurin in
-          Buxtehude bieten wir erstklassige Massagetherapie, um Ihr körperliches und seelisches
-          Wohlbefinden zu fördern und Ihre innere Balance zu stärken. Mit international anerkannten
-          Techniken, Leidenschaft für ganzheitliches Wohlbefinden und einem unvergleichlichen Feingefühl
-          setzt sich June Saurin dafür ein, Ihnen genau jene wohltuende Note zu geben, die Sie
-          brauchen, um sich rundum wohlzufühlen und Ihr Bestes zu geben.
-        </p>
-        <p>
-          Erleben Sie den Unterschied und lassen Sie sich von weltweit prämierten Massagetechniken
-          in Buxtehude inspirieren. Buchen Sie noch heute Ihren Termin und entdecken Sie, was eine
-          international ausgezeichnete Therapeutin für Ihr Wohlbefinden leisten kann.
-        </p>
+        <h2>Was davon im Studio ankommt.</h2>
+        <p>Wettbewerbe geben June Raum, Techniken zu verfeinern und sich mit anderen Massagefachkräften auszutauschen. Im Studio gilt ihre Aufmerksamkeit ganz der Person auf der Liege: ihren Wünschen, dem passenden Druck und einem stimmigen Ablauf.</p>
+        <p>Ob Sie bereits eine bestimmte Massage im Sinn haben oder eine Empfehlung wünschen, June berät Sie persönlich.</p>
       </div>
 
       <p class="story__cta">
         <a href={url('/contact')} class="pill sheen halo" data-magnetic>
-          <span data-magnetic-label>Massage Buchen</span>
+          <span data-magnetic-label>Termin anfragen</span>
         </a>
       </p>
     </div>
   </section>
 
+  <PhotoAward />
   <FilmSection featured />
 
-  <!-- Testimonial in air. One quote alone on the pale wash. -->
-  <section class="section testimonial" data-sunbeam>
-    <div class="shell shell--narrow">
-      <p class="eyebrow testimonial__label">Empfehlungsschreiben</p>
-      <blockquote class="testimonial__quote" data-reveal>
-        <p>
-          "Unglaubliche Therapeutin, ich konnte immer sagen, wenn jemand wirklich sein Bestes gibt
-          oder nicht für ihre Arbeit. Sie gab ihr Bestes jedes Mal, lassen Sie sich nicht von ihrer
-          Größe täuschen, sie packt eine Menge Schlag und sie zugeschnitten den Druck nach meiner
-          Toleranz, absolut empfehlen"
-        </p>
-        <footer class="testimonial__cite">Luka - Buxtehude</footer>
-      </blockquote>
+  <section class="section close">
+    <div class="shell shell--narrow close__inner">
+      <h2 class="close__title" data-reveal>Lernen wir uns persönlich kennen.</h2>
+      <p class="lede">Erzählen Sie June, was Sie sich von Ihrer Massage wünschen.</p>
+      <a href={url('/contact')} class="pill sheen">Termin anfragen</a>
     </div>
   </section>
 </Layout>

@@ -1,6 +1,6 @@
 ---
 /**
- * MEINE ANGEBOTE & PREISE. Nine treatment sections, verbatim, with the live
+ * MEINE ANGEBOTE & PREISE. Nine reviewed treatment sections, with the original
  * price lines exactly as written. Prices here disagree with Wix Bookings for
  * Thai, and Stark Ball has a section with nothing bookable while Schroepfkopf
  * is bookable with no section. Both are known inconsistencies and neither is
@@ -58,15 +58,14 @@ const TREATMENT_TO_FAMILY: Record<string, string> = {
 };
 
 /**
- * The italic lead on each card is the treatment's live Wix Bookings tagline,
- * not new copy. Stark Ball has no bookable service and therefore no tagline, so
- * it uses the opening clause of its own section instead.
+ * Cards share the reviewed service-family taglines. Stark Ball has no original
+ * booking entry and uses its own concise introduction.
  */
 const leadFor = (id: string): string => {
   const family = TREATMENT_TO_FAMILY[id];
   const svc = family ? services.find((s) => s.data.family === family) : undefined;
   if (svc) return svc.data.tagline;
-  return 'Eine geschützte Methode der Weltmeisterin Nadine Stark Chognon.';
+  return 'Gezielte Körperarbeit mit speziellen Massagebällen.';
 };
 
 const cardTarget = (id: string) => {
