@@ -110,6 +110,36 @@ try {
           assert.equal(await video.evaluate(v => v.controls), false);
         } finally { await c.close(); }
       });
+      await check(`${engine.name()}: repeated playing events cannot conceal a frozen first frame`, async () => {
+        const c = await context();
+        try {
+          await c.addInitScript(() => {
+            const load = HTMLMediaElement.prototype.load;
+            let frozen, timer;
+            window.__frozenLoads = 0;
+            HTMLMediaElement.prototype.load = function () {
+              if (this.matches('[data-device-video]') && (!frozen || frozen === this)) {
+                window.__frozenLoads++;
+                if (!frozen) {
+                  frozen = this;
+                  Object.defineProperty(this, 'currentTime', { configurable: true, get: () => 0 });
+                  timer = setInterval(() => {
+                    this.dispatchEvent(new Event('waiting'));
+                    this.dispatchEvent(new Event('playing'));
+                  }, 100);
+                } else {
+                  clearInterval(timer);
+                  delete this.currentTime;
+                }
+              }
+              return load.call(this);
+            };
+          });
+          const { p, video } = await open(c);
+          await playing(video);
+          assert.ok(await p.evaluate(() => window.__frozenLoads > 1), 'Frozen playback was not restarted');
+        } finally { await c.close(); }
+      });
     } finally { await browser.close(); }
   }
   assert.deepEqual(errors, [], 'Product-loop browser errors');

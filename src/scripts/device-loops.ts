@@ -5,7 +5,7 @@ export function mountDeviceLoops(signal: AbortSignal) {
     video: frame.querySelector<HTMLVideoElement>('[data-device-video]')!,
     toggle: frame.querySelector<HTMLButtonElement>('[data-device-toggle]')!,
     visible: false, paused: false, pending: false, failed: false, reload: false,
-    attempt: 0, retries: 0, timer: undefined as ReturnType<typeof setTimeout> | undefined,
+    attempt: 0, retries: 0, progress: 0, timer: undefined as ReturnType<typeof setTimeout> | undefined,
   }));
   type State = typeof states[number];
   const allowed = (state: State) => {
@@ -55,7 +55,7 @@ export function mountDeviceLoops(signal: AbortSignal) {
     video.autoplay = true; video.preload = 'auto';
     // Direct src lets a failed mobile source selection be restarted reliably.
     if (!video.getAttribute('src')) { video.src = video.dataset.deviceSrc!; state.reload = true; }
-    if (state.reload || video.error) { state.reload = false; video.load(); }
+    if (state.reload || video.error) { state.reload = false; state.progress = 0; video.load(); }
     watch(state);
     void video.play().then(() => {
       if (signal.aborted || state.attempt !== current) return;
@@ -93,9 +93,17 @@ export function mountDeviceLoops(signal: AbortSignal) {
       sync(state);
     }, { signal });
     video.addEventListener('playing', () => {
-      clearTimer(state); state.pending = false; state.failed = false; state.retries = 0;
+      state.pending = false;
       if (!allowed(state)) video.pause();
+      else if (!state.timer && !state.failed) watch(state);
       label(state);
+    }, { signal });
+    // WebKit can emit playing/waiting repeatedly with time frozen at zero.
+    // Only actual progress proves recovery and clears the stall watchdog.
+    video.addEventListener('timeupdate', () => {
+      if (video.paused || video.currentTime <= 0 || video.currentTime === state.progress) return;
+      state.progress = video.currentTime;
+      clearTimer(state); state.pending = false; state.failed = false; state.retries = 0;
     }, { signal });
     ['pause', 'ended'].forEach(event => video.addEventListener(event, () => { label(state); sync(state); }, { signal }));
     ['waiting', 'stalled'].forEach(event => video.addEventListener(event, () => {
