@@ -100,12 +100,23 @@
     },
     {
       "id": "gesicht-kopf",
-      "name": "| LUMA GESICHTS UND KOPF MASSAGE INCL. GUA SHA",
-      "priceLine": "PREIS: 60min. 75€",
+      "name": "Ultimate Face Lifting",
+      "priceLine": "Ultimate Mix: 20 Min. 75€ · Nur Pointer: 5 Min. 30€ · Pointer + Face Player II: 10 Min. 50€",
       "prices": [
         {
-          "durationMin": 60,
+          "variant": "ultimate",
+          "durationMin": 20,
           "priceEur": 75
+        },
+        {
+          "variant": "pointer",
+          "durationMin": 5,
+          "priceEur": 30
+        },
+        {
+          "variant": "duo",
+          "durationMin": 10,
+          "priceEur": 50
         }
       ]
     },
@@ -279,11 +290,11 @@
     {
       "id": "60min-luma-gesichts-und-kopf-massage",
       "slug": "60min-luma-gesichts-und-kopf-massage",
-      "name": "60min. LUMA GESICHTS UND KOPF MASSAGE",
-      "durationMin": 60,
+      "name": "Ultimate Face Lifting",
+      "durationMin": 20,
       "priceEur": 75,
-      "seoTitle": "60min. LUMA GESICHTS UND KOPF MASSAGE | LUMA Wellness",
-      "seoDescription": "Erleben Sie die belebende Wirkung meiner charakteristischen Gesichts- und Kopfmassage, die durch die uralte Technik des Gua Sha ergänzt wird. Diese Behandlung ist eine Reise der Entspannung und Verjüngung, die Ihren Teint erfrischt, die Durchblutung anregt und Verspannungen verschwinden lässt. Spüren Sie die sanfte Pflege meiner Hände und das wohltuende Kratzen des Gua Sha-Werkzeugs und fühlen Sie sich revitalisiert und strahlend. Lassen Sie sich noch heute vom LUMA-Unterschied überzeugen!"
+      "seoTitle": "Ultimate Face Lifting in Buxtehude | LUMA Wellness",
+      "seoDescription": "Gesichtspflege mit CORE FIT Face Pointer, Face Player II und Junes Gesichtsmassage. Drei Anwendungen ab 30 €. Preise, Ablauf und Hinweise bei LUMA Wellness."
     },
     {
       "id": "30min-luma-schulter-nacken-ruecken",

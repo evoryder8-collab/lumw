@@ -4,8 +4,11 @@ import type { Locale } from '../i18n/locales';
 import { BUSINESS, treatmentName, whatsappUrl } from '../lib/site';
 import treatments from '../content/treatments.json';
 import Icon from './Icon.astro';
+import faceCopy from '../i18n/face-care.json';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const u = labels(locale);
+const face = faceCopy[locale];
+const facePrices = treatments.treatments.find((t) => t.id === 'gesicht-kopf')!.prices;
 const prepare = { de: 'Nachricht vorbereiten', en: 'Prepare your message', es: 'Preparar el mensaje', pt: 'Preparar a mensagem', it: 'Prepara il messaggio', fr: 'Préparer le message' }[locale];
 const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje con ventosas', pt: 'Massagem com ventosas', it: 'Massaggio con coppettazione', fr: 'Massage aux ventouses' }[locale];
 ---
@@ -21,6 +24,10 @@ const cupping = { de: 'Schröpfkopf-Massage', en: 'Cupping massage', es: 'Masaje
       <option value="">{u.unsure}</option>
       {treatments.treatments.map((t) => <option value={t.id}>{locale === 'de' ? treatmentName(t.name) : translations[locale].treatments[t.id as keyof typeof translations.en.treatments].name}</option>)}
       <option value="schroepfkopf">{cupping}</option>
+    </select></label>
+    <label class="enquiry-field" data-face-variant hidden><span>{face.choose}</span><select name="variant" disabled>
+      <option value="">{u.unsure}</option>
+      {facePrices.map((p) => <option value={p.variant}>{face.variants[p.variant as keyof typeof face.variants]} · {p.durationMin} {u.minutes} · {p.priceEur} €</option>)}
     </select></label>
     <label class="enquiry-field"><span>{u.preferred} <small>({u.optional})</small></span><input name="preferred" maxlength="160" placeholder=" " /></label>
     <label class="enquiry-field"><span>{u.message} <small>({u.optional})</small></span><textarea name="message" rows="3" maxlength="1500" placeholder=" "></textarea></label>

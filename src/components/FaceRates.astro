@@ -1,0 +1,24 @@
+---
+import type { Locale } from '../i18n/locales';
+import { routePath } from '../i18n/locales';
+import { labels } from '../i18n/content';
+import copy from '../i18n/face-care.json';
+import data from '../content/treatments.json';
+import Price from './Price.astro';
+import Icon from './Icon.astro';
+import { url } from '../lib/site';
+import '../styles/face-care.css';
+const { locale = 'de', detailed = false } = Astro.props as { locale?: Locale; detailed?: boolean };
+const c = copy[locale];
+const u = labels(locale);
+const options = data.treatments.find((t) => t.id === 'gesicht-kopf')!.prices;
+---
+<dl class:list={['face-rates', detailed && 'face-rates--detailed']}>
+  {options.map((option) => {
+    const variant = option.variant as keyof typeof c.variants;
+    return <div class:list={['face-rate', variant === 'ultimate' && 'face-rate--ultimate']}>
+      <dt><span>{c.variants[variant]}</span><small>{option.durationMin} {u.minutes}</small>{detailed && <p>{c.includes[variant]}</p>}</dt>
+      <dd><Price amount={option.priceEur} /> <span>€</span>{detailed && <a href={url(`${routePath('contact', locale)}?treatment=gesicht-kopf&variant=${variant}#enquiry`)} aria-label={`${u.book}: ${c.variants[variant]}`}><Icon size={19} /></a>}</dd>
+    </div>;
+  })}
+</dl>

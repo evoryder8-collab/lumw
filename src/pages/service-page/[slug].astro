@@ -13,6 +13,9 @@
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import FaceTreatmentPage from '../../components/FaceTreatmentPage.astro';
+import faceCopy from '../../i18n/face-care.json';
+import treatmentData from '../../content/treatments.json';
 import Price from '../../components/Price.astro';
 import Photo from '../../components/Photo.astro';
 import { imageByName, socialImageUrl } from '../../lib/images';
@@ -32,6 +35,8 @@ export const getStaticPaths = (async () => {
 
 const { service, all } = Astro.props;
 
+const isFace = service.family === 'gesicht-kopf';
+const facePrices = treatmentData.treatments.find((t) => t.id === 'gesicht-kopf')!.prices;
 const image = imageByName(service.image);
 
 const path = `/service-page/${service.slug}`;
@@ -80,7 +85,7 @@ const related = otherFamilies
 const imageUrl = image ? await socialImageUrl(image, Astro.site) : undefined;
 
 const heroSizes = '(max-width: 900px) 88vw, 42vw';
-const preloadImage = image ? await heroPreload(image, [420, 640, 900], heroSizes) : undefined;
+const preloadImage = image && !isFace ? await heroPreload(image, [420, 640, 900], heroSizes) : undefined;
 
 const schema = graph([
   businessNode(),
@@ -98,7 +103,7 @@ const schema = graph([
     description: service.description,
     imageUrl,
     url: `${BUSINESS.name ? 'https://www.luma-wellness.com' : ''}${path}`,
-    offers: familyOffers.map((s) => ({
+    offers: isFace ? facePrices.map((p) => ({ ...p, name: faceCopy.de.variants[p.variant as keyof typeof faceCopy.de.variants], url: `https://www.luma-wellness.com${path}` })) : familyOffers.map((s) => ({
       durationMin: s.durationMin,
       priceEur: s.priceEur,
       url: `https://www.luma-wellness.com/service-page/${s.slug}`,
@@ -108,7 +113,7 @@ const schema = graph([
 ---
 
 <Layout {title} {description} {path} schema={schema} {preloadImage}>
-  <article>
+  {isFace ? <FaceTreatmentPage /> : <article>
     <section class="hero">
       <div class="shell hero__inner">
         <div class="hero__copy">
@@ -202,7 +207,7 @@ const schema = graph([
                   <a href={url(`/service-page/${s.slug}`)} class="related__link panel float">
                     <span class="related__name">{s.familyName}</span>
                     <span class="related__meta">
-                      ab {s.durationMin} Minuten · <Price amount={s.priceEur} />€
+                      ab {s.family === 'gesicht-kopf' ? Math.min(...facePrices.map((p) => p.durationMin)) : s.durationMin} Minuten · <Price amount={s.family === 'gesicht-kopf' ? Math.min(...facePrices.map((p) => p.priceEur)) : s.priceEur} />€
                     </span>
                   </a>
                 </li>
@@ -225,7 +230,7 @@ const schema = graph([
         </p>
       </div>
     </section>
-  </article>
+  </article>}
 </Layout>
 
 <style>

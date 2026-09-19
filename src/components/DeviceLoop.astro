@@ -1,0 +1,15 @@
+---
+import type { Locale } from '../i18n/locales';
+import copy from '../i18n/face-care.json';
+import { url } from '../lib/site';
+const { locale = 'de', kind = 'action' } = Astro.props as { locale?: Locale; kind?: 'action' | 'echogram' };
+const c = copy[locale];
+const alt = kind === 'action' ? c.actionAlt : c.echoAlt;
+---
+<div class:list={['device-loop', `device-loop--${kind}`]} data-device-loop>
+  <video muted loop playsinline controls preload="none" aria-label={alt} data-device-poster={url(`/media/corefit/${kind === 'action' ? 'action' : 'echogram'}-poster.webp`)}>
+    <source src={url(`/media/corefit/face-player-${kind}.mp4`)} type="video/mp4" />
+    <a href={url(`/media/corefit/face-player-${kind}.mp4`)}>{c.play}</a>
+  </video>
+  <button class="device-loop__toggle" type="button" data-device-toggle data-play={c.play} data-pause={c.pause} aria-label={c.play} hidden><span data-device-toggle-symbol aria-hidden="true">Ⅱ</span><span class="sr-only" data-device-toggle-label>{c.play}</span></button>
+</div>

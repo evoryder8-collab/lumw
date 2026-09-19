@@ -16,7 +16,7 @@ const canonicalHost = 'https://www.luma-wellness.com';
 const indexable = process.env.PUBLIC_INDEXABLE === 'true';
 const baseline = JSON.parse(fs.readFileSync('src/data/migration-content-baseline.json', 'utf8'));
 // Explicit owner request, 16 September 2026. Keep the original crawl intact.
-const approvedHeadings = { '/': 'International ausgezeichnete Massage', '/about': 'Über June' };
+const approvedHeadings = { '/': 'International ausgezeichnete Massage', '/about': 'Über June', '/service-page/60min-luma-gesichts-und-kopf-massage': 'Ultimate Face Lifting' };
 // Owner explicitly commissioned a site-wide editorial rewrite on 18 Sep 2026.
 // Keep the migration archive and metadata tests intact; freeze commercial facts
 // separately so polishing prose cannot silently change a price or service URL.
@@ -36,7 +36,7 @@ for (const file of files.filter((file) => file.endsWith('.html'))) {
   check(!documents.has(route), `${route}: duplicate canonical destination`);
   documents.set(route, { document, file });
 }
-check(documents.size === 51, `Expected 25 original German, 25 translated pages, and linkinbio; found ${documents.size}`);
+check(documents.size === 56, `Expected 25 original German, 30 translated pages, and linkinbio; found ${documents.size}`);
 
 for (const [route, { document }] of documents) {
   const locale = document.documentElement.lang;
@@ -147,7 +147,7 @@ for (const item of compressed.filter((item) => path.basename(item.file).startsWi
 for (const locale of ['de','en','fr','es','pt','it']) {
   const sitemap = fs.readFileSync(path.join(dist, `sitemaps/${locale}.xml`), 'utf8');
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => decodeURI(new URL(m[1]).pathname));
-  check(urls.length === (locale === 'de' ? 26 : 5), `${locale}: incorrect sitemap coverage`);
+  check(urls.length === (locale === 'de' ? 26 : 6), `${locale}: incorrect sitemap coverage`);
   for (const route of urls) check(documents.has(route), `${locale}: sitemap lists a missing page ${route}`);
 }
 const robotsFile = fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8');
@@ -159,5 +159,5 @@ if (indexable) {
   check(/^Disallow: \/$/m.test(robotsFile), 'Staging robots.txt must block crawling');
 }
 assert.equal(failures.length, 0, `Experience checks failed:\n${failures.join('\n')}`);
-console.log(`✓ 51 pages: commercial facts, legal content retention, locale links, hreflang, assets, sitemaps, ${indexable ? 'production indexing' : 'staging noindex'}, ownership verification, video loading, and no em dashes`);
+console.log(`✓ ${documents.size} pages: commercial facts, legal content retention, locale links, hreflang, assets, sitemaps, ${indexable ? 'production indexing' : 'staging noindex'}, ownership verification, video loading, and no em dashes`);
 console.log(`✓ JavaScript: ${(total / 1024).toFixed(1)} KiB gzip / 100 KiB budget`);

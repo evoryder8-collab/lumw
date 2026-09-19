@@ -1,4 +1,5 @@
-/** Welcome choices are session-only. No media plays before an explicit choice. */
+import { mountLanguageCountdown } from './language-countdown';
+/** Welcome choices are session-only. No media plays before an explicit sound choice. */
 const memory = new Map<string, string>();
 const read = (key: string) => { try { return sessionStorage.getItem(key) ?? memory.get(key); } catch { return memory.get(key); } };
 const write = (key: string, value: string) => { memory.set(key, value); try { sessionStorage.setItem(key, value); } catch { /* Private storage can be unavailable. */ } };
@@ -11,6 +12,7 @@ export function mountWelcome(signal: AbortSignal) {
   const play = document.querySelector<HTMLButtonElement>('[data-intro-play]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-intro-sound]');
   const films = [...document.querySelectorAll<HTMLVideoElement>('[data-film]')];
+  const countdown = language ? mountLanguageCountdown(language, signal) : undefined;
   // Browsers eagerly fetch video posters even with preload="none". Keep the
   // lower films from competing with the introduction and portrait on mobile.
   const posters = new IntersectionObserver((entries) => {
@@ -97,6 +99,7 @@ export function mountWelcome(signal: AbortSignal) {
     openCurtain();
   };
   const askSound = () => {
+    countdown?.stop();
     if (!sound || sound.open || disposed) return;
     lock();
     sound.showModal();
@@ -107,6 +110,7 @@ export function mountWelcome(signal: AbortSignal) {
     welcoming = firstVisit;
     language.classList.toggle('is-welcome', firstVisit);
     lock(); language.showModal();
+    if (firstVisit && !read('luma-welcome-language')) countdown?.start();
   };
 
   document.querySelectorAll<HTMLButtonElement>('[data-portal-open]').forEach((button) => {
@@ -133,6 +137,7 @@ export function mountWelcome(signal: AbortSignal) {
   }, { signal });
   language?.querySelectorAll<HTMLAnchorElement>('[data-language-pick]').forEach((link) => {
     link.addEventListener('click', (event) => {
+      countdown?.stop();
       const samePage = new URL(link.href).pathname === location.pathname;
       if (samePage) event.preventDefault();
       if (welcoming) {
@@ -191,6 +196,7 @@ export function mountWelcome(signal: AbortSignal) {
 
   return () => {
     disposed = true;
+    countdown?.stop();
     clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame); curtain?.close();
     posters.disconnect();
     films.forEach((film) => film.pause());

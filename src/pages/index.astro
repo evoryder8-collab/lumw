@@ -9,6 +9,7 @@
  */
 import { getCollection } from 'astro:content';
 import Photo from '../components/Photo.astro';
+import FeaturedTreatments from '../components/FeaturedTreatments.astro';
 import HomeHero from '../components/HomeHero.astro';
 import IntroFilm from '../components/IntroFilm.astro';
 import PhotoAward from '../components/PhotoAward.astro';
@@ -28,64 +29,11 @@ import {
 import junePortrait from '../assets/june-winner.webp';
 import studioWorking from '../assets/studio-june-working.webp';
 import studioExterior from '../assets/studio-exterior-clear.webp';
-/* The chapters run full-bleed at 100vw by 100svh, which is where the baked
-   vignettes on these files hurt most: a transparent edge over a viewport-sized
-   element lets the page through, so the photograph stops short of the edges it
-   is meant to own. june-with-nadine-stark, at a mean alpha of 0.146, was a
-   small blob adrift in a whole screen. These are the opaque 16:9 crops from
-   scripts/normalize-cards.mjs. */
-import imgAroma from '../assets/chapter/treatment-back-warm.webp';
-import imgGold from '../assets/chapter/award-competition-gold.webp';
-import imgThai from '../assets/chapter/award-competition-stretch.webp';
-import imgPregnancy from '../assets/chapter/treatment-pregnancy.webp';
-import imgStark from '../assets/chapter/june-with-nadine-stark.webp';
-import imgFacial from '../assets/chapter/treatment-facial.webp';
-
 const title =
   'Massage Buxtehude – LUMA Wellness by June Saurin | Goldprämierte Massagen & Wellness';
 const description =
   'Massage in Buxtehude bei LUMA Wellness – internationale Goldmedaillen-Massagen & ganzheitliche Entspannung in Hauptstraße 19. Jetzt Termin sichern & Wohlbefinden steigern!';
 const path = '/';
-
-// Six treatment introductions, editorially reviewed on 18 September 2026.
-const angebote = [
-  {
-    image: imgAroma,
-    alt: 'Aroma-Luxus Massage mit Bio-Jojoba-Ölen bei LUMA Wellness in Buxtehude',
-    name: 'LUMA Aroma-Luxus Massage (Klassiker)',
-    text: 'Klassische Massagegriffe mit Bio-Jojoba-Aromaölen. Fließende Bewegungen und feine Düfte begleiten die Behandlung.',
-  },
-  {
-    image: imgGold,
-    alt: 'June Saurin bei der goldprämierten Gold-Medalie Massage',
-    name: 'LUMA Gold-Medalie Signature Massage',
-    text: 'Junes Signature vereint Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens für diese Massage gestaltete Klangbegleitung ergänzt die international ausgezeichneten Techniken.',
-  },
-  {
-    image: imgThai,
-    alt: 'June Saurin bei einer thailändischen Dehnungstechnik',
-    name: 'LUMA THAI-Solution Massage (Nuad-Benja-Phaki)',
-    text: 'Nuad Benja Phaki verbindet thailändische Dehnungen mit gezieltem Druck, ohne Öl. Die Intensität wählen Sie gemeinsam mit June.',
-  },
-  {
-    image: imgPregnancy,
-    alt: 'Sanfte Schwangerschaftsmassage für werdende Mütter',
-    name: 'LUMA Schwangerschaftsmassage',
-    text: 'Eine sanfte Massage, bei der Ihr Komfort im Mittelpunkt steht. Besprechen Sie Ihre Schwangerschaft und persönlichen Bedürfnisse vorab mit June.',
-  },
-  {
-    image: imgStark,
-    alt: 'June Saurin mit Weltmeisterin Nadine Stark Chognon',
-    name: 'STARK BALL MASSAGE / Sportmassage',
-    text: 'Die von Nadine Stark Chognon entwickelte Methode nutzt spezielle Massagebälle für gezielte Arbeit an einzelnen Muskelgruppen.',
-  },
-  {
-    image: imgFacial,
-    alt: 'Gesichts- und Kopfmassage inklusive Gua Sha',
-    name: 'Gesichts- und Kopfmassage inkl. Gua Sha',
-    text: 'Sanfte Massagegriffe für Gesicht und Kopf, ergänzt durch Gua Sha. Eine Behandlung für alle, die diesen Bereichen besondere Aufmerksamkeit schenken möchten.',
-  },
-];
 
 const heroSizes = '(max-width: 760px) calc(100vw - 80px), 44vw';
 const preloadImage = await heroPreload(junePortrait, [360, 480, 720, 1000, 1400], heroSizes);
@@ -172,76 +120,7 @@ const schema = graph([
     </div>
   </section>
 
-  <!-- Chapter 5. Angebotsübersicht. -->
-  <section class="section">
-    <div class="shell">
-      <h2 class="section__title section__title--center" data-reveal>
-        Welche Massage passt zu Ihnen?
-      </h2>
-    </div>
-
-    <!-- Names the chapter you are inside while the pinned sequence runs. -->
-    <div class="chapter-counter" data-chapter-counter aria-hidden="true">
-      <span data-chapter-now>01</span>
-      <span class="chapter-counter__rule"></span>
-      <span data-chapter-total>06</span>
-    </div>
-
-    <!-- Chapter 3. Each treatment pins for one viewport. The photograph is the
-         chapter, edge to edge and full height, scaling down through the pin so
-         the scene settles as you read it. Same grammar every chapter, so the
-         rhythm becomes the identity. -->
-    <div class="treatment-stories shell">
-    {
-      angebote.map((a, i) => (
-        <div class="chapter treatment-story">
-          <figure class="chapter__media" data-story-media>
-            <Photo
-              src={a.image}
-              alt={a.alt}
-              widths={[900, 1400, 1920]}
-              sizes="100vw"
-              variant="fill"
-            />
-          </figure>
-
-          {/* Porcelain poured across the side the copy sits on, so ink reads at
-              full contrast over any frame without dimming the picture itself. */}
-          <span class="chapter__scrim" aria-hidden="true"></span>
-
-          <div class="shell chapter__inner">
-            <div class="chapter__copy" data-story-copy>
-              <p class="chapter__num">{String(i + 1).padStart(2, '0')} / 06</p>
-              <h3 class="chapter__name">{a.name}</h3>
-              <p class="chapter__text">{a.text}</p>
-              <p class="chapter__cta" data-story-price>
-                <a href={url('/meineangebote-preise')} class="underline-gold">
-                  Preise ansehen
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      ))
-    }
-
-    </div>
-    <div class="shell">
-      <div class="offers__foot">
-        <p>
-          <a href={url('/meineangebote-preise')} class="underline-gold">
-            Alle neun Massagen mit Preisen ansehen.
-          </a>
-        </p>
-        <p class="offers__cta-text">
-          Sie sind noch unentschlossen? Ich helfe Ihnen gerne bei der Auswahl.
-        </p>
-        <a href={url('/contact')} class="pill sheen" data-magnetic>
-          <span data-magnetic-label>Buchen Sie eine Massage</span>
-        </a>
-      </div>
-    </div>
-  </section>
+  <FeaturedTreatments />
 
   <JuneFeature />
   <PhotoGallery />

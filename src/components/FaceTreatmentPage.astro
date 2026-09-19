@@ -1,0 +1,72 @@
+---
+import type { Locale } from '../i18n/locales';
+import { routePath } from '../i18n/locales';
+import { labels } from '../i18n/content';
+import { url } from '../lib/site';
+import copy from '../i18n/face-care.json';
+import ScrollSummon from './ScrollSummon.astro';
+import DeviceLoop from './DeviceLoop.astro';
+import FaceDetails from './FaceDetails.astro';
+import FaceRates from './FaceRates.astro';
+import Price from './Price.astro';
+import Icon from './Icon.astro';
+import '../styles/face-care.css';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const c = copy[locale];
+const u = labels(locale);
+---
+<article class="face-page" id="gesicht-kopf">
+  <header class="face-page__intro shell">
+    <a class="face-page__back" href={url(`${routePath('services', locale)}#gesicht-kopf`)}>{c.story.back}</a>
+    <div class="face-page__heading"><div><p class="eyebrow">{c.eyebrow}</p><h1>{c.name}</h1></div><p class="face-page__from">{u.from} <strong><Price amount={30} /> €</strong></p></div>
+    <div class="face-page__lead"><p>{c.intro}</p><a class="pill sheen" href="#face-options">{c.choose}<Icon size={18} /></a></div>
+  </header>
+  <ScrollSummon {locale} />
+  <section class="face-science shell" id="face-science">
+    <div class="face-science__heading"><p class="eyebrow">{c.story.eyebrow}</p><h2>{c.story.scienceTitle}</h2><p>{c.story.scienceIntro}</p></div>
+    <figure class="face-science__screen"><DeviceLoop {locale} kind="echogram" /><figcaption>{c.echoCaption}</figcaption></figure>
+  </section>
+  <section class="shell face-page__details" aria-label={c.story.eyebrow}>
+    <p class="face-page__expectations">{c.expectations}</p>
+    <FaceDetails {locale} includeRates={false} includeEcho={false} />
+  </section>
+  <section class="shell face-page__booking" id="face-options">
+    <div><p class="eyebrow">LUMA Wellness · June Saurin</p><h2>{c.story.options}</h2><p>{c.appointmentTime}</p><a class="pill sheen" href={url(`${routePath('contact', locale)}?treatment=gesicht-kopf#enquiry`)}>{u.book}<Icon size={18} /></a></div>
+    <div class="face-page__rates"><FaceRates {locale} detailed /></div>
+  </section>
+</article>
+<style>
+  .face-page__intro { padding-block: clamp(2.5rem,5vw,5rem) 3rem; }
+  .face-page__back { font-size: .8rem; display: inline-block; padding-block: .6rem; border-bottom: 1px solid #82612750; margin-bottom: 1.7rem; }
+  .face-page__heading { display:flex; align-items: end; justify-content: space-between; gap: 2rem; }
+  .face-page h1 { font-size: clamp(3.2rem,6.5vw,6.7rem); line-height: 1; max-width: 16ch; margin-top: .6rem; }
+  .face-page__from { white-space: nowrap; font-size: .8rem; padding-bottom: .7rem; color: #675024; }
+  .face-page__from strong { font-family:var(--font-display); font-size:3rem; font-weight:400; margin-left:.5rem; }
+  .face-page__lead { display:flex; align-items:center; justify-content:space-between; gap:3rem; margin-top:2rem; }
+  .face-page__lead p { max-width:65ch; font-size:1.05rem; line-height:1.7; }
+  .face-page__lead .pill { flex-shrink:0; }
+  .face-science { padding-block:clamp(4rem,8vw,8rem) 2rem; display:grid; grid-template-columns:.8fr 1.2fr; gap:clamp(2rem,5vw,5rem); align-items:center; scroll-margin-top:130px; }
+  .face-science h2, .face-page__booking h2 { font-size:clamp(2.3rem,4vw,4rem); line-height:1.06; margin-block:1rem 1.4rem; }
+  .face-science__heading > p:last-child { font-size:1.05rem; line-height:1.7; }
+  .face-science__screen { padding:.65rem; background:linear-gradient(145deg,#ffffffc0,#e9e8db80); border:1px solid #fff; border-radius:24px; box-shadow:0 24px 50px #293c2920,inset 0 1px 0 #fff; }
+  .face-science__screen figcaption { padding:1rem .6rem .4rem; font-size:.8rem; color:#566052; line-height:1.6; }
+  .face-page__details { max-width:1100px; padding-top:2rem; padding-bottom:4rem; }
+  .face-page__expectations { max-width:78ch; font-size:1rem; line-height:1.7; }
+  .face-page__details :global(.face-details__methods) { gap:clamp(2rem,5vw,5rem); padding-block:2.6rem; }
+  .face-page__details :global(.face-details h3) { font-size:clamp(1.8rem,2.8vw,2.8rem); }
+  .face-page__details :global(.face-details p), .face-page__details :global(.face-details li) { font-size:1rem; }
+  .face-page__details :global(.face-details > .face-details__note) { display:none; }
+  .face-page__booking { display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,6vw,6rem); padding-block:3rem 7rem; border-top:1px solid #856a4030; scroll-margin-top:120px; align-items:start; }
+  .face-page__booking p { line-height:1.7; }
+  .face-page__booking .pill { margin-top:1.5rem; }
+  .face-page__rates { padding:1rem 1.8rem; border:1px solid #fff; border-radius:22px; background:#ffffff85; box-shadow:0 20px 40px #30443110; }
+  @media(max-width:760px) {
+    .face-page__intro { padding-top:1.4rem; }
+    .face-page__heading { flex-direction:column; align-items:start; gap:1rem; }
+    .face-page__lead { flex-direction:column; align-items:start; gap:1.5rem; margin-top:.5rem; }
+    .face-page__from { padding:0; }
+    .face-page__from strong { font-size:2.2rem; }
+    .face-science, .face-page__booking { grid-template-columns:1fr; }
+    .face-page__rates { padding:1rem; }
+  }
+</style>

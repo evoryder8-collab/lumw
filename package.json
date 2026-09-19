@@ -11,7 +11,7 @@
     "check:urls": "node scripts/check-urls.mjs",
     "check:jsonld": "node scripts/check-jsonld.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "verify": "npm run build && npm run check:titles && npm run check:jsonld && npm run check:contrast && npm run check:experience && npm run check:locales",
+    "verify": "npm run build && npm run check:titles && npm run check:jsonld && npm run check:contrast && npm run check:experience && npm run check:locales && npm run check:face-care",
     "assets": "node scripts/prepare-assets.mjs",
     "map": "node scripts/fetch-map.mjs",
     "cards": "node scripts/normalize-cards.mjs",
@@ -19,8 +19,9 @@
     "check:titles": "node scripts/check-titles.mjs",
     "check:experience": "node scripts/check-experience.mjs",
     "check:locales": "node scripts/check-locales.mjs",
-    "check:browser": "node scripts/browser-smoke.mjs",
-    "check:performance": "node scripts/check-performance.mjs"
+    "check:browser": "node scripts/browser-smoke.mjs && node scripts/browser-face-care.mjs && node scripts/browser-product-scroll.mjs",
+    "check:performance": "node scripts/check-performance.mjs",
+    "check:face-care": "node scripts/check-face-care.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1",

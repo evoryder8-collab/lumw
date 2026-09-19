@@ -8,6 +8,7 @@ import { mountLocation } from './location';
 import { mountInvitation } from './invitation';
 import { mountTreatmentDetails } from './treatment-details';
 import { mountAwardVideo } from './award-video';
+import { mountDeviceLoops } from './device-loops';
 import './page-curtain';
 let activeBody: HTMLElement | undefined;
 let cleanup: (() => void) | undefined;
@@ -23,6 +24,7 @@ function bootExperience() {
   const disposePrices = mountPrices();
   const disposeTreatmentDetails = mountTreatmentDetails(signal);
   const disposeAwardVideo = mountAwardVideo(signal);
+  const disposeDeviceLoops = mountDeviceLoops(signal);
   mountReviews(signal);
   document.querySelectorAll<HTMLElement>('[data-gallery-track], [data-film-track]').forEach((track) => mountScrollHint(track, signal));
   mountBio(signal);
@@ -77,6 +79,13 @@ function bootExperience() {
     const select = form.elements.namedItem('treatment') as HTMLSelectElement;
     const chosen = new URLSearchParams(location.search).get('treatment');
     if (chosen && [...select.options].some((o) => o.value === chosen)) select.value = chosen;
+    const variant = form.elements.namedItem('variant') as HTMLSelectElement;
+    const variantField = form.querySelector<HTMLElement>('[data-face-variant]')!;
+    const requestedVariant = new URLSearchParams(location.search).get('variant');
+    if (requestedVariant && [...variant.options].some((o) => o.value === requestedVariant)) variant.value = requestedVariant;
+    const syncVariant = () => { variantField.hidden = select.value !== 'gesicht-kopf'; variant.disabled = variantField.hidden; };
+    select.addEventListener('change', syncVariant, { signal });
+    syncVariant();
     const result = form.querySelector<HTMLElement>('[data-enquiry-result]')!;
     form.addEventListener('input', () => { result.hidden = true; }, { signal });
     form.addEventListener('submit', (event) => {
@@ -85,7 +94,7 @@ function bootExperience() {
       const data = new FormData(form);
       const read = (name: string) => String(data.get(name) ?? '').trim();
       const name = [read('firstName'), read('lastName')].filter(Boolean).join(' ');
-      const lines = [form.dataset.greeting!, '', name, read('email'), select.selectedOptions[0]?.textContent ?? '', read('preferred'), read('message')].filter(Boolean);
+      const lines = [form.dataset.greeting!, '', name, read('email'), select.selectedOptions[0]?.textContent ?? '', !variant.disabled && variant.value ? variant.selectedOptions[0]?.textContent : '', read('preferred'), read('message')].filter(Boolean);
       const message = lines.join('\n');
       form.querySelector<HTMLElement>('[data-enquiry-preview]')!.textContent = message;
       form.querySelector<HTMLAnchorElement>('[data-enquiry-whatsapp]')!.href = `https://wa.me/${form.dataset.phone}?text=${encodeURIComponent(message)}`;
@@ -146,6 +155,7 @@ function bootExperience() {
     disposePrices();
     disposeTreatmentDetails();
     disposeAwardVideo();
+    disposeDeviceLoops();
     activeBody = undefined;
     if (gallery?.open) { gallery.close(); document.body.style.overflow = galleryOverflow; }
     controller.abort(); observers.forEach((o) => o.disconnect());

@@ -329,7 +329,7 @@ try {
         for (const card of cards) {
           const row = cards.filter((other) => Math.abs(other.top - card.top) < 1);
           assert.ok(row.every((other) => Math.abs(other.bottom - card.bottom) < 1 && Math.abs(other.action - card.action) < 1), `${width}px ${route}: booking actions do not share a baseline`);
-          if (card.more !== undefined) assert.ok(row.every((other) => Math.abs(other.more - card.more) < 1), `${width}px ${route}: More info actions do not align`);
+          if (card.more !== undefined) assert.ok(row.filter((other) => other.more !== undefined).every((other) => Math.abs(other.more - card.more) < 1), `${width}px ${route}: More info actions do not align`);
         }
       }
       if (route === '/en') {
@@ -544,13 +544,14 @@ try {
   report.push('When both autoplay attempts are denied, the visible Play with sound tap starts real audible playback');
 
   for (const motion of ['no-preference', 'reduce']) {
-  const invitationContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: motion });
+  const invitationContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: motion, locale: 'de-DE' });
   const invitation = await invitationContext.newPage(); track(invitation);
   await invitation.clock.install();
   await invitation.goto(preview.url());
   await invitation.clock.fastForward(25_000);
   assert.equal(await invitation.locator('[data-june-invitation]').isVisible(), false, 'Greeting covered the welcome choices');
-  await invitation.locator('[data-language-pick][lang="de"]').click();
+  // The language countdown can now reach the sound question during this wait.
+  if (!(await invitation.locator('[data-sound-dialog]').evaluate(d => d.open))) await invitation.locator('[data-language-pick][lang="de"]').click();
   await invitation.locator('[data-sound-no]').click();
   if (motion === 'no-preference') {
     assert.equal(await invitation.locator('[data-june-invitation]').isVisible(), false);

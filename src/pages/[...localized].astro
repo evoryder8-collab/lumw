@@ -1,5 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import FaceTreatmentPage from '../components/FaceTreatmentPage.astro';
+import FeaturedTreatments from '../components/FeaturedTreatments.astro';
+import FaceMedia from '../components/FaceMedia.astro';
+import FaceRates from '../components/FaceRates.astro';
+import FaceDetails from '../components/FaceDetails.astro';
+import faceCopy from '../i18n/face-care.json';
 import HomeHero from '../components/HomeHero.astro';
 import IntroFilm from '../components/IntroFilm.astro';
 import JuneFeature from '../components/JuneFeature.astro';
@@ -34,7 +40,7 @@ export function getStaticPaths() {
 const { locale, pageKey } = Astro.props as { locale: TranslatedLocale; pageKey: RouteKey };
 const t = translations[locale];
 const u = labels(locale);
-const page = t.pages[pageKey];
+const page = pageKey === 'face' ? { title: `${faceCopy[locale].name} | LUMA Wellness`, description: faceCopy[locale].description, heading: faceCopy[locale].name, lead: faceCopy[locale].intro, eyebrow: faceCopy[locale].eyebrow } : t.pages[pageKey];
 const path = routePath(pageKey, locale);
 const title = page.title;
 const description = page.description;
@@ -52,23 +58,20 @@ const schema = graph([
   businessNode(), personNode(undefined, locale), websiteNode(), webPageNode({ path, title, description, hasBreadcrumb: true, imageUrl: ogImage }),
   breadcrumbNode(path, [{ name: u.home, path: routePath('home', locale) }, ...(pageKey === 'home' ? [] : [{ name: page.eyebrow, path }])]),
   ...(pageKey === 'faq' ? [faqNode(path, t.faq.map(([question, answerText]) => ({ question, answerText })))] : []),
-  ...(pageKey === 'services' ? treatments.map((item) => {
+  ...(['services','face'].includes(pageKey) ? treatments.filter(item => pageKey !== 'face' || item.id === 'gesicht-kopf').map((item) => {
     const translated = t.treatments[item.id as keyof typeof t.treatments];
-    return serviceNode({ family: item.id, name: translated.name, description: translated.description, offers: item.prices, url: `https://www.luma-wellness.com${path}#${item.id}` });
+    return serviceNode({ family: item.id, name: translated.name, description: translated.description, offers: item.prices.map((p) => ({ ...p, name: 'variant' in p ? faceCopy[locale].variants[p.variant as keyof typeof faceCopy.en.variants] : undefined })), url: `https://www.luma-wellness.com${path}#${item.id}` });
   }) : []),
 ]);
 ---
 <Layout {title} {description} {path} {schema} {preloadImage}>
+  {pageKey === 'face' ? <FaceTreatmentPage {locale} /> : <>
   {pageKey === 'home' && <IntroFilm {locale} />}
   {pageKey === 'home' ? <HomeHero {locale} heading={page.heading} lead={page.lead} /> : <section class="hero"><div class="shell"><p class="eyebrow">{page.eyebrow}</p><h1>{page.heading}</h1><p class="lede localized-lead">{page.lead}</p></div></section>}
 
   {pageKey === 'home' && <>
     <AwardStrip {locale} /><section class="section editorial-intro" id="discover"><div class="shell shell--mid"><h2 class="section__title">{t.intro.title}</h2><div class="prose">{t.intro.body.map((p) => <p>{p}</p>)}<a href={url(routePath('services', locale))} class="underline-gold">{u.all}</a></div></div></section>
-    <section class="section--tight"><div class="shell"><p class="eyebrow">{u.signature}</p><div class="localized-feature-grid">{['gold-medalie','aroma-luxus','thai-solution'].map((id) => {
-      const item = treatments.find((v) => v.id === id)!;
-      const text = t.treatments[id as keyof typeof t.treatments];
-      return <a class="localized-feature" href={url(`${routePath('services', locale)}#${id}`)}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /><span>{u.from} <Price amount={Math.min(...item.prices.map((p) => p.priceEur))} /> €</span><h3>{text.name}</h3><p>{text.description}</p><Icon /></a>;
-    })}</div></div></section>
+    <FeaturedTreatments {locale} />
     <JuneFeature {locale} /><PhotoGallery {locale} /><FilmSection {locale} /><GoogleReviews {locale} /><PhotoAward {locale} />
   </>}
 
@@ -81,8 +84,8 @@ const schema = graph([
   {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item) => {
     const text = t.treatments[item.id as keyof typeof t.treatments];
     return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature']} id={item.id} data-card>
-      <div class="card__photo"><Photo src={cardImageByName(item.image)!} alt={text.name} widths={treatmentWidths} sizes={treatmentSizes} priority={item === treatments[0]} ratio="7 / 6" dissolve={false} /></div>
-      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{text.name}</h2><p class="card__lead">{text.description}</p><dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl><a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} /></div>
+      <div class="card__photo">{item.id === 'gesicht-kopf' ? <FaceMedia {locale} href={url(routePath('face', locale))} /> : <Photo src={cardImageByName(item.image)!} alt={text.name} widths={treatmentWidths} sizes={treatmentSizes} priority={item === treatments[0]} ratio="7 / 6" dissolve={false} />}</div>
+      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{item.id === 'gesicht-kopf' ? <a href={url(routePath('face', locale))}>{text.name}</a> : text.name}</h2><p class="card__lead">{text.description}</p>{item.id === 'gesicht-kopf' ? <FaceRates {locale} /> : <dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl>}<a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} triggerLabel={item.id === 'gesicht-kopf' ? faceCopy[locale].more : undefined}>{item.id === 'gesicht-kopf' && <FaceDetails {locale} />}</TreatmentDetails></div>
     </article>;
   })}</div></div></section>}
 
@@ -93,4 +96,5 @@ const schema = graph([
 
   {pageKey === 'home' && <section class="section--tight"><div class="shell visit-journey"><p class="eyebrow">{u.journey}</p><ol>{t.journey.map(([heading, body], i) => <li><span>0{i+1}</span><h3>{heading}</h3><p>{body}</p></li>)}</ol></div></section>}
   {pageKey !== 'contact' && <section class="section close"><div class="shell localized-close"><p class="eyebrow">LUMA WELLNESS</p><h2>{t.closing}</h2><p>{u.appointment}</p><a class="pill sheen" href={url(routePath('contact', locale))}>{u.book}<Icon size={20} /></a></div></section>}
+</>}
 </Layout>

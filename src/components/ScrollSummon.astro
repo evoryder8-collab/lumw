@@ -1,0 +1,179 @@
+---
+import { url } from '../lib/site';
+import type { Locale } from '../i18n/locales';
+import copy from '../i18n/face-care.json';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const c = copy[locale].story;
+const playerImage = url('/media/corefit/scroll-player.webp');
+const pointerImage = url('/media/corefit/scroll-pointer.webp');
+const headline = c.headline;
+const playerTitle = 'CORE FIT\nFACE PLAYER II';
+const pointerTitle = 'CORE FIT\nFACE POINTER II';
+const closing = c.closing;
+const scrollLength = 360;
+const ground = 'linear-gradient(160deg,#20372a 0%,#13281f 55%,#0c1c16 100%)';
+const accent = '#dfd69a';
+const ink = '#f5f3e8';
+const blobs = [
+ {color:'#9bc23f',x:24,y:26,size:62,opacity:.4,blur:70,period:13,phase:0},
+ {color:'#3f7a3a',x:76,y:20,size:70,opacity:.5,blur:70,period:17,phase:1.2},
+ {color:'#1e3a24',x:64,y:82,size:80,opacity:.7,blur:80,period:21,phase:2.4},
+ {color:'#6b7a34',x:14,y:80,size:64,opacity:.4,blur:70,period:15,phase:3.6},
+ {color:'#cfe06a',x:48,y:46,size:42,opacity:.2,blur:70,period:19,phase:4.8},
+];
+const lines = (s: string) => s.split('\n');
+---
+<section class="ss" data-ss aria-label={c.scrollLabel} data-blobs={JSON.stringify(blobs)} style={`--ss-accent:${accent};--ss-ink:${ink};--ss-length:${scrollLength}`}>
+  <a class="ss-skip" href="#face-science">{c.skip}</a>
+  <div class="ss-stage" style={`background:${ground}`}>
+    {blobs.map((b, i) => (
+      <div
+        class="ss-blob"
+        data-blob={i}
+        style={`left:${b.x}%;top:${b.y}%;width:${b.size}vw;height:${b.size}vw;opacity:${b.opacity};filter:blur(${b.blur}px);background:radial-gradient(circle at 50% 50%, ${b.color} 0%, rgba(0,0,0,0) 68%)`}
+      ></div>
+    ))}
+
+    <div class="ss-cam" data-cam aria-hidden="true">
+      <div class="ss-player" data-player>
+        <img src={playerImage} alt="" width="960" height="800" loading="lazy" decoding="async" />
+      </div>
+      <div class="ss-pointer" data-pointer>
+        <img src={pointerImage} alt="" width="806" height="86" loading="lazy" decoding="async" data-pointer-img />
+      </div>
+      <div class="ss-impact" data-impact>
+        <div class="ss-bloom" data-bloom></div>
+        <div class="ss-ring ss-ring-a" data-ring-a></div>
+        <div class="ss-ring ss-ring-b" data-ring-b></div>
+      </div>
+      <div class="ss-fx" data-fx>
+        <div class="ss-halo" data-halo></div>
+        <svg viewBox="0 0 400 400" data-bolt-svg>
+          <defs>
+            <filter id="corefitBoltGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"></feGaussianBlur>
+              <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+            </filter>
+          </defs>
+          <g filter="url(#corefitBoltGlow)" data-bolt-group>
+            <path data-bolt-halo fill="none" stroke={accent} stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"></path>
+            <path data-bolt-core fill="none" stroke="#f4ffd0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path data-bolt-branch fill="none" stroke="#eaf7b0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"></path>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="ss-copy ss-copy-left">
+      <h2 class="ss-headline" data-headline>{lines(headline).map((l, i) => (<>{i > 0 && <br />}{l}</>))}</h2>
+      <div class="ss-rule" data-rule-a></div>
+      <p class="ss-ja" data-player-copy>CORE FIT · JAPAN</p>
+      <h3 class="ss-title" data-player-copy>{lines(playerTitle).map((l, i) => (<>{i > 0 && <br />}{l}</>))}</h3>
+      <p class="ss-ja ss-ja-dim" data-player-copy>{c.playerLabel}</p>
+    </div>
+
+    <div class="ss-copy ss-copy-right" data-pointer-copy>
+      <div class="ss-rule" data-rule-b></div>
+      <p class="ss-ja">CORE FIT · JAPAN</p>
+      <h3 class="ss-title ss-title-sm">{lines(pointerTitle).map((l, i) => (<>{i > 0 && <br />}{l}</>))}</h3>
+      <p class="ss-ja ss-ja-dim">{c.pointerLabel}</p>
+    </div>
+
+    <div class="ss-closing" data-closing>
+      <div class="ss-rule ss-rule-full"></div>
+      <p>{closing}</p>
+    </div>
+
+    <div class="ss-vignette"></div>
+    <div class="ss-grain"></div>
+  </div>
+</section>
+
+<style>
+  .ss { position: relative; width: 100%; }
+  .ss-stage { position: sticky; top: 0; height: 100svh; width: 100%; overflow: hidden; }
+  .ss-blob { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); will-change: transform; }
+  .ss-cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  .ss-player { position: absolute; left: 36%; top: 57%; width: min(40vw, 56vh); max-width: 700px; will-change: transform; }
+  .ss-pointer { position: absolute; left: 74%; top: 41%; width: min(34vw, 58vh); max-width: 640px; will-change: transform; }
+  .ss-player img, .ss-pointer img { display: block; width: 100%; }
+  .ss-player img { filter: drop-shadow(0 46px 60px rgba(4, 12, 6, 0.55)); }
+  .ss-impact { position: absolute; left: 74%; top: 41%; width: min(34vw, 58vh); max-width: 640px; aspect-ratio: 1; pointer-events: none; }
+  .ss-bloom { position: absolute; left: 50%; top: 109%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; background: radial-gradient(closest-side, rgba(234, 247, 176, 0.55), rgba(234, 247, 176, 0)); }
+  .ss-ring { position: absolute; left: 50%; top: 109%; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; }
+  .ss-ring-a { border: 2px solid #eaf7b0; }
+  .ss-ring-b { border: 2px solid #9bc23f; }
+  .ss-fx { position: absolute; left: 36%; top: 57%; width: min(40vw, 56vh); max-width: 700px; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; }
+  .ss-halo { position: absolute; inset: 0; border: 2px solid var(--ss-accent); border-radius: 50%; }
+  .ss-fx svg { position: absolute; inset: -10%; width: 120%; height: 120%; overflow: visible; }
+
+  .ss-copy { position: absolute; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; font-family: var(--font-body); color: var(--ss-ink); pointer-events: none; margin: 0; }
+  .ss-copy-left { left: 6vw; top: 12vh; }
+  .ss-copy-right { right: 6vw; bottom: 16vh; gap: 12px; }
+  .ss-headline { font-size: clamp(38px, 6.4vw, 116px); font-weight: 500; line-height: 0.98; letter-spacing: -0.02em; max-width: 14ch; margin: 0; }
+  .ss-title { font-size: clamp(34px, 4.4vw, 78px); font-weight: 500; line-height: 1.02; letter-spacing: -0.01em; margin: 0; }
+  .ss-title-sm { font-size: clamp(26px, 3.2vw, 56px); }
+  .ss-ja { font-family: var(--font-body); font-size: clamp(13px, 1.15vw, 21px); font-weight: 500; letter-spacing: 0.18em; color: var(--ss-accent); margin: 0; }
+  .ss-ja-dim { font-size: clamp(12px, 1vw, 18px); font-weight: 400; letter-spacing: 0.1em; color: var(--ss-ink); }
+  .ss-rule { height: 2px; background: var(--ss-accent); width: 0%; max-width: 420px; }
+  .ss-rule-full { width: 100%; max-width: none; margin-bottom: 18px; }
+  .ss-closing { position: absolute; left: 6vw; bottom: 10vh; max-width: min(84vw, 640px); font-family: var(--font-body); color: var(--ss-ink); pointer-events: none; }
+  .ss-closing p { font-size: clamp(20px, 2.1vw, 32px); font-weight: 400; line-height: 1.35; text-wrap: pretty; margin: 0; }
+  .ss-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0, 0, 0, 0) 40%, rgba(6, 14, 9, 0.72) 100%); }
+  .ss-grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.14; mix-blend-mode: overlay; background-image: radial-gradient(rgba(255, 255, 255, 0.7) 0.6px, rgba(0, 0, 0, 0) 0.6px); background-size: 3px 3px; }
+
+  @media (max-width: 720px) {
+    .ss-copy-left { top: 8vh; }
+    .ss-copy-right { bottom: 12vh; }
+    .ss-closing { bottom: 6vh; max-width: 88vw; }
+    .ss-player { width: min(58vw, 42vh); left: 44%; }
+    .ss-pointer, .ss-impact { width: min(62vw, 46vh); left: 71%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+  }
+
+  .ss { height: auto; background: #16291f; isolation: isolate; }
+  .ss.is-active { height: calc(var(--ss-length) * 1svh); }
+  .ss-stage { min-height: 620px; }
+  .ss-player, .ss-pointer { transform: translate(-50%, -50%); }
+  .ss-pointer { transform: translate(-50%, -50%) rotate(-90deg); }
+  .ss-impact, .ss-fx { opacity: 0; }
+  .ss.is-active .ss-impact, .ss.is-active .ss-fx { opacity: 1; }
+  .ss:not(.is-active) .ss-headline, .ss:not(.is-active) .ss-closing { display: none; }
+  .ss-pointer, .ss-impact { top: 37%; width: min(32vw,55svh); }
+  .ss-copy-left { top: max(140px, 16svh); width: 44%; }
+  .ss-headline { position: absolute; top: 0; left: 0; width: min(680px,85vw); font-size: clamp(36px, 5.5vw, 90px); letter-spacing: -.025em; }
+  .ss-title { font-size: clamp(28px, 3.4vw, 60px); }
+  .ss-headline, .ss-title { font-family: var(--font-body); color: var(--ss-ink); }
+  .ss-grain { opacity: .035; }
+  .ss-title-sm { font-size: clamp(24px, 2.8vw, 46px); }
+  .ss-ja { font-size: clamp(11px, .9vw, 15px); letter-spacing: .12em; }
+  .ss-ja-dim { letter-spacing: .01em; max-width: 28ch; }
+  .ss-copy, .ss-closing { z-index: 2; text-shadow: 0 2px 16px #051c14a0; }
+  .ss-blob { pointer-events: none; }
+  .ss-skip { position: absolute; top: 1.2rem; right: 6vw; z-index: 3; border-bottom: 1px solid #e3d29c66; padding: .6rem 0; color: #f0f4e6; font-size: .8rem; }
+  .ss-skip:focus-visible { outline: 2px solid #ead49a; outline-offset: 5px; }
+  @media(max-width:720px) {
+    .ss-stage { min-height: 580px; }
+    .ss-copy-left { top: max(120px, 14svh); width: 82%; }
+    .ss-title { font-size: 26px; }
+    .ss-copy-right { bottom: 17svh; max-width: 45%; gap: 8px; }
+    .ss-title-sm { font-size: 23px; }
+    .ss-player, .ss-fx { left: 32%; top: 52%; width: min(58vw,42svh); }
+    .ss-pointer, .ss-impact { left: 79%; top: 53%; width: min(62vw,46svh); }
+    .ss-closing { bottom: 7svh; }
+    .ss-closing p { font-size: 19px; }
+    .ss-headline { font-size: 36px; max-width: 15ch; }
+    .ss-ja { font-size: 10px; }
+    .ss-ja-dim { font-size: 12px; }
+    .ss-skip { top: 1rem; }
+  }
+  @media(prefers-reduced-motion:reduce) {
+    .ss { height: auto !important; }
+    .ss-stage { position: relative; }
+    .ss-blob { will-change: auto; }
+  }
+</style>
+<script>import '../scripts/product-scroll';</script>

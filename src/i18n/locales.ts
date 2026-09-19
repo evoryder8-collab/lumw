@@ -67,6 +67,7 @@ export const ROUTES = {
   home:     { de: '/',                       en: '/en',                        fr: '/fr',                      es: '/es',                      pt: '/pt',                      it: '/it' },
   about:    { de: '/about',                  en: '/en/about',                  fr: '/fr/a-propos',              es: '/es/sobre-mi',              pt: '/pt/sobre-mim',             it: '/it/chi-sono' },
   services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',      fr: '/fr/massages-tarifs',       es: '/es/tratamientos-precios',  pt: '/pt/tratamentos-precos',    it: '/it/trattamenti-prezzi' },
+  face: { de: '/service-page/60min-luma-gesichts-und-kopf-massage', en: '/en/ultimate-face-lifting', fr: '/fr/ultimate-face-lifting', es: '/es/ultimate-face-lifting', pt: '/pt/ultimate-face-lifting', it: '/it/ultimate-face-lifting' },
   faq:      { de: '/massage-buxtehude-faq',  en: '/en/massage-buxtehude-faq',  fr: '/fr/questions-frequentes',  es: '/es/masaje-buxtehude-faq',  pt: '/pt/massagem-buxtehude-faq',it: '/it/massaggio-buxtehude-faq' },
   contact:  { de: '/contact',                en: '/en/contact',                fr: '/fr/contact',              es: '/es/contacto',              pt: '/pt/contacto',              it: '/it/contatti' },
 } as const satisfies Record<string, Record<Locale, string>>;

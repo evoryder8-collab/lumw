@@ -1,0 +1,16 @@
+---
+import type { Locale } from '../i18n/locales';
+import DeviceLoop from './DeviceLoop.astro';
+import { url } from '../lib/site';
+import '../styles/face-care.css';
+import copy from '../i18n/face-care.json';
+const { locale = 'de', href } = Astro.props as { locale?: Locale; href?: string };
+---
+<div class="face-media">
+  {href && <a class="face-media__destination" href={href} aria-label={copy[locale].story.explore}></a>}
+  <DeviceLoop {locale} />
+  <div class="face-media__tools">
+    <div class="face-media__player"><img src={url('/media/corefit/face-player.webp')} width="480" height="289" loading="lazy" decoding="async" alt="CORE FIT Face Player II" /><span>FACE PLAYER II</span></div>
+    <div class="face-media__pointer"><img src={url('/media/corefit/face-pointer.webp')} width="700" height="75" loading="lazy" decoding="async" alt="CORE FIT Face Pointer II" /><span>FACE POINTER II</span></div>
+  </div>
+</div>

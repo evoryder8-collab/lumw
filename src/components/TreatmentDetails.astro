@@ -2,18 +2,19 @@
 import type { Locale } from '../i18n/locales';
 import { labels } from '../i18n/content';
 import Icon from './Icon.astro';
-const { id, name, paragraphs, href, locale } = Astro.props as {
-  id: string; name: string; paragraphs: string[]; href: string; locale: Locale;
+const { id, name, paragraphs, href, locale, triggerLabel } = Astro.props as {
+  id: string; name: string; paragraphs: string[]; href: string; locale: Locale; triggerLabel?: string;
 };
 const u = labels(locale);
 ---
 <details class="treatment-details" data-treatment-details>
-  <summary class="treatment-details__trigger">{u.details}<Icon name="plus" size={15} /></summary>
+  <summary class="treatment-details__trigger">{triggerLabel ?? u.details}<Icon name="plus" size={15} /></summary>
   <div class="treatment-details__panel" data-treatment-panel>
     <button type="button" class="treatment-details__close" data-treatment-close aria-label={u.close} hidden><Icon name="close" size={22} /></button>
     <p class="eyebrow">LUMA WELLNESS</p>
     <h2 id={`treatment-details-${id}`} data-treatment-title>{name}</h2>
     <div class="treatment-details__copy">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
+    <slot />
     <a class="pill sheen" href={href}>{u.book}<Icon size={18} /></a>
   </div>
 </details>

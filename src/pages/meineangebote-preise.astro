@@ -14,6 +14,11 @@ import { url, treatmentName } from '../lib/site';
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
 import Medal from '../components/Medal.astro';
+import FaceMedia from '../components/FaceMedia.astro';
+import FaceRates from '../components/FaceRates.astro';
+import FaceDetails from '../components/FaceDetails.astro';
+import TreatmentDetails from '../components/TreatmentDetails.astro';
+import faceCopy from '../i18n/face-care.json';
 import Price from '../components/Price.astro';
 import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
 import { heroPreload } from '../lib/heroPreload';
@@ -104,7 +109,7 @@ const schema = graph([
       family: t.data.id,
       name: treatmentName(t.data.name),
       description: t.data.body.find((b) => b.type === 'p')?.text ?? t.data.name,
-      offers: t.data.prices.map((p) => ({ durationMin: p.durationMin, priceEur: p.priceEur })),
+      offers: t.data.prices.map((p) => ({ durationMin: p.durationMin, priceEur: p.priceEur, name: p.variant ? faceCopy.de.variants[p.variant] : undefined })),
       url: `https://www.luma-wellness.com${path}`,
       imageUrl: serviceImageUrls[t.data.id],
     }),
@@ -135,6 +140,7 @@ const money = (n: number) => `${n}€`;
           treatments.map((t, i) => {
             const image = cardImageByName(t.data.image);
             const target = cardTarget(t.data.id);
+            const isFace = t.data.id === 'gesicht-kopf';
             const isSignature = t.data.id === 'gold-medalie';
             const [first, ...rest] = t.data.body;
             return (
@@ -147,7 +153,7 @@ const money = (n: number) => `${n}€`;
                 style={`--reveal-delay:${(i % 3) * 70}ms`}
               >
                 {/* The photograph is the top of the card and fades into it. */}
-                {image && (
+                {isFace ? <div class="card__photo"><FaceMedia href={url('/service-page/60min-luma-gesichts-und-kopf-massage')} /></div> : image && (
                   <span
                     class="card__photo"
                     transition:name={target ? `svc-${target.family}` : undefined}
@@ -185,14 +191,14 @@ const money = (n: number) => `${n}€`;
                   </header>
 
                   <h2 class:list={['card__name', isSignature && 'gilt gilt-live']} transition:name={target ? `title-${target.family}` : undefined}>
-                    {treatmentName(t.data.name)}
+                    {isFace ? <a href={url('/service-page/60min-luma-gesichts-und-kopf-massage')}>{treatmentName(t.data.name)}</a> : treatmentName(t.data.name)}
                   </h2>
 
                   <p class="card__lead">{leadFor(t.data.id)}</p>
 
                   <div class="card__rule" aria-hidden="true"></div>
 
-                  <dl class="rates">
+                  {isFace ? <FaceRates /> : <dl class="rates">
                     {t.data.prices.map((pr, j) => (
                       <div class="rate">
                         <dt class="rate__dur">{pr.durationMin} Min.</dt>
@@ -203,13 +209,13 @@ const money = (n: number) => `${n}€`;
                         </dd>
                       </div>
                     ))}
-                  </dl>
+                  </dl>}
 
                   <div class="card__body prose">
                     {first && first.type === 'p' && <p>{first.text}</p>}
                   </div>
 
-                  {rest.length > 0 && (
+                  {!isFace && rest.length > 0 && (
                     <details class="card__more">
                       <summary class="card__more-toggle">
                         <span class="card__more-open">Ganze Beschreibung</span>
@@ -238,13 +244,15 @@ const money = (n: number) => `${n}€`;
                     </details>
                   )}
 
+                  {isFace && <TreatmentDetails id="catalogue-face" name={faceCopy.de.name} paragraphs={[faceCopy.de.intro, faceCopy.de.expectations]} href={url('/contact?treatment=gesicht-kopf#enquiry')} locale="de" triggerLabel={faceCopy.de.more}><FaceDetails /></TreatmentDetails>}
+
                   <a
                     class="card__cta gleam"
-                    href={target ? target.href : url('/contact')}
+                    href={isFace ? url('/contact?treatment=gesicht-kopf#enquiry') : target ? target.href : url('/contact')}
                     data-magnetic
                   >
                     <span data-magnetic-label>
-                      {target ? 'Details & Termin' : 'Termin anfragen'}
+                      {isFace ? 'Termin anfragen' : target ? 'Details & Termin' : 'Termin anfragen'}
                     </span>
                     <svg viewBox="0 0 24 12" aria-hidden="true" class="card__arrow">
                       <path d="M0 6h21M16 1l5 5-5 5" fill="none" stroke="currentColor"

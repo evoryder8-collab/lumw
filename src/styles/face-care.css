@@ -1,0 +1,66 @@
+/* Warm porcelain and bronze connect the Japanese tools with LUMA's palette. */
+.face-media { aspect-ratio: 7 / 6; display: grid; grid-template-rows: minmax(0, 1fr) 28%; overflow: hidden; border-radius: 22px; background: #e8e1d8; isolation: isolate; }
+.device-loop { position: relative; overflow: hidden; background: #ddd6cd; min-width: 0; min-height: 0; }
+.device-loop video { width: 100%; height: 100%; display: block; object-fit: cover; }
+.device-loop--echogram { aspect-ratio: 16 / 9; border-radius: 15px; background: #080a09; }
+.device-loop--echogram video { object-fit: contain; }
+.device-loop__toggle { position: absolute; bottom: 8px; right: 8px; display: grid; place-items: center; width: 44px; height: 36px; min-height: 36px; padding: 0; color: #fff8e9; background: #173b32de; border: 1px solid #f4e4ac60; border-radius: 9px; backdrop-filter: blur(12px); cursor: pointer; font-size: 15px; opacity: 0; transition: opacity .2s; }
+.device-loop:hover .device-loop__toggle, .device-loop__toggle:focus-visible, .device-loop--still .device-loop__toggle { opacity: 1; }
+.device-loop__toggle[hidden] { display: none; }
+.device-loop__toggle:active { transform: scale(.92); }
+.device-loop__toggle:focus-visible { outline: 3px solid #a16b12; outline-offset: 3px; }
+.face-media__tools { position: relative; display: grid; grid-template-columns: 40% 60%; gap: 0; padding: .3rem 1rem .6rem; background: radial-gradient(ellipse at 20% 10%, #fbf7e9, transparent 65%), linear-gradient(130deg, #eeeadf, #d4d8c9); border-top: 1px solid #fff9; box-shadow: inset 0 1px 0 #fff, 0 -3px 18px #271b1914; }
+.face-media__tools > div { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem; min-height: 0; }
+.face-media__tools img { object-fit: contain; width: 100%; min-height: 0; }
+.face-media__player img { max-height: 75%; width: 90%; filter: drop-shadow(0 5px 3px #332c2430); }
+.face-media__pointer img { width: 97%; max-height: 45%; margin-block: auto; filter: drop-shadow(0 4px 3px #59321830); }
+.face-media__tools span { font-size: clamp(.43rem, .62vw, .6rem); color: #435344; letter-spacing: .13em; white-space: nowrap; }
+.face-rates { margin: 1.2rem 0 1.7rem; }
+.face-rate { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid #49614b2b; }
+.face-rate dt > span { display: block; font-size: .82rem; line-height: 1.35; font-weight: 500; }
+.face-rate dt small { display: block; margin-top: .22rem; font-size: .72rem; opacity: .8; }
+.face-rate dd { white-space: nowrap; display: flex; align-items: center; gap: .2rem; font-family: var(--font-display); font-size: 1.45rem; }
+.face-rate--ultimate dt > span { color: #245b41; }
+.face-rates--detailed { margin-bottom: .7rem; }
+.face-rates--detailed .face-rate { padding: 1rem 0; }
+.face-rates--detailed .face-rate dt > span { font-size: 1rem; }
+.face-rate dt p { font-size: .8rem; line-height: 1.5; margin-top: .4rem; color: #526354; }
+.face-rate dd a { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #b9a57480; border-radius: 50%; margin-left: .35rem; background: #fff9; color: #234c3c; }
+.face-rate dd a:hover { background: #e4ebda; }
+.face-details > section { margin-top: 2rem; }
+.face-details h3 { font-size: 1.55rem; line-height: 1.2; margin-bottom: .8rem; }
+.face-details p, .face-details li { font-size: .92rem; line-height: 1.7; }
+.face-details__methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; border-block: 1px solid #9e9e8033; padding-block: 1.5rem; }
+.face-details__step { font-size: .7rem; color: #826127; display: block; margin-bottom: .6rem; }
+.face-details .face-details__note, .face-details figcaption { font-size: .78rem; line-height: 1.6; color: #526052; margin-top: .8rem; }
+.face-details__safety { padding: 1.4rem; border: 1px solid #adb59760; border-radius: 16px; background: #e4e8dc80; }
+.face-details ul { padding-left: 1.1rem; }
+.face-details li + li { margin-top: .65rem; }
+.face-details__context { padding-top: 1.6rem; border-top: 1px solid #9e9e8033; }
+.face-details__context details { font-size: .8rem; margin-top: 1rem; }
+.face-details__context summary { cursor: pointer; min-height: 44px; padding-block: .65rem; }
+.face-details__context a { text-decoration: underline; text-underline-offset: 3px; }
+.treatment-dialog:has([data-face-details]) { width: min(760px, calc(100% - 2rem)); }
+.localized-treatment .face-rates { margin-top: auto; padding-top: 1.2rem; }
+.featured-treatments .localized-feature { display: flex; flex-direction: column; }
+.featured-treatments .localized-feature > .photo, .featured-treatments .face-media { flex: none; }
+.featured-treatments .localized-feature > .feature-price { font-size: .75rem; color: #6a5428; margin-top: 1rem; }
+.featured-treatments .feature-actions { margin-top: auto; padding-top: 1.2rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+.featured-treatments .feature-actions > a { min-height: 44px; display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
+.featured-treatments > .shell > .eyebrow { margin-bottom: 1.2rem; }
+.card__photo > .face-media { width: 100%; }
+.face-service-details { padding-top: 2rem; }
+@media (max-width: 600px) {
+  .face-details__methods { grid-template-columns: 1fr; }
+  .face-media__tools span { font-size: .52rem; }
+  .face-rates--detailed .face-rate dd { font-size: 1.25rem; }
+  .face-details__safety { padding: 1rem; }
+}
+/* A real link covers the visual, while the separate pause button stays usable. */
+.face-media { position: relative; }
+.face-media__destination { position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
+.face-media__destination:focus-visible { outline: 3px solid #ad8738; outline-offset: -4px; }
+.face-media .device-loop__toggle { z-index: 3; }
+.face-media:hover .device-loop__toggle, .face-media:focus-within .device-loop__toggle { opacity: 1; }
+.card__name a { text-decoration: none; }
+.card__name a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .15em; }

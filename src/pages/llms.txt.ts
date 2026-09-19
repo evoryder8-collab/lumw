@@ -6,6 +6,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { BUSINESS, AWARDS, SITE_URL } from '../lib/site';
+import faceCopy from '../i18n/face-care.json';
 
 export const GET: APIRoute = async () => {
   const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
@@ -45,7 +46,7 @@ ${AWARDS.map((a) => `- ${a.award} (${a.place})`).join('\n')}
 ${treatments
   .map((t) => {
     const name = t.data.name.replace(/^\|\s*/, '').trim();
-    const prices = t.data.prices.map((p) => `${p.durationMin} Min. ${p.priceEur} EUR`).join(', ');
+    const prices = t.data.prices.map((p) => `${p.variant ? faceCopy.de.variants[p.variant] + ': ' : ''}${p.durationMin} Min. ${p.priceEur} EUR`).join(', ');
     const intro = t.data.body.find((b) => b.type === 'p');
     return `### ${name}\n${prices}\n${intro && intro.type === 'p' ? intro.text : ''}`;
   })

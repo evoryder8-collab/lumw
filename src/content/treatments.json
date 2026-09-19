@@ -207,24 +207,39 @@
       "id": "gesicht-kopf",
       "number": "7.",
       "order": 7,
-      "name": "| LUMA GESICHTS UND KOPF MASSAGE INCL. GUA SHA",
-      "image": "treatment-facial.webp",
-      "imageAlt": "Gesichts- und Kopfmassage inklusive Gua Sha bei LUMA Wellness in Buxtehude",
-      "priceLine": "PREIS: 60min. 75€",
+      "name": "Ultimate Face Lifting",
+      "image": "corefit-face-player.webp",
+      "imageAlt": "Der Face Player II löst sanfte Muskelbewegungen in den Wangen aus",
+      "priceLine": "Ultimate Mix: 20 Min. 75€ · Nur Pointer: 5 Min. 30€ · Pointer + Face Player II: 10 Min. 50€",
       "prices": [
         {
-          "durationMin": 60,
+          "variant": "ultimate",
+          "durationMin": 20,
           "priceEur": 75
+        },
+        {
+          "variant": "pointer",
+          "durationMin": 5,
+          "priceEur": 30
+        },
+        {
+          "variant": "duo",
+          "durationMin": 10,
+          "priceEur": 50
         }
       ],
       "body": [
         {
           "type": "p",
-          "text": "Diese Behandlung konzentriert sich auf Gesicht und Kopf. Sanfte Massagegriffe werden durch die gezielte Anwendung eines Gua-Sha-Werkzeugs ergänzt."
+          "text": "Japanische Akupressur mit dem CORE FIT Face Pointer, sanfte Muskelstimulation mit dem Face Player II und im Ultimate Mix zusätzlich Junes Gesichtsmassage. Wählen Sie die passende Anwendung."
         },
         {
           "type": "p",
-          "text": "Bitte sprechen Sie Hauterkrankungen, Verletzungen oder laufende medizinische Behandlungen vorab an. Bei gesundheitlichen Fragen klären Sie die Eignung mit Ihrer behandelnden Fachperson."
+          "text": "Eine gezielte Gesichtsbehandlung mit zwei japanischen Werkzeugen, die sich ergänzen. Der Pointer arbeitet mit manuellem Druck, der Player mit elektrischer Muskelstimulation (EMS). June stimmt die Anwendung auf Ihr Empfinden ab."
+        },
+        {
+          "type": "p",
+          "text": "Für entspannte Gesichtsmuskeln und ein frisches Aussehen. Sichtbare Veränderungen sind individuell und können vorübergehend sein. Die Anwendung dient der kosmetischen Pflege, nicht als operatives Lifting oder zur Behandlung von Erkrankungen."
         }
       ]
     },

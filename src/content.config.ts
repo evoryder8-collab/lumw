@@ -79,7 +79,7 @@ const treatments = defineCollection({
       z.object({ type: z.literal('ul'), items: z.array(z.string()) }),
     ])),
     priceLine: z.string(),
-    prices: z.array(z.object({ durationMin: z.number(), priceEur: z.number() })),
+    prices: z.array(z.object({ durationMin: z.number(), priceEur: z.number(), variant: z.enum(['ultimate', 'pointer', 'duo']).optional() })),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
     order: z.number().int(),

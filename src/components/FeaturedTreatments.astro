@@ -1,0 +1,29 @@
+---
+import type { Locale } from '../i18n/locales';
+import { routePath } from '../i18n/locales';
+import { labels, translations } from '../i18n/content';
+import data from '../content/treatments.json';
+import { cardImageByName } from '../lib/images';
+import { url, treatmentName } from '../lib/site';
+import Photo from './Photo.astro';
+import Price from './Price.astro';
+import Icon from './Icon.astro';
+import FaceMedia from './FaceMedia.astro';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const u = labels(locale);
+---
+<section class="section--tight featured-treatments"><div class="shell">
+  <p class="eyebrow">{u.signature}</p>
+  <div class="localized-feature-grid">{['aroma-luxus', 'thai-solution', 'gesicht-kopf'].map((id) => {
+    const item = data.treatments.find((t) => t.id === id)!;
+    const text = locale === 'de' ? { name: treatmentName(item.name), description: item.body.find((b) => b.type === 'p')?.text } : translations[locale].treatments[id as keyof typeof translations.en.treatments];
+    const isFace = id === 'gesicht-kopf';
+    const href = url(`${routePath('services', locale)}#${id}`);
+    return <article class="localized-feature" data-featured-treatment={id}>
+      {isFace ? <FaceMedia {locale} {href} /> : <a href={href} aria-label={text.name}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></a>}
+      <span class="feature-price">{`${u.from} `}<Price amount={Math.min(...item.prices.map((p) => p.priceEur))} /> €</span>
+      <h3>{text.name}</h3><p>{text.description}</p>
+      <div class="feature-actions"><a href={href}>{u.details}<Icon size={18} /></a></div>
+    </article>;
+  })}</div>
+</div></section>

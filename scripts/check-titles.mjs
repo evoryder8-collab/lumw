@@ -49,6 +49,8 @@ for (const line of md) {
 // The original prose export omitted service-page metadata. Compare every
 // original destination against the fresh, dated Wix crawl as well.
 const liveArchive = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/wix-seo-baseline.json'), 'utf8'));
+// Explicit post-migration owner-approved service replacement. Preserve the Wix archive.
+const approved = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/approved-seo-updates.json'), 'utf8'));
 const checkable = [...expected.filter((e) => e.title), ...liveArchive.pages];
 
 /** dist file for a live URL, flat layout first. */
@@ -73,7 +75,8 @@ const decode = (s) =>
 const failures = [];
 const notes = [];
 
-for (const e of checkable) {
+for (const original of checkable) {
+  const e = { ...original, ...approved[decodeURI(new URL(original.url).pathname)] };
   const file = fileFor(e.url);
   if (!fs.existsSync(file)) {
     failures.push({ url: e.url, why: `no built page at ${path.relative(ROOT, file)}` });

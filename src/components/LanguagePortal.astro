@@ -7,6 +7,14 @@ import Icon from './Icon.astro';
 import BrandMark from './BrandMark.astro';
 const { locale = 'de', path = '/' } = Astro.props as { locale?: Locale; path?: string };
 const u = labels(locale);
+const countdown = {
+  de: ['Deutsch startet gleich', 'Automatische Auswahl pausiert', 'Pausieren', 'Fortsetzen'],
+  en: ['Continuing in English shortly', 'Automatic selection paused', 'Pause', 'Resume'],
+  fr: ['Le français sera sélectionné', 'Sélection automatique en pause', 'Pause', 'Reprendre'],
+  es: ['Se seleccionará español', 'Selección automática en pausa', 'Pausar', 'Continuar'],
+  pt: ['O português será selecionado', 'Seleção automática em pausa', 'Pausar', 'Continuar'],
+  it: ['Verrà selezionato italiano', 'Selezione automatica in pausa', 'Pausa', 'Riprendi'],
+};
 const flagCodes: Record<Locale, string> = { de: 'de', en: 'gb', fr: 'fr', es: 'es', pt: 'pt', it: 'it' };
 // Embed these six small flag assets so the portal's flags
 // appear with its HTML and do not compete with the portrait for connections.
@@ -20,10 +28,31 @@ const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'servi
     <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA<span class="portal-brand__sub">Wellness by June Saurin</span></span></div>
     <h2 id="language-title">{u.language}</h2>
     <div class="language-dialog__choices">
-      {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-language-pick lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
+      {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-language-pick data-language-title={labels(code).language} data-countdown={countdown[code][0]} data-paused={countdown[code][1]} data-pause={countdown[code][2]} data-resume={countdown[code][3]} lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
         <span class="language-choice__flag"><img src={flags[code]} width="36" height="27" alt="" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong></span><Icon size={20} />
       </a>)}
+    </div>
+    <div class="language-countdown" data-language-countdown hidden>
+      <span class="language-countdown__clock" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" /><circle cx="18" cy="18" r="16" pathLength="1" /></svg><span data-countdown-seconds>5</span></span>
+      <span data-countdown-label role="status"></span>
+      <button type="button" data-countdown-toggle aria-pressed="false">{countdown[locale][2]}</button>
     </div>
     <div class="portal-footer"><span>BUXTEHUDE, DE</span><span class="portal-footer__line" aria-hidden="true"></span><span>JUNE SAURIN</span></div>
   </div>
 </dialog>
+
+<style is:global>
+  .language-countdown { display: flex; align-items: center; gap: .65rem; margin-top: 1.15rem; color: #355448; font-size: .78rem; }
+  .language-countdown[hidden] { display: none; }
+  .language-countdown__clock { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center; position: relative; font-variant-numeric: tabular-nums; }
+  .language-countdown__clock svg { position: absolute; inset: 0; fill: none; stroke: #284d3824; stroke-width: 1.5; transform: rotate(-90deg); }
+  .language-countdown__clock circle + circle { stroke: #866b36; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--countdown-progress, 1)); stroke-linecap: round; }
+  .language-countdown button { margin-left: auto; min-height: 44px; padding: .5rem .7rem; border: 0; background: transparent; color: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  .language-dialog.has-language-suggestion .language-choice.is-current:not(.is-suggested) { border-color: #ffffffc0; box-shadow: 0 6px 14px #15352410, inset 0 1px 0 #fff; }
+  .language-dialog .language-choice.is-suggested { border-color: #b69a58; box-shadow: 0 0 0 1px #d5be7b55, 0 0 24px #ba974635, inset 0 1px 1px #fff; }
+  @media (prefers-reduced-motion: no-preference) {
+    .language-dialog .language-choice.is-suggested { animation: language-breathe 2.6s ease-in-out infinite; }
+    .language-dialog.countdown-paused .language-choice.is-suggested { animation-play-state: paused; }
+  }
+  @keyframes language-breathe { 50% { box-shadow: 0 0 0 1px #d5be7b99, 0 0 32px #ba974655, inset 0 1px 1px #fff; } }
+</style>

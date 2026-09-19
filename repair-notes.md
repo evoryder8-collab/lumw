@@ -624,3 +624,55 @@ The unchanged mobile performance budgets pass in three cold runs per scenario:
 median LCP is 2.412 seconds for welcome, 2.411 for Home, 2.109 for treatments
 and 2.032 for contact, with zero CLS in every run. French portal, treatment grid,
 map and directions choices were also inspected visually.
+
+## Browser-language welcome and Ultimate Face Lifting, 19 September 2026
+
+The first welcome portal now recommends the primary browser language for five
+visible seconds. German regional language codes all select the same German
+option. Unsupported primary languages select English. Visitors can choose
+another language or pause the timer; keyboard exploration pauses it. Background
+tabs do not consume countdown time. Expiry uses the existing language navigation
+and opens the sound question. Only an explicit sound answer starts the curtain
+and introductory film. Reopening the language menu does not restart a timer.
+
+The owner replaced the old face/head service with Ultimate Face Lifting and
+explicitly supplied three prices: Ultimate Mix 20 min / €75, Pointer Only
+5 min / €30, and Pointer + Face Player II 10 min / €50. The commercial guard
+is updated for this one treatment. The old service URL remains reachable and
+its obsolete metadata is replaced through a documented, narrow SEO override.
+Homepage features now show Aroma-Luxus, Thai Solution and Ultimate Face Lifting
+in that order for all six languages. The €350 treatment remains in the full
+catalogue. All offers have consistent booking choices and structured data.
+
+Source-checked device explanations, comfort information, contraindications,
+competition context and exact session inclusions appear in the detail window.
+The owner-supplied product cutouts and videos are optimized for delivery. The
+live cheek loop and detail-window ultrasound loop have separate silent controls
+and follow viewport visibility, reduced motion, dialog state and page cleanup.
+See `content-source/corefit-2026-09-19.md` for sources and editorial limits.
+
+The supplied product-scroll export is integrated into the dedicated facial
+treatment page in all six languages. The German URL is preserved, with five
+new translated routes in the sitemap and hreflang cluster. Product images and
+titles on the catalogue link to the relevant page; More info stays a quick
+in-place dialog. Homepage teasers show only the minimum price, from €30 for
+facial care, and do not show the three option rows.
+
+A closed native dialog can still have a stale positive IntersectionObserver
+entry for one frame. Product-loop eligibility now checks its owning dialog's
+open state synchronously, so an ultrasound cannot restart when the popup
+closes. The browser check reproduces Escape immediately after playback.
+
+The countdown pauses on pointer-down as well as keyboard exploration, so a
+touch begun just before expiry wins even if the visitor releases after five
+seconds. The regression check holds that touch across the deadline.
+
+Validation: `npm run verify` covers all 56 canonical pages. The focused browser
+checks pass for browser-language matching, five-second timing and overrides,
+actual silent playback, popup cleanup, exact enquiry options, six mobile
+languages and no-JavaScript fallbacks. Product-page checks pass desktop and
+mobile forward/reverse scrolling, re-entry, visibility suspension, two WCAG
+audits, all six language routes and reduced-motion layouts. Three cold mobile
+runs per scenario retain the original performance budgets: median scores
+97/97/99/99, LCP 2.408/2.412/2.107/2.032 seconds for welcome/home/menu/contact,
+and zero CLS in every run.

@@ -200,7 +200,7 @@ export function serviceNode(opts: {
   family: string;
   name: string;
   description: string;
-  offers: { durationMin: number; priceEur: number; url?: string }[];
+  offers: { durationMin: number; priceEur: number; url?: string; name?: string }[];
   imageUrl?: string;
   url?: string;
 }): Node {
@@ -218,6 +218,7 @@ export function serviceNode(opts: {
     offers: opts.offers.map((o) => ({
       '@type': 'Offer',
       price: String(o.priceEur),
+      ...(o.name ? { name: o.name } : {}),
       priceCurrency: 'EUR',
       availability: 'https://schema.org/InStock',
       category: `${o.durationMin} Minuten`,

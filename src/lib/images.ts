@@ -6,6 +6,7 @@ import treatmentBackNeck from '../assets/treatment-back-neck.webp';
 import treatmentBamboo from '../assets/treatment-bamboo.webp';
 import treatmentCupping from '../assets/treatment-cupping.webp';
 import treatmentFacial from '../assets/treatment-facial.webp';
+import corefitFacePlayer from '../assets/corefit-face-player.webp';
 import treatmentFoot from '../assets/treatment-foot.webp';
 import treatmentPregnancy from '../assets/treatment-pregnancy.webp';
 import awardCompetitionGold from '../assets/award-competition-gold.webp';
@@ -35,6 +36,7 @@ import cardNadineStark from '../assets/cards/june-with-nadine-stark.webp';
  * Only images actually referenced by content collections belong here.
  */
 const BY_NAME: Record<string, ImageMetadata> = {
+  'corefit-face-player.webp': corefitFacePlayer,
   'treatment-back-warm.webp': treatmentBackWarm,
   'treatment-back-neck.webp': treatmentBackNeck,
   'treatment-bamboo.webp': treatmentBamboo,

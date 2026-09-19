@@ -24,13 +24,15 @@ export function mountTreatmentDetails(signal: AbortSignal) {
       document.body.style.overflow = previousOverflow;
       trigger.focus({ preventScroll: true });
     };
-    const closeDialog = () => { dialog.close(); release(); };
+    const notify = () => document.dispatchEvent(new Event('luma:dialog-change'));
+    const closeDialog = () => { dialog.close(); release(); notify(); };
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
       previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       active = dialog;
       dialog.showModal();
+      notify();
     }, { signal });
     close.addEventListener('click', closeDialog, { signal });
     dialog.addEventListener('cancel', (event) => {
@@ -39,7 +41,7 @@ export function mountTreatmentDetails(signal: AbortSignal) {
     dialog.addEventListener('close', () => {
       // Native close events are queued. Ignore one from an earlier opening if
       // the visitor has already reopened this dialog in the meantime.
-      if (!dialog.open) release();
+      if (!dialog.open) { release(); notify(); }
     }, { signal });
     dialog.addEventListener('click', (event) => {
       if (event.target !== dialog) return;
