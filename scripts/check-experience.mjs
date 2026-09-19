@@ -103,6 +103,14 @@ for (const [route, { document }] of documents) {
     }
   }
   for (const video of document.querySelectorAll('video')) {
+    if (video.closest('[data-device-loop]')) {
+      check(['autoplay', 'muted', 'loop', 'playsinline'].every(attribute => video.hasAttribute(attribute)) && !video.hasAttribute('controls'), `${route}: product demonstration must be a silent inline loop without transport UI`);
+      if (video.hasAttribute('data-device-video')) {
+        check(!video.hasAttribute('src') && !!video.getAttribute('data-device-src') && !video.querySelector('source[src]'), `${route}: product loop must wait until visible before downloading`);
+        check(!!video.parentElement.querySelector('[data-device-toggle][aria-label]'), `${route}: keyboard pause action missing`);
+      } else check(!!video.closest('noscript'), `${route}: immediate loop source must be a no-JavaScript fallback`);
+      continue;
+    }
     check(video.getAttribute('preload') === 'none' && !video.hasAttribute('autoplay'), `${route}: unexpected eager video`);
     const introControls = video.hasAttribute('data-intro-film') && document.querySelector('[data-intro-transport] [data-intro-toggle]') && document.querySelector('[data-intro-seek]') && document.querySelector('.intro-film noscript video[controls]');
     check((video.hasAttribute('controls') || introControls) && video.hasAttribute('playsinline'), `${route}: film controls missing`);

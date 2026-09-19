@@ -157,7 +157,8 @@ try {
   }
   const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});const p=await c.newPage();
   await p.goto(preview.url('/fr/ultimate-face-lifting'));assert.ok(await p.locator('[data-player]').isVisible());
-  assert.equal(await p.locator('video[controls]').count(),1);
+  assert.equal(await p.locator('video[controls]').count(),0);
+  assert.equal(await p.locator('.device-loop noscript video[autoplay][muted][loop]').count(),1);
   await p.goto(preview.url('/fr'));await p.locator('[data-featured-treatment="gesicht-kopf"] .treatment-details__trigger').click();
   assert.ok(await p.locator('[data-featured-treatment="gesicht-kopf"] [data-player]').isVisible());
   assert.equal(await p.locator('[data-featured-treatment="gesicht-kopf"] .face-rate').count(),3);await c.close();

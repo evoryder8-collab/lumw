@@ -99,9 +99,10 @@ try {
   await mp.locator('.face-media').scrollIntoViewIfNeeded();
   await expect.poll(()=>clip.evaluate(v=>!v.paused && v.muted && v.currentTime>0)).toBe(true);
   await mp.screenshot({path:`${artifacts}/face-home-desktop.png`});
-  await mp.locator('.face-media [data-device-toggle]').click();
+  await mp.locator('.face-media [data-device-toggle]').focus();
+  await mp.keyboard.press('Space');
   await expect.poll(()=>clip.evaluate(v=>v.paused)).toBe(true);
-  await mp.locator('.face-media [data-device-toggle]').click();
+  await mp.keyboard.press('Space');
   await expect.poll(()=>clip.evaluate(v=>!v.paused)).toBe(true);
   await hidden(mp,true);assert.equal(await clip.evaluate(v=>v.paused),true);
   await hidden(mp,false);await expect.poll(()=>clip.evaluate(v=>!v.paused)).toBe(true);
@@ -133,14 +134,12 @@ try {
   await mp.locator('[data-enquiry] button[type="submit"]').click();
   assert.ok(!(await mp.locator('[data-enquiry-preview]').textContent()).includes('50 €'));
   await media.close();
-  report.push('Live muted action/ultrasound clips, pause/restart, offscreen/background/dialog cleanup, accessible details and exact €50/10-minute enquiry');
+  report.push('Automatic muted action/ultrasound loops, keyboard pause, offscreen/background/dialog cleanup, accessible details and exact €50/10-minute enquiry');
 
   for (const [locale,route] of [['de','/meineangebote-preise'],['en','/en/treatments-prices'],['fr','/fr/massages-tarifs'],['es','/es/tratamientos-precios'],['pt','/pt/tratamentos-precos'],['it','/it/trattamenti-prezzi']]) {
     const c = await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
     await c.addInitScript(savedWelcome);const p=await c.newPage();track(p);
     await p.goto(preview.url(route));await p.locator('#gesicht-kopf').scrollIntoViewIfNeeded();
-    assert.equal(await p.locator('#gesicht-kopf video').evaluate(v=>v.paused),true);
-    await p.locator('#gesicht-kopf [data-device-toggle]').click();
     await expect.poll(()=>p.locator('#gesicht-kopf video').evaluate(v=>!v.paused)).toBe(true);
     await p.locator('#gesicht-kopf .treatment-details__trigger').click();
     const d=p.locator('.treatment-dialog[open]');await d.waitFor();await p.waitForTimeout(400);
@@ -154,10 +153,11 @@ try {
   const np=await noJS.newPage();await np.goto(preview.url('/fr/massages-tarifs'));
   await np.locator('#gesicht-kopf .treatment-details__trigger').click();
   assert.equal(await np.locator('#gesicht-kopf [data-face-details]').isVisible(),true);
-  assert.equal(await np.locator('#gesicht-kopf video[controls]').count(),2);
+  assert.equal(await np.locator('#gesicht-kopf video[controls]').count(),0);
+  assert.equal(await np.locator('#gesicht-kopf noscript video[autoplay][muted][loop][playsinline]').count(),2);
   await np.screenshot({path:`${artifacts}/face-no-js-mobile.png`});
   await noJS.close();
-  report.push('Six mobile locales, reduced-motion manual playback, complete no-JavaScript information and native video controls');
+  report.push('Six mobile locales, automatic product demos with reduced decorative motion, complete no-JavaScript information and silent loops without player chrome');
   assert.deepEqual(errors,[]);
   fs.writeFileSync(`${artifacts}/face-care-report.json`,JSON.stringify({report,errors},null,2));
   console.log(report.map(line=>`✓ ${line}`).join('\n'));
