@@ -6,6 +6,19 @@ function bootProductScroll() {
   controller?.abort();body=document.body;controller=new AbortController();
   const {signal}=controller;
   document.querySelectorAll('[data-ss]').forEach(root=>{
+    if(!root.hasAttribute('data-ss-dialog')) { mountProductScroll(root,signal);return; }
+    // A closed quick view needs no scene setup, layout reads or observers during
+    // the welcome screen. Mount once, when the visitor actually opens it.
+    let mounted=false;
+    const activate=()=>{
+      if(mounted || !root.closest('dialog')?.open) return;
+      mounted=true;mountProductScroll(root,signal);
+    };
+    document.addEventListener('luma:dialog-change',activate,{signal});
+    activate();
+  });
+}
+function mountProductScroll(root,signal) {
     const blobs=JSON.parse(root.dataset.blobs);
     const q=s=>root.querySelector(s);
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -43,7 +56,7 @@ function bootProductScroll() {
     const inDialog = root.hasAttribute('data-ss-dialog');
     const stage = q('.ss-stage');
     let target = 0, active = false, raf = 0, alive = true;
-    let clock = 0, wasOpen = false;
+    let clock = 0, wasOpen = Boolean(root.closest('dialog')?.open);
     const sim = { p: 0, v: 0, ph: 0, vh: 0, pp: 0, vp: 0, last: performance.now() };
     const measure = () => {
       // Treatment panels are moved into native dialogs after enhancement.
@@ -254,8 +267,6 @@ function bootProductScroll() {
       el.cam.style.transform = `scale(${r3(cam)}) translate(${r3(camX)}px, ${r3(camY)}px)`;
     }
 
-
-  });
 }
 bootProductScroll();
 document.addEventListener('astro:page-load',bootProductScroll);

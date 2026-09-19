@@ -25,6 +25,7 @@ try {
     await c.addInitScript(saved);const p=await c.newPage();p.on('pageerror',e=>errors.push(e.message));
     for(const [route,selector] of [['/en','[data-featured-treatment="gesicht-kopf"]'],['/en/treatments-prices','#gesicht-kopf']]) {
       await p.goto(preview.url(route));await p.evaluate(()=>document.fonts.ready);
+      assert.equal(await p.locator('[data-ss].is-active').count(),0,'Closed popup initialized its animation during page load');
       const trigger=p.locator(`${selector} .treatment-details__trigger`);
       await trigger.scrollIntoViewIfNeeded();await trigger.click();
       const url=p.url(),background=await p.evaluate(()=>scrollY);
