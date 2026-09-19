@@ -15,6 +15,23 @@ try {
         const page = await context.newPage();
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
+        await page.addInitScript(() => {
+          window.__introCalls = [];
+          for (const method of ['play', 'pause']) {
+            const original = HTMLMediaElement.prototype[method];
+            HTMLMediaElement.prototype[method] = function (...args) {
+              const entry = { method, at: performance.now(), source: this.getAttribute('src'), time: this.currentTime, stack: new Error().stack };
+              window.__introCalls.push(entry);
+              const result = original.apply(this, args);
+              result?.then(() => { entry.result = 'resolved'; }, error => { entry.result = `${error.name}: ${error.message}`; });
+              return result;
+            };
+          }
+          document.addEventListener('click', event => {
+            const button = event.target.closest?.('[data-intro-transport] button');
+            if (button) window.__introCalls.push({ method: 'click', label: button.getAttribute('aria-label'), at: performance.now() });
+          }, true);
+        });
         try {
           await page.goto(preview.url('/en'));
           await page.locator('[data-language-pick][lang="en"]').click();
@@ -70,7 +87,7 @@ try {
         } catch (error) {
           const diagnostic = await page.evaluate(() => {
             const v = document.querySelector('[data-intro-film]');
-            return { state: v && { time: v.currentTime, duration: v.duration, paused: v.paused, ended: v.ended, seeking: v.seeking, ready: v.readyState, network: v.networkState, error: v.error?.code }, events: window.__introEvents };
+            return { state: v && { time: v.currentTime, duration: v.duration, paused: v.paused, ended: v.ended, seeking: v.seeking, ready: v.readyState, network: v.networkState, error: v.error?.code }, events: window.__introEvents, calls: window.__introCalls };
           });
           console.error(`${engine.name()} ${width}px playback failure:`, JSON.stringify(diagnostic));
           fs.writeFileSync(`artifacts/browser/intro-failure-${engine.name()}-${width}.json`, JSON.stringify(diagnostic, null, 2));
