@@ -676,3 +676,14 @@ audits, all six language routes and reduced-motion layouts. Three cold mobile
 runs per scenario retain the original performance budgets: median scores
 97/97/99/99, LCP 2.408/2.412/2.107/2.032 seconds for welcome/home/menu/contact,
 and zero CLS in every run.
+
+The first production build exposed a welcome-screen performance regression on
+the slower CI runner. Focusing the suggested English tile triggered Astro's
+default focus prefetch before the visitor had confirmed a language. The timer
+also changed inherited styles on every frame, and the breathing glow animated
+a large box shadow. Language tiles now opt out of speculative prefetch; the
+small clock arc updates ten times per second while elapsed time stays precise.
+The glow animates a separate layer's opacity. A browser regression check ensures
+no language-page request occurs before selection. All three local cold welcome
+runs now score 97, with median LCP 2.412 seconds and zero CLS. The original CI
+performance limits remain unchanged.

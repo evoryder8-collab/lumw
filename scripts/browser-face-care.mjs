@@ -37,11 +37,14 @@ try {
   const context = await browser.newContext({locale:'ja-JP',viewport:{width:1440,height:1000}});
   const page = await context.newPage(); track(page);
   const downloaded = [];
+  const localeDownloads = [];
   page.on('request', r => { if(r.url().endsWith('.mp4')) downloaded.push(r.url()); });
+  page.on('request', r => { if(new URL(r.url()).pathname.endsWith('/en')) localeDownloads.push(Date.now()); });
   await page.goto(preview.url('/')); await portalReady(page);
   const started = Date.now();
   await page.locator('[data-sound-dialog][open]').waitFor();
   assert.ok(Date.now()-started >= 4200, 'Countdown advanced before five seconds');
+  assert.ok(localeDownloads.length > 0 && localeDownloads.every(time=>time-started>=4000), 'Suggested focus fetched a second page before confirmation');
   assert.ok(page.url().endsWith('/en'));
   assert.equal(await page.locator('[data-language-dialog]').evaluate(d=>d.open), true);
   assert.equal(downloaded.length,0,'Countdown bypassed sound consent');

@@ -6,6 +6,7 @@ export function mountLanguageCountdown(dialog: HTMLDialogElement, signal: AbortS
   const bar = dialog.querySelector<HTMLElement>('[data-language-countdown]')!;
   const label = bar.querySelector<HTMLElement>('[data-countdown-label]')!;
   const seconds = bar.querySelector<HTMLElement>('[data-countdown-seconds]')!;
+  const arc = bar.querySelector<SVGCircleElement>('circle + circle')!;
   const toggle = bar.querySelector<HTMLButtonElement>('[data-countdown-toggle]')!;
   const title = dialog.querySelector<HTMLElement>('#language-title')!;
   const originalTitle = title.textContent;
@@ -14,11 +15,18 @@ export function mountLanguageCountdown(dialog: HTMLDialogElement, signal: AbortS
   let remaining = 5000;
   let previous = 0;
   let frame = 0;
+  let paintedAt = 0;
+  let paintedRemaining = -1;
 
-  const render = () => {
+  const renderClock = () => {
+    if (paintedRemaining === remaining) return;
+    paintedRemaining = remaining;
     const digit = String(Math.ceil(remaining / 1000));
     if (seconds.textContent !== digit) seconds.textContent = digit;
-    bar.style.setProperty('--countdown-progress', String(remaining / 5000));
+    arc.style.strokeDashoffset = String(1 - remaining / 5000);
+  };
+  const render = () => {
+    renderClock();
     const status = paused ? suggested.dataset.paused! : suggested.dataset.countdown!;
     const action = paused ? suggested.dataset.resume! : suggested.dataset.pause!;
     if (label.textContent !== status) label.textContent = status;
@@ -39,7 +47,9 @@ export function mountLanguageCountdown(dialog: HTMLDialogElement, signal: AbortS
     if (!active) return;
     if (!paused && !document.hidden && dialog.open && previous) remaining = Math.max(0, remaining - (now - previous));
     previous = now;
-    render();
+    // Redraw only the small arc at 10 Hz. Labels and dialog classes change
+    // only on an interaction, avoiding a full frosted-panel repaint per frame.
+    if (now - paintedAt >= 100 || remaining === 0) { renderClock(); paintedAt = now; }
     if (remaining === 0) {
       stop();
       // Use the same navigation and sound-consent path as a real language tap.
@@ -49,7 +59,7 @@ export function mountLanguageCountdown(dialog: HTMLDialogElement, signal: AbortS
     frame = requestAnimationFrame(tick);
   };
   const start = () => {
-    stop(); active = true; paused = false; remaining = 5000; previous = 0;
+    stop(); active = true; paused = false; remaining = 5000; previous = 0; paintedAt = 0;
     bar.hidden = false; bar.lang = suggested.lang;
     dialog.classList.add('has-language-suggestion');
     suggested.classList.add('is-suggested');

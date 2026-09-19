@@ -28,7 +28,7 @@ const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'servi
     <div class="portal-brand"><BrandMark /><span class="portal-brand__word">LUMA<span class="portal-brand__sub">Wellness by June Saurin</span></span></div>
     <h2 id="language-title">{u.language}</h2>
     <div class="language-dialog__choices">
-      {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-language-pick data-language-title={labels(code).language} data-countdown={countdown[code][0]} data-paused={countdown[code][1]} data-pause={countdown[code][2]} data-resume={countdown[code][3]} lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
+      {AVAILABLE.map((code, i) => <a href={url(routePath(key, code))} class:list={['language-choice', code === locale && 'is-current']} data-astro-prefetch="false" data-language-pick data-language-title={labels(code).language} data-countdown={countdown[code][0]} data-paused={countdown[code][1]} data-pause={countdown[code][2]} data-resume={countdown[code][3]} lang={code} hreflang={LOCALE_META[code].tag} aria-current={code === locale ? 'true' : undefined} autofocus={code === locale} style={`--tile-order:${i}`}>
         <span class="language-choice__flag"><img src={flags[code]} width="36" height="27" alt="" /></span><span class="language-choice__text"><strong>{LOCALE_META[code].name}</strong></span><Icon size={20} />
       </a>)}
     </div>
@@ -46,13 +46,14 @@ const key = routeKeyForPath(path) ?? (path.startsWith('/service-page/') ? 'servi
   .language-countdown[hidden] { display: none; }
   .language-countdown__clock { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center; position: relative; font-variant-numeric: tabular-nums; }
   .language-countdown__clock svg { position: absolute; inset: 0; fill: none; stroke: #284d3824; stroke-width: 1.5; transform: rotate(-90deg); }
-  .language-countdown__clock circle + circle { stroke: #866b36; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--countdown-progress, 1)); stroke-linecap: round; }
+  .language-countdown__clock circle + circle { stroke: #866b36; stroke-dasharray: 1; stroke-dashoffset: 0; stroke-linecap: round; transition: stroke-dashoffset .1s linear; }
   .language-countdown button { margin-left: auto; min-height: 44px; padding: .5rem .7rem; border: 0; background: transparent; color: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
   .language-dialog.has-language-suggestion .language-choice.is-current:not(.is-suggested) { border-color: #ffffffc0; box-shadow: 0 6px 14px #15352410, inset 0 1px 0 #fff; }
   .language-dialog .language-choice.is-suggested { border-color: #b69a58; box-shadow: 0 0 0 1px #d5be7b55, 0 0 24px #ba974635, inset 0 1px 1px #fff; }
+  .language-dialog .language-choice.is-suggested::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 24px #d7b66066; opacity: .3; pointer-events: none; }
   @media (prefers-reduced-motion: no-preference) {
-    .language-dialog .language-choice.is-suggested { animation: language-breathe 2.6s ease-in-out infinite; }
-    .language-dialog.countdown-paused .language-choice.is-suggested { animation-play-state: paused; }
+    .language-dialog .language-choice.is-suggested::after { animation: language-breathe 2.6s ease-in-out infinite; will-change: opacity; }
+    .language-dialog.countdown-paused .language-choice.is-suggested::after { animation-play-state: paused; }
   }
-  @keyframes language-breathe { 50% { box-shadow: 0 0 0 1px #d5be7b99, 0 0 32px #ba974655, inset 0 1px 1px #fff; } }
+  @keyframes language-breathe { 50% { opacity: 1; } }
 </style>
