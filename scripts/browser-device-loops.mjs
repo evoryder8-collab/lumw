@@ -6,7 +6,18 @@ import { startPreview } from './preview-server.mjs';
 const preview = await startPreview();
 const failures = [], errors = [];
 fs.mkdirSync('artifacts/browser', { recursive: true });
-const playing = async (video) => expect.poll(() => video.evaluate(v => !v.paused && v.muted && v.currentTime > .03), { timeout: 12000 }).toBe(true);
+const playing = async (video) => {
+  try {
+    await expect.poll(() => video.evaluate(v => !v.paused && v.muted && v.currentTime > .03), { timeout: 12000 }).toBe(true);
+  } catch (error) {
+    const state = await video.evaluate(v => ({
+      src: v.currentSrc, paused: v.paused, time: v.currentTime, ready: v.readyState, network: v.networkState,
+      error: v.error?.message, hidden: document.hidden, rect: v.getBoundingClientRect().toJSON(),
+      dialogs: [...document.querySelectorAll('dialog[open]')].map(d => d.id), events: window.__deviceEvents,
+    }));
+    throw new Error(`${error.message}\nVideo state: ${JSON.stringify(state)}`);
+  }
+};
 const check = async (name, run) => {
   try { await run(); console.log(`✓ ${name}`); }
   catch (error) { failures.push(`${name}: ${error.message}`); console.error(`✗ ${name}: ${error.message}`); }
@@ -18,6 +29,15 @@ try {
     const context = async (reducedMotion = 'no-preference') => {
       const c = await browser.newContext({ viewport: { width: 430, height: 932 }, isMobile: true, hasTouch: true, reducedMotion });
       await c.addInitScript(() => {
+        window.__deviceEvents = [];
+        for (const event of ['loadstart', 'loadedmetadata', 'canplay', 'playing', 'pause', 'waiting', 'stalled', 'error', 'emptied']) {
+          document.addEventListener(event, e => {
+            const v = e.target;
+            if (!v.matches?.('[data-device-video]')) return;
+            window.__deviceEvents.push({ event, at: Math.round(performance.now()), time: v.currentTime, paused: v.paused, ready: v.readyState });
+            if (window.__deviceEvents.length > 30) window.__deviceEvents.shift();
+          }, true);
+        }
         try {
           sessionStorage.setItem('luma-welcome-done', 'yes');
           sessionStorage.setItem('luma-sound', 'no');
