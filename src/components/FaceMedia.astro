@@ -4,9 +4,11 @@ import DeviceLoop from './DeviceLoop.astro';
 import { url } from '../lib/site';
 import '../styles/face-care.css';
 import copy from '../i18n/face-care.json';
-const { locale = 'de', href } = Astro.props as { locale?: Locale; href?: string };
+import NewRibbon from './NewRibbon.astro';
+const { locale = 'de', href, newTreatment = false } = Astro.props as { locale?: Locale; href?: string; newTreatment?: boolean };
 ---
 <div class="face-media">
+  {newTreatment && <NewRibbon {locale} />}
   {href && <a class="face-media__destination" href={href} aria-label={copy[locale].story.explore}></a>}
   <DeviceLoop {locale} />
   <div class="face-media__tools">

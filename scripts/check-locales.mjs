@@ -21,6 +21,16 @@ for (const [locale, content] of Object.entries(translated)) {
   }
 }
 
+const bioCopy = JSON.parse(fs.readFileSync('src/i18n/linkinbio.json', 'utf8'));
+assert.deepEqual(Object.keys(bioCopy), locales, 'Link-in-bio languages do not match the website');
+for (const locale of locales) {
+  assert.deepEqual(Object.keys(bioCopy[locale]), Object.keys(bioCopy.en), `${locale}: incomplete link-in-bio translation`);
+  for (const [key, value] of Object.entries(bioCopy[locale])) {
+    assert.ok(value.trim() && !/[\u2014\u0e00-\u0e7f]/u.test(value), `${locale}.${key}: invalid link-in-bio translation`);
+    strings++;
+  }
+}
+
 const dir = 'dist';
 let pages = 0;
 for (const locale of locales) {
@@ -30,14 +40,21 @@ for (const locale of locales) {
     const file = route === '/' ? `${dir}/index.html` : `${dir}${route}.html`;
     const { document } = parseHTML(fs.readFileSync(file, 'utf8'));
     assert.equal(document.documentElement.lang, locale, `${route}: wrong document language`);
-    if (route !== '/linkinbio') {
+    const bio = route.endsWith('/linkinbio');
+    if (bio) {
+      const languageLinks = [...document.querySelectorAll('[data-bio-locale]')];
+      assert.deepEqual(languageLinks.map((link) => link.getAttribute('lang')), locales, `${route}: incomplete language menu`);
+      assert.equal(document.querySelector('[data-bio-locale][aria-current="page"]')?.getAttribute('lang'), locale, `${route}: incorrect selected language`);
+      assert.equal(document.querySelector('[data-bio-action="whatsapp"] strong')?.textContent, bioCopy[locale].whatsapp, `${route}: untranslated WhatsApp action`);
+      assert.equal(document.querySelector('[data-bio-action="spark"] strong')?.textContent, bioCopy[locale].services, `${route}: untranslated treatments action`);
+    } else {
       const languageLinks = [...document.querySelectorAll('[data-language-pick]')];
       assert.deepEqual(languageLinks.map((link) => link.getAttribute('lang')), locales, `${route}: incorrect language portal`);
       assert.ok(languageLinks[2].textContent.includes('Français'), `${route}: French missing from selector`);
       assert.ok(languageLinks[2].querySelector('img').getAttribute('src').startsWith('data:image/webp;base64,'), `${route}: French flag missing`);
     }
     const content = translated[locale];
-    if (content) {
+    if (content && !bio) {
       assert.deepEqual([...document.querySelectorAll('.nav__label')].map((el) => el.textContent.trim()), content.nav, `${route}: untranslated navigation`);
       assert.equal(document.querySelector('.nav__cta a')?.textContent.trim(), content.ui.book, `${route}: wrong booking label`);
       assert.equal(document.querySelector('.footer__note')?.textContent.trim(), content.ui.appointment, `${route}: untranslated appointment note`);

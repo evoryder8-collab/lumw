@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BrandMark from './BrandMark.astro';
+import LocationMap from './LocationMap.astro';
+import IntroFilm from './IntroFilm.astro';
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import portrait from '../assets/june-dark-portrait.webp';
+import { BUSINESS, url, whatsappUrl } from '../lib/site';
+import { socialImageUrl } from '../lib/images';
+import { graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode } from '../lib/schema';
+import '../styles/linkinbio.css';
+import BioLanguage from './BioLanguage.astro';
+import BioLanguageDetect from './BioLanguageDetect.astro';
+import copy from '../i18n/linkinbio.json';
+import { routePath, type Locale } from '../i18n/locales';
+import { labels } from '../i18n/content';
+
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const c = copy[locale];
+const u = labels(locale);
+const title = c.title;
+const description = c.description;
+const path = routePath('bio', locale);
+const ogImage = await socialImageUrl(portrait, Astro.site);
+const links = [
+  { icon: 'contact' as const, title: c.save, detail: c.saveDetail, href: url('/june-saurin.vcf'), download: 'June-Saurin.vcf' },
+  { icon: 'phone' as const, title: c.call, detail: BUSINESS.whatsapp, href: `tel:${BUSINESS.phoneE164}` },
+  { icon: 'mail' as const, title: c.email, detail: BUSINESS.email, href: `mailto:${BUSINESS.email}?subject=${encodeURIComponent(c.subject)}` },
+  { icon: 'instagram' as const, title: 'Instagram', detail: c.instagramDetail, href: BUSINESS.sameAs[1], external: true },
+  { icon: 'facebook' as const, title: 'Facebook', detail: c.facebookDetail, href: BUSINESS.sameAs[0], external: true },
+  { icon: 'spark' as const, title: c.services, detail: c.servicesDetail, href: url(routePath('services', locale)) },
+  { icon: 'globe' as const, title: c.about, detail: c.aboutDetail, href: url(routePath('about', locale)) },
+];
+const schema = graph([businessNode(), personNode(undefined, locale), websiteNode(), webPageNode({title, description, path, imageUrl: ogImage, hasBreadcrumb: true}), breadcrumbNode(path, [{name:'LUMA Wellness', path:routePath('home', locale)}, {name:c.links, path}])]);
+---
+<Layout {title} {description} {path} {schema} compact>
+  <BioLanguageDetect slot="head" />
+  <div class="bio-ambient" aria-hidden="true"><span></span><span></span></div>
+  <div class="bio-shell">
+    <header class="bio-nav">
+      <a class="brand bio-brand" href={url(routePath('home', locale))} aria-label={`LUMA Wellness, ${u.home}`}><BrandMark /><span class="bio-brand__word">LUMA<small>WELLNESS</small></span></a>
+      <div class="bio-nav__actions"><a class="bio-website" href={url(routePath('home', locale))}>{c.website}<Icon size={17} /></a><BioLanguage {locale} /></div>
+    </header>
+
+    <section class="bio-profile" aria-labelledby="bio-name">
+      <div class="bio-profile__portrait"><Photo src={portrait} alt="June Saurin" widths={[360,540,720]} sizes="(max-width: 650px) 62vw, 340px" variant="fill" dissolve={false} priority /></div>
+      <div class="bio-profile__veil" aria-hidden="true"></div>
+      <div class="bio-profile__copy"><p class="eyebrow">{c.welcome}</p><h1 id="bio-name">June<br /><em>Saurin.</em></h1><p>{c.recognition}<br />{c.local}</p></div>
+      <span class="bio-profile__location"><span></span>{c.location}</span>
+    </section>
+
+    <div class="bio-film"><IntroFilm {locale} bio /></div>
+
+    <nav class="bio-links" aria-label={c.links}>
+      <a class="bio-link bio-link--primary" href={whatsappUrl(u.greeting)} data-bio-action="whatsapp" data-bio-reveal><span class="bio-link__sheen" aria-hidden="true"></span><span class="bio-link__icon"><Icon name="whatsapp" /></span><span class="bio-link__copy"><strong>{c.whatsapp}</strong><small>{c.whatsappDetail}</small></span><span class="bio-link__arrow"><Icon size={18} /></span></a>
+      <p class="bio-group-label">{c.links}</p>
+      {links.map((link, i) => <a class="bio-link" href={link.href} download={link.download} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined} data-bio-action={link.icon} data-bio-reveal style={`--gleam-delay:${(i + 1) * 0.4}s`}>
+        <span class="bio-link__sheen" aria-hidden="true"></span><span class="bio-link__icon"><Icon name={link.icon} /></span><span class="bio-link__copy"><strong>{link.title}</strong><small>{link.detail}</small></span><span class="bio-link__arrow"><Icon size={18} /></span>
+      </a>)}
+    </nav>
+
+    <div class="bio-location" data-bio-reveal>
+      <p class="bio-group-label">{c.studio}</p>
+      <LocationMap {locale} />
+    </div>
+
+    <footer class="bio-footer"><p>{c.farewell}</p><span>{u.appointment}</span><nav aria-label={c.more}><a href={url(routePath('home', locale))}>LUMA Wellness</a><a href={url(routePath('contact', locale))}>{{ de: 'Kontakt', en: 'Contact', fr: 'Contact', es: 'Contacto', pt: 'Contacto', it: 'Contatti' }[locale]}</a><a href={url('/datenschutzrichtlinie')}>{u.privacy}</a><a href={url('/nutzungsbedingungen')}>{u.terms}</a></nav><span class="bio-footer__signature">JUNE SAURIN</span></footer>
+  </div>
+</Layout>

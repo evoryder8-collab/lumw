@@ -1,6 +1,22 @@
 /** Small, interruptible glass interactions for the native Instagram landing page. */
 export function mountBio(signal: AbortSignal) {
   if (document.body.dataset.page !== 'linkinbio') return;
+  const languageMenu = document.querySelector<HTMLDetailsElement>('[data-bio-language]');
+  languageMenu?.querySelectorAll<HTMLAnchorElement>('[data-bio-locale]').forEach(link => {
+    link.addEventListener('click', () => {
+      try { sessionStorage.setItem('luma-bio-language', link.dataset.bioLocale!); } catch { /* Locale URLs also work without storage. */ }
+      languageMenu.open = false;
+    }, { signal });
+  });
+  document.addEventListener('pointerdown', event => {
+    if (languageMenu?.open && !languageMenu.contains(event.target as Node)) languageMenu.open = false;
+  }, { signal });
+  languageMenu?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault(); languageMenu.open = false;
+      languageMenu.querySelector('summary')?.focus();
+    }
+  }, { signal });
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
   const animations = new Set<Animation>();

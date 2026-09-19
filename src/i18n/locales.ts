@@ -64,6 +64,7 @@ export const ALTERNATES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
  * page, so hreflang can pair them up.
  */
 export const ROUTES = {
+  bio:      { de: '/linkinbio', en: '/en/linkinbio', fr: '/fr/linkinbio', es: '/es/linkinbio', pt: '/pt/linkinbio', it: '/it/linkinbio' },
   home:     { de: '/',                       en: '/en',                        fr: '/fr',                      es: '/es',                      pt: '/pt',                      it: '/it' },
   about:    { de: '/about',                  en: '/en/about',                  fr: '/fr/a-propos',              es: '/es/sobre-mi',              pt: '/pt/sobre-mim',             it: '/it/chi-sono' },
   services: { de: '/meineangebote-preise',   en: '/en/treatments-prices',      fr: '/fr/massages-tarifs',       es: '/es/tratamientos-precios',  pt: '/pt/tratamentos-precos',    it: '/it/trattamenti-prezzi' },

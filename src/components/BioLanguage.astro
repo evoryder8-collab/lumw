@@ -1,0 +1,20 @@
+---
+import { readFileSync } from 'node:fs';
+import { AVAILABLE, LOCALE_META, routePath, type Locale } from '../i18n/locales';
+import { labels } from '../i18n/content';
+import { url } from '../lib/site';
+const { locale } = Astro.props as { locale: Locale };
+const flagCodes = { de: 'de', en: 'gb', fr: 'fr', es: 'es', pt: 'pt', it: 'it' };
+const flags = Object.fromEntries(AVAILABLE.map(code => [code, `data:image/webp;base64,${readFileSync(`public/flags/${flagCodes[code]}.webp`).toString('base64')}`]));
+---
+<details class="bio-language" data-bio-language>
+  <summary aria-label={labels(locale).language}>
+    <img src={flags[locale]} width="24" height="18" alt="" />
+    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m2 4 4 4 4-4" /></svg>
+  </summary>
+  <nav class="bio-language__choices" aria-label={labels(locale).language}>
+    {AVAILABLE.map(code => <a href={url(`${routePath('bio', code)}${code === 'de' ? '?lang=de' : ''}`)} lang={code} hreflang={LOCALE_META[code].tag} data-bio-locale={code} aria-current={code === locale ? 'page' : undefined} data-astro-prefetch="false">
+      <img src={flags[code]} width="24" height="18" alt="" /><span>{LOCALE_META[code].name}</span><i aria-hidden="true"></i>
+    </a>)}
+  </nav>
+</details>

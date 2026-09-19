@@ -33,11 +33,11 @@ import winner from '../assets/june-winner.webp';
 import portrait from '../assets/june-dark-portrait.webp';
 
 export function getStaticPaths() {
-  return ALTERNATES.flatMap((locale) => (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
+  return ALTERNATES.flatMap((locale) => (Object.keys(ROUTES) as RouteKey[]).filter(key => key !== 'bio').map((key) => ({
     params: { localized: routePath(key, locale).slice(1) }, props: { locale, pageKey: key },
   })));
 }
-const { locale, pageKey } = Astro.props as { locale: TranslatedLocale; pageKey: RouteKey };
+const { locale, pageKey } = Astro.props as { locale: TranslatedLocale; pageKey: Exclude<RouteKey, 'bio'> };
 const t = translations[locale];
 const u = labels(locale);
 const page = pageKey === 'face' ? { title: `${faceCopy[locale].name} | LUMA Wellness`, description: faceCopy[locale].description, heading: faceCopy[locale].name, lead: faceCopy[locale].intro, eyebrow: faceCopy[locale].eyebrow } : t.pages[pageKey];

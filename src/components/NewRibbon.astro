@@ -1,0 +1,20 @@
+---
+import type { Locale } from '../i18n/locales';
+const { locale = 'de' } = Astro.props as { locale?: Locale };
+const label = { de: 'NEU', en: 'NEW', fr: 'NOUVEAU', es: 'NUEVO', pt: 'NOVO', it: 'NOVITÀ' }[locale];
+// Keep long translations inside the central, unclipped part of the diagonal.
+const size = Math.min(13, 74 / (label.length * .78));
+---
+<span class="new-ribbon" lang={locale}>
+  <span class="new-ribbon__band"><span class="new-ribbon__label" style={`font-size:${size}px`}>{label}</span></span>
+</span>
+
+<style>
+  .new-ribbon { position: absolute; top: 0; right: 0; width: 130px; height: 130px; overflow: hidden; z-index: 4; pointer-events: none; border-top-right-radius: inherit; }
+  .new-ribbon__band { position: absolute; top: 29px; right: -45px; width: 180px; height: 34px; display: grid; place-items: center; transform: rotate(45deg); overflow: hidden; color: #263c2b; background: linear-gradient(176deg, #fff1bf 0%, #e8cd89 16%, #c5a052 51%, #e5c780 80%, #f5e2ad 100%); border-block: 1px solid #fff2bd; box-shadow: 0 3px 2px #2b200733, 0 8px 15px #111b2440, inset 0 1px 1px #fff9, inset 0 -2px 3px #8a642945; }
+  .new-ribbon__band::before { content: ''; position: absolute; inset: 3px 0; border-block: 1px solid #8a6a3452; pointer-events: none; }
+  .new-ribbon__band::after { content: ''; position: absolute; inset: -10% -20%; background: linear-gradient(105deg, transparent 32%, #fff7dc44 43%, #ffffffd9 50%, #fff7dc44 57%, transparent 68%); transform: translateX(-115%); pointer-events: none; }
+  .new-ribbon__label { position: relative; z-index: 1; display: block; width: 84px; text-align: center; white-space: nowrap; font-family: var(--font-body); font-weight: 650; line-height: 1; letter-spacing: .12em; text-shadow: 0 1px 0 #fff5; }
+  @media (prefers-reduced-motion: no-preference) { .new-ribbon__band::after { animation: ribbon-gleam 7s ease-in-out infinite; } }
+  @keyframes ribbon-gleam { 0% { transform: translateX(-115%); } 24%, 100% { transform: translateX(115%); } }
+</style>

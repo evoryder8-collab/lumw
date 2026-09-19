@@ -36,7 +36,7 @@ for (const file of files.filter((file) => file.endsWith('.html'))) {
   check(!documents.has(route), `${route}: duplicate canonical destination`);
   documents.set(route, { document, file });
 }
-check(documents.size === 56, `Expected 25 original German, 30 translated pages, and linkinbio; found ${documents.size}`);
+check(documents.size === 61, `Expected 25 original German, 30 translated pages, and six link-in-bio pages; found ${documents.size}`);
 
 for (const [route, { document }] of documents) {
   const locale = document.documentElement.lang;
@@ -148,7 +148,7 @@ for (const item of compressed.filter((item) => path.basename(item.file).startsWi
 for (const locale of ['de','en','fr','es','pt','it']) {
   const sitemap = fs.readFileSync(path.join(dist, `sitemaps/${locale}.xml`), 'utf8');
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => decodeURI(new URL(m[1]).pathname));
-  check(urls.length === (locale === 'de' ? 26 : 6), `${locale}: incorrect sitemap coverage`);
+  check(urls.length === (locale === 'de' ? 26 : 7), `${locale}: incorrect sitemap coverage`);
   for (const route of urls) check(documents.has(route), `${locale}: sitemap lists a missing page ${route}`);
 }
 const robotsFile = fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8');

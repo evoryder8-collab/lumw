@@ -17,7 +17,7 @@ import { execFileSync } from 'node:child_process';
 /** The sources whose content actually decides what a page renders. */
 const SOURCES: Record<string, string[]> = {
   '/': ['src/pages/index.astro', 'src/content/treatments.json', 'src/components/HomeHero.astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'],
-  '/linkinbio': ['src/pages/linkinbio.astro', 'src/styles/linkinbio.css', 'src/lib/site.ts', 'src/components/IntroFilm.astro', 'src/components/LocationMap.astro'],
+  '/linkinbio': ['src/pages/linkinbio.astro', 'src/pages/[locale]/linkinbio.astro', 'src/components/BioPage.astro', 'src/components/BioLanguage.astro', 'src/components/BioLanguageDetect.astro', 'src/i18n/linkinbio.json', 'src/scripts/bio.ts', 'src/styles/linkinbio.css', 'src/lib/site.ts', 'src/components/IntroFilm.astro', 'src/components/LocationMap.astro'],
   '/about': ['src/pages/about.astro', 'src/components/FilmSection.astro'],
   '/contact': ['src/pages/contact.astro', 'src/components/LocationMap.astro'],
   '/meineangebote-preise': ['src/pages/meineangebote-preise.astro', 'src/content/treatments.json'],
@@ -53,7 +53,7 @@ export function lastmodFor(path: string): string {
 
   const locale = path.match(/^\/(en|fr|es|pt|it)(?:\/|$)/)?.[1];
   const facial = path.endsWith('/ultimate-face-lifting') || path === '/service-page/60min-luma-gesichts-und-kopf-massage';
-  const sources = facial ? ['src/components/FaceTreatmentPage.astro', 'src/components/FaceDetails.astro', 'src/components/ScrollSummon.astro', 'src/i18n/face-care.json', 'src/content/treatments.json'] : locale ? [`src/i18n/${locale}.json`, 'src/pages/[...localized].astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'] : path.startsWith('/service-page/') ? SERVICE_SOURCES : SOURCES[path];
+  const sources = path.endsWith('/linkinbio') ? [...SOURCES['/linkinbio'], ...(locale ? [`src/i18n/${locale}.json`] : [])] : facial ? ['src/components/FaceTreatmentPage.astro', 'src/components/FaceDetails.astro', 'src/components/ScrollSummon.astro', 'src/i18n/face-care.json', 'src/content/treatments.json'] : locale ? [`src/i18n/${locale}.json`, 'src/pages/[...localized].astro', 'src/components/IntroFilm.astro', 'src/components/PhotoGallery.astro', 'src/components/GoogleReviews.astro', 'src/components/FilmSection.astro', 'src/components/JuneInvitation.astro', 'src/data/google-reviews.json'] : path.startsWith('/service-page/') ? SERVICE_SOURCES : SOURCES[path];
   const date = (sources && lastCommit(sources)) || BUILD_DATE;
 
   cache.set(path, date);

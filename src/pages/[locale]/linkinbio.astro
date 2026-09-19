@@ -1,0 +1,7 @@
+---
+import BioPage from '../../components/BioPage.astro';
+import { ALTERNATES } from '../../i18n/locales';
+export const getStaticPaths = () => ALTERNATES.map(locale => ({ params: { locale }, props: { locale } }));
+const { locale } = Astro.props;
+---
+<BioPage {locale} />

@@ -28,7 +28,7 @@ const sportsNames = {
     const isFace = id === 'gesicht-kopf';
     const href = url(`${routePath('services', locale)}#${id}`);
     return <article class="localized-feature" data-featured-treatment={id}>
-      {isFace ? <FaceMedia {locale} {href} /> : <a href={href} aria-label={text.name}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></a>}
+      {isFace ? <FaceMedia {locale} {href} newTreatment /> : <a href={href} aria-label={text.name}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></a>}
       <span class="feature-price">{`${u.from} `}<Price amount={Math.min(...item.prices.map((p) => p.priceEur))} /> €</span>
       <h3>{text.name}</h3><p>{text.description}</p>
       <div class="feature-actions">{isFace ? <FaceQuickView id="home-face" {locale} /> : <a href={href}>{u.details}<Icon size={18} /></a>}</div>

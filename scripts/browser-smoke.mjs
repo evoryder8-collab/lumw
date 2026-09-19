@@ -479,7 +479,7 @@ try {
   await staticPage.locator('.treatment-details__trigger').first().click();
   assert.equal(await staticPage.locator('[data-treatment-panel]').first().isVisible(), true);
   assert.match(await staticPage.locator('[data-treatment-panel]').first().innerText(), /jojoba/);
-  await staticPage.goto(preview.url('/linkinbio'));
+  await staticPage.goto(preview.url('/linkinbio?lang=de'));
   assert.equal(await staticPage.locator('.loc noscript a').count(), 2);
   assert.equal(await staticPage.locator('[data-bio-action]').count(), 8);
   await staticPage.goto(preview.url('/en/about'));
@@ -493,7 +493,7 @@ try {
     const autoplayBrowser = await chromium.launch({ headless: true, ...(channel ? { channel } : {}), args: [`--autoplay-policy=${policy}`] });
     try {
       const bio = await autoplayBrowser.newPage({ viewport: { width: 390, height: 844 } }); track(bio);
-      await bio.goto(preview.url('/linkinbio'));
+      await bio.goto(preview.url('/linkinbio?lang=de'));
       await bio.waitForFunction(() => { const v = document.querySelector('[data-bio-film]'); return !v.paused && v.currentTime > 0.1; });
       assert.equal(await bio.locator('[data-bio-film]').evaluate((v) => v.muted), policy === 'user-gesture-required');
       assert.equal(await bio.locator('[data-language-dialog], [data-sound-dialog]').count(), 0);
@@ -541,7 +541,7 @@ try {
     };
   });
   const blockedPage = await blockedContext.newPage(); track(blockedPage);
-  await blockedPage.goto(preview.url('/linkinbio'));
+  await blockedPage.goto(preview.url('/linkinbio?lang=de'));
   await blockedPage.getByRole('button', { name: 'Mit Ton abspielen', exact: true }).click();
   await blockedPage.waitForFunction(() => { const v = document.querySelector('[data-bio-film]'); return !v.paused && !v.muted && v.currentTime > 0.1; });
   await blockedContext.close();
