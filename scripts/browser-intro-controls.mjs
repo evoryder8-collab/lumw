@@ -76,7 +76,7 @@ try {
           }
           await seek.focus();
           await seek.press('End');
-          await expect.poll(() => film.evaluate(v => v.ended)).toBe(true);
+          await expect.poll(() => film.evaluate(v => v.ended && v.paused)).toBe(true);
           await transport.getByRole('button', { name: 'Replay video', exact: true }).click();
           await expect.poll(() => film.evaluate(v => !v.paused && v.currentTime > .1 && v.currentTime < 5)).toBe(true);
           assert.equal(await film.evaluate(v => v.controls), false, 'Native overlay returned after replay');

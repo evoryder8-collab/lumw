@@ -32,7 +32,11 @@ export function mountIntroControls(video: InlineVideo, signal: AbortSignal, play
   seek.addEventListener('blur', finishSeek, { signal });
   seek.addEventListener('input', () => {
     if (seek.disabled) return;
-    video.currentTime = Math.min(Number(seek.value), video.duration);
+    const position = Math.min(Number(seek.value), video.duration);
+    // Finishing via the slider must cancel pending playback before seeking.
+    // Otherwise WebKit can resume an earlier play request at the beginning.
+    if (position === video.duration) pause();
+    video.currentTime = position;
     sync();
   }, { signal });
   fullscreen.addEventListener('click', async () => {
