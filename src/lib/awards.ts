@@ -23,7 +23,7 @@ const words = {
 export function awardsFor(locale: Locale = 'de') {
   const t = words[locale];
   return records.map((record) => {
-    const event = locale === 'de' && record.id === 'swiss-silver' ? 'Schweizer Massage-Meisterschaft' : record.event;
+    const event = record.event;
     const category = record.category === 'photo' ? t.photo : record.category;
     const place = t.places[['penzberg', 'zurich', 'athens', 'paris'].indexOf(record.city)];
     const placement = `${t.ranks[record.rank - 1]} · ${t.metals[record.rank - 1]}`;
