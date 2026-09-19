@@ -74,7 +74,9 @@ main .hero.hero--immersive {
   color: #f5f1e7;
 }
 .hero-winner { position: absolute; right: 4.5%; top: 47%; width: 44%; aspect-ratio: 1; margin: 0; transform: translateY(-50%); border-radius: 50%; z-index: 0; box-shadow: 0 30px 70px #071b2060, 0 0 40px #d9be711c; }
-.hero-winner .media { overflow: hidden; border-radius: 50%; }
+/* Outrank Photo's scoped fill styles. Clip only the image plane, so the
+   separate gold rim, lotus reliefs and petals keep their full silhouette. */
+.hero-winner > .media.media--fill { overflow: hidden; border-radius: 50%; clip-path: circle(50%); }
 .hero-winner .media img { object-position: 50% 23%; }
 .hero-winner::before { content: ''; position: absolute; inset: -16%; z-index: -1; border-radius: 50%; background: conic-gradient(from 20deg, #69ae8840, transparent 25%, #e0bd7847 43%, transparent 68%, #55b79835); filter: blur(32px); pointer-events: none; }
 
@@ -453,6 +455,9 @@ body[data-ambient-sleep] .hero-winner img, body[data-ambient-sleep] .winner-capt
 .intro-film__frame::after { z-index: -1; }
 .intro-film__screen { position: relative; overflow: hidden; border-radius: 22px; background: #0c1914; }
 .intro-film video { display: block; width: 100%; height: auto; max-height: 76svh; aspect-ratio: 16 / 9; object-fit: contain; }
+.intro-film__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0c1914; pointer-events: none; }
+.intro-film__loading { position: absolute; left: 1rem; bottom: 1rem; padding: .55rem .85rem; border: 1px solid #fff5; border-radius: 24px; color: #fff; background: #11271de8; font-size: .75rem; pointer-events: none; }
+.intro-film__poster[hidden], .intro-film__loading[hidden] { display: none; }
 .intro-film__caption { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 44px; padding: 0.65rem 1rem; color: var(--ink-soft); font-size: 0.58rem; letter-spacing: 0.16em; }
 .intro-film__play { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 0.85rem; color: #fff; border: 0; padding: 1rem; cursor: pointer; background: transparent; text-shadow: 0 1px 12px #000; font-size: 0.8rem; white-space: nowrap; }
 .intro-film__play > :first-child { display: grid; place-items: center; width: 82px; height: 82px; border-radius: 50%; border: 1px solid #ffffffb3; background: #11271dc2; box-shadow: 0 10px 35px #0004, inset 0 1px 1px #fff7; backdrop-filter: blur(18px); font-size: 2rem; padding-left: 4px; }

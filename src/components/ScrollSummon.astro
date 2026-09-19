@@ -186,7 +186,9 @@ const lines = (s: string) => s.split('\n');
   /* The same choreography, sized to the popup's own viewport and scroll area. */
   .ss--dialog { --ss-stage-height: min(820px, calc(100dvh - 2rem - 2px)); container-type: inline-size; margin: 0 0 2rem; border: 1px solid #a4996166; border-radius: 19px; }
   .ss--dialog.is-active { height: calc(var(--ss-stage-height) * 3.4); }
-  .ss--dialog .ss-stage { height: var(--ss-stage-height); min-height: 0; border-radius: 18px; }
+  /* Explicitly clip the composited blur/transform layers in iOS Safari. Keep
+     the tall scroll track unclipped so the stage can still stick inside it. */
+  .ss--dialog .ss-stage { height: var(--ss-stage-height); min-height: 0; border-radius: 18px; clip-path: inset(0 round 18px); }
   .ss--dialog .ss-copy-left { left: 7%; top: 17%; width: 86%; gap: 10px; }
   .ss--dialog .ss-headline { width: 100%; max-width: 17ch; font-size: clamp(28px, 6.1cqw, 42px); line-height: 1.08; }
   .ss--dialog .ss-title { font-size: clamp(23px, 4.5cqw, 31px); }

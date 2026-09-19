@@ -1,5 +1,6 @@
 import { mountLanguageCountdown } from './language-countdown';
 import { animateCurtain, cancelCurtain } from './curtain-cloth';
+import { mountIntroPlayer } from './intro-player';
 /** Welcome choices are session-only. No media plays before an explicit sound choice. */
 const memory = new Map<string, string>();
 const read = (key: string) => { try { return sessionStorage.getItem(key) ?? memory.get(key); } catch { return memory.get(key); } };
@@ -31,6 +32,7 @@ export function mountWelcome(signal: AbortSignal) {
   let disposed = false;
   let curtainTimer: ReturnType<typeof setTimeout> | undefined;
   let curtainFrame = 0;
+  let player: ReturnType<typeof mountIntroPlayer> | undefined;
 
   const lock = () => {
     if (locked) return;
@@ -50,7 +52,7 @@ export function mountWelcome(signal: AbortSignal) {
   const syncPlayer = () => {
     if (!intro) return;
     if (play) {
-      play.hidden = !intro.paused;
+      play.hidden = !intro.paused && !player?.needsRetry;
       const label = read('luma-sound') === 'no' ? play.dataset.labelPlay! : play.dataset.labelSound!;
       play.querySelector('[data-intro-play-label]')!.textContent = label;
     }
@@ -63,12 +65,8 @@ export function mountWelcome(signal: AbortSignal) {
       toggle.querySelector('[data-intro-sound-label]')!.textContent = label;
     }
   };
-  const playIntro = () => {
-    if (!intro) return;
-    // Keep play() directly inside the consent tap for Safari and mobile Chrome.
-    const started = intro.play();
-    started?.catch(() => { if (!disposed) syncPlayer(); });
-  };
+  if (intro) player = mountIntroPlayer(intro, signal, syncPlayer);
+  const playIntro = () => player?.play();
   const finishCurtain = () => {
     clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame);
     if (curtain) cancelCurtain(curtain);
@@ -97,10 +95,10 @@ export function mountWelcome(signal: AbortSignal) {
     write('luma-welcome-done', 'yes');
     welcoming = false;
     setSound(enabled);
-    // Playback must happen in this tap, before any animation or awaited work.
-    if (enabled || !matchMedia('(prefers-reduced-motion: reduce)').matches) playIntro();
     sound?.close(); language?.close();
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // Playback must happen in this tap, before any animation or awaited work.
+    if (enabled || !matchMedia('(prefers-reduced-motion: reduce)').matches) playIntro();
     openCurtain();
   };
   const askSound = () => {
@@ -186,12 +184,7 @@ export function mountWelcome(signal: AbortSignal) {
     // result decide; preserve an existing No and fall back when audio is blocked.
     intro.muted = read('luma-sound') === 'no';
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      intro.play().catch(() => {
-        if (disposed) return;
-        intro.muted = true;
-        intro.play().catch(() => { if (!disposed) syncPlayer(); });
-        syncPlayer();
-      });
+      player?.play(true);
     }
     syncPlayer();
   } else if (intro && !read('luma-welcome-done')) {
@@ -201,6 +194,7 @@ export function mountWelcome(signal: AbortSignal) {
 
   return () => {
     disposed = true;
+    player?.dispose();
     countdown?.stop();
     clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame); if (curtain) cancelCurtain(curtain); curtain?.close();
     posters.disconnect();

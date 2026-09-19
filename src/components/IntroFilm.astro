@@ -15,14 +15,16 @@ const words = {
 // The delivery poster is independent of the unchanged 1080p film.
 const poster = await getImage({src: posterSource, width: 1280, format: 'webp', quality: 72});
 const playWithSound = { de: 'Mit Ton abspielen', en: 'Play with sound', es: 'Reproducir con sonido', pt: 'Reproduzir com som', it: 'Riproduci con audio', fr: 'Lire avec le son' }[locale];
+const loading = { de: 'Video wird geladen …', en: 'Loading the introduction…', es: 'Cargando el vídeo…', pt: 'A carregar o vídeo…', it: 'Caricamento del video…', fr: 'Chargement de la vidéo…' }[locale];
 ---
 <section class="intro-film" aria-label={words[3]}>
   <div class="intro-film__frame liquid-glass" tabindex="-1" data-intro-frame>
     <div class="intro-film__screen">
-      <video data-intro-film data-bio-film={bio || undefined} data-film controls playsinline muted={bio} preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
-        <source src={url('/media/june-intro.mp4')} type="video/mp4" />
+      <video src={url('/media/june-intro.mp4')} data-mobile-src={url('/media/june-intro-mobile.mp4')} data-intro-film data-bio-film={bio || undefined} data-film controls playsinline muted={bio} preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
         <a href={url('/media/june-intro.mp4')}>{words[4]}</a>
       </video>
+      <img class="intro-film__poster" data-intro-poster src={poster.src} width="1280" height="720" alt="" aria-hidden="true" hidden />
+      <span class="intro-film__loading" data-intro-loading role="status" hidden>{loading}</span>
       <button class="intro-film__play" data-intro-play data-label-play={words[4]} data-label-sound={playWithSound} type="button" hidden>
         <span aria-hidden="true">▷</span><span data-intro-play-label>{words[4]}</span>
       </button>

@@ -44,8 +44,8 @@ jobs:
       - name: Build and verify the complete deployment artifact
         run: npm run verify
 
-      - name: Install the browser
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Verify real visitor journeys and accessibility
         run: npm run check:browser
