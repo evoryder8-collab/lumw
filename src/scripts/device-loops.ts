@@ -37,7 +37,7 @@ export function mountDeviceLoops(signal: AbortSignal) {
     state.timer = setTimeout(() => {
       state.timer = undefined;
       if (!allowed(state)) return;
-      if (!state.video.paused && state.video.readyState >= 2 && state.video.currentTime !== previous) return;
+      if (!state.video.paused && state.video.readyState >= 2 && state.video.currentTime > .03 && state.video.currentTime !== previous) return;
       retry(state, true);
     }, 6000);
   };
@@ -100,8 +100,9 @@ export function mountDeviceLoops(signal: AbortSignal) {
     }, { signal });
     // WebKit can emit playing/waiting repeatedly with time frozen at zero.
     // Only actual progress proves recovery and clears the stall watchdog.
+    // Sub-frame startup jitter can run backwards to zero on a stalled decoder.
     video.addEventListener('timeupdate', () => {
-      if (video.paused || video.currentTime <= 0 || video.currentTime === state.progress) return;
+      if (video.paused || video.currentTime <= .03 || video.currentTime === state.progress) return;
       state.progress = video.currentTime;
       clearTimer(state); state.pending = false; state.failed = false; state.retries = 0;
     }, { signal });
