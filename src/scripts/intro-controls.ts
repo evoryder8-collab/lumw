@@ -10,10 +10,12 @@ export function mountIntroControls(video: InlineVideo, signal: AbortSignal, play
   let scrubbing = false;
   const time = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
   const sync = () => {
-    const playing = !video.paused && !video.ended;
-    toggle.dataset.playing = String(playing);
-    toggle.setAttribute('aria-label', video.ended ? toggle.dataset.labelReplay! : playing ? toggle.dataset.labelPause! : toggle.dataset.labelPlay!);
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
+    // A paused seek to the final frame can update ended after its media events.
+    const atEnd = video.ended || (duration > 0 && video.currentTime >= duration);
+    const playing = !video.paused && !atEnd;
+    toggle.dataset.playing = String(playing);
+    toggle.setAttribute('aria-label', atEnd ? toggle.dataset.labelReplay! : playing ? toggle.dataset.labelPause! : toggle.dataset.labelPlay!);
     seek.disabled = duration <= 0;
     // Round up so the slider's End key can reach the end of a fractional second.
     seek.max = String(Math.ceil(duration) || 1);
