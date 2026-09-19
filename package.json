@@ -19,7 +19,7 @@
     "check:titles": "node scripts/check-titles.mjs",
     "check:experience": "node scripts/check-experience.mjs",
     "check:locales": "node scripts/check-locales.mjs",
-    "check:browser": "node scripts/browser-smoke.mjs && node scripts/browser-face-care.mjs && node scripts/browser-product-scroll.mjs && npm run check:safari && npm run check:intro-controls",
+    "check:browser": "npm run check:intro-controls && node scripts/browser-smoke.mjs && node scripts/browser-face-care.mjs && node scripts/browser-product-scroll.mjs && npm run check:safari",
     "check:safari": "node scripts/browser-safari.mjs",
     "check:intro-controls": "node scripts/browser-intro-controls.mjs",
     "check:performance": "node scripts/check-performance.mjs",

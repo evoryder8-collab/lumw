@@ -20,6 +20,12 @@ try {
           await page.locator('[data-language-pick][lang="en"]').click();
           await page.locator('[data-sound-yes]').click();
           const film = page.locator('[data-intro-film]');
+          await film.evaluate(v => {
+            window.__introEvents = [];
+            for (const name of ['play', 'playing', 'pause', 'ended', 'seeking', 'seeked', 'waiting', 'stalled', 'error', 'timeupdate']) {
+              v.addEventListener(name, () => window.__introEvents.push({ event: name, at: performance.now(), time: v.currentTime, paused: v.paused, ended: v.ended, seeking: v.seeking, ready: v.readyState, error: v.error?.code }));
+            }
+          });
           await expect.poll(() => film.evaluate(v => v.currentTime), { timeout: 20000 }).toBeGreaterThan(.1);
           assert.equal(await film.evaluate(v => v.controls), false, 'Native controls darken the opening frames');
           assert.equal(await film.evaluate(v => v.muted), false, 'Clean startup lost the sound choice');
@@ -61,6 +67,15 @@ try {
           assert.deepEqual(a11y.violations, [], 'Intro controls accessibility');
           assert.deepEqual(errors, [], 'Intro player errors');
           console.log(`✓ ${engine.name()} ${width}px: clean audible opening, controls below film, pause, seek, mute, replay and accessibility`);
+        } catch (error) {
+          const diagnostic = await page.evaluate(() => {
+            const v = document.querySelector('[data-intro-film]');
+            return { state: v && { time: v.currentTime, duration: v.duration, paused: v.paused, ended: v.ended, seeking: v.seeking, ready: v.readyState, network: v.networkState, error: v.error?.code }, events: window.__introEvents };
+          });
+          console.error(`${engine.name()} ${width}px playback failure:`, JSON.stringify(diagnostic));
+          fs.writeFileSync(`artifacts/browser/intro-failure-${engine.name()}-${width}.json`, JSON.stringify(diagnostic, null, 2));
+          await page.screenshot({ path: `artifacts/browser/intro-failure-${engine.name()}-${width}.png` });
+          throw error;
         } finally { await context.close(); }
       }
     } finally { await browser.close(); }
