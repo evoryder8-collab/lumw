@@ -1,4 +1,5 @@
 import { mountLanguageCountdown } from './language-countdown';
+import { animateCurtain, cancelCurtain } from './curtain-cloth';
 /** Welcome choices are session-only. No media plays before an explicit sound choice. */
 const memory = new Map<string, string>();
 const read = (key: string) => { try { return sessionStorage.getItem(key) ?? memory.get(key); } catch { return memory.get(key); } };
@@ -70,6 +71,7 @@ export function mountWelcome(signal: AbortSignal) {
   };
   const finishCurtain = () => {
     clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame);
+    if (curtain) cancelCurtain(curtain);
     curtain?.close(); curtain?.classList.remove('is-opening');
     if (disposed) return;
     document.documentElement.dataset.welcomeComplete = 'true';
@@ -83,7 +85,10 @@ export function mountWelcome(signal: AbortSignal) {
     curtain.showModal();
     // Paint the closed fabric before opening its separate folds onto the film.
     curtainFrame = requestAnimationFrame(() => {
-      curtainFrame = requestAnimationFrame(() => curtain.classList.add('is-opening'));
+      curtainFrame = requestAnimationFrame(() => {
+        curtain.classList.add('is-opening');
+        void animateCurtain(curtain, true, 1850).then(() => { if (!disposed && curtain.open) finishCurtain(); });
+      });
     });
     // A cancelled animation must never leave the entrance blocking the page.
     curtainTimer = setTimeout(finishCurtain, 2150);
@@ -197,7 +202,7 @@ export function mountWelcome(signal: AbortSignal) {
   return () => {
     disposed = true;
     countdown?.stop();
-    clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame); curtain?.close();
+    clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame); if (curtain) cancelCurtain(curtain); curtain?.close();
     posters.disconnect();
     films.forEach((film) => film.pause());
     language?.close(); sound?.close(); unlock();

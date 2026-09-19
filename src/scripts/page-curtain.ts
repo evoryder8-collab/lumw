@@ -1,5 +1,6 @@
 import type { TransitionBeforePreparationEvent, TransitionBeforeSwapEvent } from 'astro:transitions/client';
 import { routeKeyForPath } from '../i18n/locales';
+import { animateCurtain, cancelCurtain } from './curtain-cloth';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active: { curtain: HTMLElement; signal: AbortSignal } | undefined;
@@ -7,7 +8,7 @@ let timer: ReturnType<typeof setTimeout> | undefined;
 let frame = 0;
 const finish = () => {
   clearTimeout(timer); cancelAnimationFrame(frame);
-  if (active) { active.curtain.hidden = true; active.curtain.classList.remove('is-closing', 'is-opening'); }
+  if (active) { cancelCurtain(active.curtain); active.curtain.hidden = true; active.curtain.classList.remove('is-closing', 'is-opening'); }
   active = undefined;
 };
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -26,7 +27,7 @@ document.addEventListener('astro:before-preparation', (raw) => {
   // Fetch the destination while the fabric closes. Only the short visual cover
   // delays the swap; no extra network round trip is introduced.
   const loader = event.loader;
-  const covered = new Promise<void>((resolve) => setTimeout(resolve, 410));
+  const covered = animateCurtain(curtain, false, 600);
   event.loader = async () => {
     try { await Promise.all([loader(), covered]); }
     catch (error) { if (active?.signal === event.signal) finish(); throw error; }
@@ -50,7 +51,8 @@ document.addEventListener('astro:after-swap', () => {
     frame = requestAnimationFrame(() => {
       if (active !== current) return;
       current.curtain.classList.add('is-opening');
-      clearTimeout(timer); timer = setTimeout(finish, 1330);
+      void animateCurtain(current.curtain, true, 1600).then(() => { if (active === current) finish(); });
+      clearTimeout(timer); timer = setTimeout(finish, 2000);
     });
   });
 });

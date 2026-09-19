@@ -32,6 +32,7 @@ export function mountTreatmentDetails(signal: AbortSignal) {
       document.body.style.overflow = 'hidden';
       active = dialog;
       dialog.showModal();
+      dialog.scrollTop = 0;
       notify();
     }, { signal });
     close.addEventListener('click', closeDialog, { signal });

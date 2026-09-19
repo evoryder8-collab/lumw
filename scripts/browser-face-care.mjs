@@ -111,8 +111,9 @@ try {
   const dialog = mp.locator('.treatment-dialog[open]');
   await expect.poll(()=>mp.locator('#gesicht-kopf video').evaluate(v=>v.paused)).toBe(true);
   const ultrasound = dialog.locator('.device-loop--echogram video');
-  await ultrasound.scrollIntoViewIfNeeded();
   await expect.poll(()=>ultrasound.evaluate(v=>!v.paused && v.muted && v.currentTime>0)).toBe(true);
+  assert.equal(await dialog.evaluate(d=>d.scrollTop),0,'Popup should open at the echogram');
+  assert.ok(await ultrasound.evaluate(v=>{const r=v.getBoundingClientRect(),d=v.closest('dialog').getBoundingClientRect();return r.top>=d.top&&r.bottom<=d.bottom}),'Echogram is not visible immediately');
   assert.equal(await dialog.locator('.face-rate').count(),3);
   assert.deepEqual(await dialog.locator('.face-rate [data-price-counter]').evaluateAll(es=>es.map(e=>+e.dataset.price)),[75,30,50]);
   await mp.screenshot({path:`${artifacts}/face-ultrasound-desktop.png`});

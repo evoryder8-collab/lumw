@@ -13,6 +13,7 @@ const u = labels(locale);
     <button type="button" class="treatment-details__close" data-treatment-close aria-label={u.close} hidden><Icon name="close" size={22} /></button>
     <p class="eyebrow">LUMA WELLNESS</p>
     <h2 id={`treatment-details-${id}`} data-treatment-title>{name}</h2>
+    <slot name="media" />
     <div class="treatment-details__copy">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
     <slot />
     <a class="pill sheen" href={href}>{u.book}<Icon size={18} /></a>

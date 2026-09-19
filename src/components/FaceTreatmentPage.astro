@@ -28,7 +28,7 @@ const u = labels(locale);
   </section>
   <section class="shell face-page__details" aria-label={c.story.eyebrow}>
     <p class="face-page__expectations">{c.expectations}</p>
-    <FaceDetails {locale} includeRates={false} includeEcho={false} />
+    <FaceDetails {locale} includeRates={false} />
   </section>
   <section class="shell face-page__booking" id="face-options">
     <div><p class="eyebrow">LUMA Wellness · June Saurin</p><h2>{c.story.options}</h2><p>{c.appointmentTime}</p><a class="pill sheen" href={url(`${routePath('contact', locale)}?treatment=gesicht-kopf#enquiry`)}>{u.book}<Icon size={18} /></a></div>

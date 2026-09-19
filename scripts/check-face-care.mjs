@@ -21,7 +21,10 @@ for (const [locale, paths] of Object.entries(routes)) {
   assert.deepEqual(strings.map(([key]) => key).sort(), keys, `${locale}: incomplete facial care copy`);
   for (const [key, value] of strings) assert.ok(value.trim() && !value.includes('\u2014'), `${locale}.${key}: empty or forbidden copy`);
   const home = read(paths[0]);
-  assert.deepEqual([...home.querySelectorAll('[data-featured-treatment]')].map((el) => el.getAttribute('data-featured-treatment')), ['aroma-luxus','thai-solution','gesicht-kopf']);
+  assert.equal(home.querySelectorAll('.hero-kicker').length, 0, `${locale}: redundant hero label`);
+  assert.deepEqual([...home.querySelectorAll('[data-featured-treatment]')].map((el) => el.getAttribute('data-featured-treatment')), ['aroma-luxus','gesicht-kopf','stark-ball']);
+  assert.ok(home.querySelector('[data-featured-treatment="stark-ball"] a').getAttribute('href').endsWith('#stark-ball'));
+  assert.equal(home.querySelector('[data-featured-treatment="stark-ball"] [data-price-counter]').getAttribute('data-price'), '149');
   assert.ok(home.querySelector('[data-language-countdown] [data-countdown-toggle]'));
   for (const route of paths.slice(0,2)) {
     const doc = read(route);
@@ -31,8 +34,10 @@ for (const [locale, paths] of Object.entries(routes)) {
       assert.equal(doc.querySelectorAll('.featured-treatments .face-rates').length, 0);
       continue;
     }
-    assert.ok(doc.querySelector('[data-face-details] .device-loop--echogram video'), `${route}: ultrasound missing`);
+    assert.ok(doc.querySelector('.treatment-details__panel [data-face-echo] .device-loop--echogram video'), `${route}: ultrasound missing`);
     const panel = doc.querySelector('[data-face-details]');
+    const siblings = [...panel.parentElement.children];
+    assert.ok(siblings.indexOf(panel.parentElement.querySelector('[data-face-echo]')) < siblings.indexOf(panel.parentElement.querySelector('.treatment-details__copy')), `${route}: popup should lead with the ultrasound`);
     assert.equal(panel.querySelectorAll('.face-details__safety li').length, 4);
     assert.ok(panel.textContent.includes('Kosuke Takeuchi') && panel.textContent.includes('ViEW=TECH'));
     assert.deepEqual([...panel.querySelectorAll('.face-rate [data-price-counter]')].map((el) => +el.getAttribute('data-price')), [75,30,50]);

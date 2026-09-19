@@ -687,3 +687,32 @@ The glow animates a separate layer's opacity. A browser regression check ensures
 no language-page request occurs before selection. All three local cold welcome
 runs now score 97, with median LCP 2.412 seconds and zero CLS. The original CI
 performance limits remain unchanged.
+
+## Softer curtains and echogram-first details, 19 September 2026
+
+The shared welcome and page curtains now use connected spring rows instead of
+skewing rigid rectangles. The lower fabric pulls first; the upper rows follow
+with a curved, damped response. Folds and floral embroidery travel with the
+cloth, and released petals carry its sideways momentum before falling. The
+embroidery keeps its proportions on tall phones. Closing still fully covers
+the page swap; cancellation, rapid navigation, reduced motion and the timeout
+escape remain supported.
+
+The facial-treatment quick view starts with its automatically looping
+echogram immediately below the title. The caption now describes the visible
+tissue movement in plain, positive language in all six locales. Device
+guidance, suitability and realistic expectations remain in the detailed copy.
+Reopening the popup returns to the top, with the video visible immediately.
+
+Homepage features now run Aroma-Luxus, Ultimate Face Lifting, then Stark Ball
+Sports Massage. The archived studio copy identifies Stark Ball as its sports
+massage (`content-source/luma-wellness-copy.md`, lines 100 and 454), so the
+existing treatment photo, €149 starting price and booking destination are
+used. All menu prices remain unchanged. The redundant Massage with June Saurin
+line is removed from every homepage language.
+
+Validation includes the curved lower-first reveal, rapid-tap cancellation,
+history navigation, welcome sound flow, immediate popup playback and six-locale
+content checks. The complete browser suite passes 84 responsive page checks
+and 17 accessibility audits. Three cold runs per mobile performance scenario
+pass the existing budgets with zero layout shift.

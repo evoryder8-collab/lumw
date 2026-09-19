@@ -1,10 +1,9 @@
 ---
 import type { Locale } from '../i18n/locales';
 import copy from '../i18n/face-care.json';
-import DeviceLoop from './DeviceLoop.astro';
 import FaceRates from './FaceRates.astro';
 import '../styles/face-care.css';
-const { locale = 'de', includeRates = true, includeEcho = true } = Astro.props as { locale?: Locale; includeRates?: boolean; includeEcho?: boolean };
+const { locale = 'de', includeRates = true } = Astro.props as { locale?: Locale; includeRates?: boolean };
 const c = copy[locale];
 const sources = [
   'https://core-fit.jp/product/faceplayer/',
@@ -18,7 +17,6 @@ const sources = [
   {includeRates && <section><h3>{c.choose}</h3><FaceRates {locale} detailed /><p class="face-details__note">{c.appointmentTime}</p></section>}
   {!includeRates && <p class="face-details__note">{c.appointmentTime}</p>}
   <section class="face-details__methods"><div><span class="face-details__step" aria-hidden="true">01</span><h3>{c.pointerTitle}</h3><p>{c.pointerBody}</p></div><div><span class="face-details__step" aria-hidden="true">02</span><h3>{c.playerTitle}</h3><p>{c.playerBody}</p></div></section>
-  {includeEcho && <section><h3>{c.echoTitle}</h3><figure class="face-details__echo"><DeviceLoop {locale} kind="echogram" /><figcaption>{c.echoCaption}</figcaption></figure></section>}
   <section><h3>{c.comfortTitle}</h3><p>{c.comfortBody}</p></section>
   <section class="face-details__safety"><h3>{c.safetyTitle}</h3><ul>{c.safety.map((line) => <li>{line}</li>)}</ul></section>
   <section class="face-details__context"><h3>{c.championTitle}</h3><p>{c.championBody}</p><p class="face-details__note">{c.championNote}</p><details><summary>{c.sources}</summary><ul>{sources.map((source, i) => <li><a href={source} target="_blank" rel="noopener noreferrer">{c.sourceLabels[i]}</a></li>)}</ul><a href="https://face-matrix.com/fmc2025tokyo_entry/taiwan/" target="_blank" rel="noopener noreferrer">Face Matrix Championship 2025 · ¥10,000,000</a></details></section>

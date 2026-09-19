@@ -11,12 +11,19 @@ import Icon from './Icon.astro';
 import FaceMedia from './FaceMedia.astro';
 const { locale = 'de' } = Astro.props as { locale?: Locale };
 const u = labels(locale);
+// The original studio copy identifies Stark Ball as its sports massage.
+const sportsNames = {
+  de: 'Stark Ball Sportmassage', en: 'Stark Ball Sports Massage',
+  fr: 'Massage sportif Stark Ball', es: 'Masaje deportivo Stark Ball',
+  pt: 'Massagem desportiva Stark Ball', it: 'Massaggio sportivo Stark Ball',
+};
 ---
 <section class="section--tight featured-treatments"><div class="shell">
   <p class="eyebrow">{u.signature}</p>
-  <div class="localized-feature-grid">{['aroma-luxus', 'thai-solution', 'gesicht-kopf'].map((id) => {
+  <div class="localized-feature-grid">{['aroma-luxus', 'gesicht-kopf', 'stark-ball'].map((id) => {
     const item = data.treatments.find((t) => t.id === id)!;
-    const text = locale === 'de' ? { name: treatmentName(item.name), description: item.body.find((b) => b.type === 'p')?.text } : translations[locale].treatments[id as keyof typeof translations.en.treatments];
+    const baseText = locale === 'de' ? { name: treatmentName(item.name), description: item.body.find((b) => b.type === 'p')?.text } : translations[locale].treatments[id as keyof typeof translations.en.treatments];
+    const text = { ...baseText, name: id === 'stark-ball' ? sportsNames[locale] : baseText.name };
     const isFace = id === 'gesicht-kopf';
     const href = url(`${routePath('services', locale)}#${id}`);
     return <article class="localized-feature" data-featured-treatment={id}>
