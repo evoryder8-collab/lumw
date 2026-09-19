@@ -61,7 +61,8 @@
       "scienceTitle": "See the movement beneath the surface.",
       "scienceIntro": "A closer look at the Face Player II demonstration. The ultrasound clip shows tissue movement during stimulation; the explanation below puts it in context.",
       "options": "Your facial treatment",
-      "back": "Back to treatments"
+      "back": "Back to treatments",
+      "scrollHint": "Scroll to explore the tools"
     }
   },
   "de": {
@@ -126,7 +127,8 @@
       "scienceTitle": "Ein Blick unter die Haut.",
       "scienceIntro": "Die Ultraschallaufnahme zeigt Gewebebewegungen bei der Stimulation mit dem Face Player II. Hier erfahren Sie, was dahintersteckt.",
       "options": "Ihre Gesichtsbehandlung",
-      "back": "Zurück zu den Massagen"
+      "back": "Zurück zu den Massagen",
+      "scrollHint": "Scrollen und die Tools entdecken"
     }
   },
   "fr": {
@@ -191,7 +193,8 @@
       "scienceTitle": "Voir le mouvement sous la peau.",
       "scienceIntro": "Cette vidéo échographique montre les mouvements des tissus pendant la stimulation avec le Face Player II. Les explications ci-dessous vous aident à les comprendre.",
       "options": "Votre soin du visage",
-      "back": "Retour aux massages"
+      "back": "Retour aux massages",
+      "scrollHint": "Faites défiler pour découvrir les outils"
     }
   },
   "es": {
@@ -256,7 +259,8 @@
       "scienceTitle": "El movimiento bajo la piel.",
       "scienceIntro": "Este vídeo de ecografía muestra el movimiento de los tejidos durante la estimulación con Face Player II. Más abajo te explicamos qué significa.",
       "options": "Tu tratamiento facial",
-      "back": "Volver a los masajes"
+      "back": "Volver a los masajes",
+      "scrollHint": "Desliza para descubrir las herramientas"
     }
   },
   "pt": {
@@ -321,7 +325,8 @@
       "scienceTitle": "O movimento por baixo da pele.",
       "scienceIntro": "Este vídeo de ecografia mostra o movimento dos tecidos durante a estimulação com o Face Player II. As explicações abaixo ajudam a perceber o que acontece.",
       "options": "O seu tratamento facial",
-      "back": "Voltar às massagens"
+      "back": "Voltar às massagens",
+      "scrollHint": "Deslize para descobrir os aparelhos"
     }
   },
   "it": {
@@ -386,7 +391,8 @@
       "scienceTitle": "Il movimento sotto la pelle.",
       "scienceIntro": "Questo video ecografico mostra il movimento dei tessuti durante la stimolazione con Face Player II. Qui sotto trovi le spiegazioni per capire cosa succede.",
       "options": "Il tuo trattamento viso",
-      "back": "Torna ai massaggi"
+      "back": "Torna ai massaggi",
+      "scrollHint": "Scorri per scoprire gli strumenti"
     }
   }
 }

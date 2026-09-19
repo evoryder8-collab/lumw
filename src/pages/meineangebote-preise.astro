@@ -16,9 +16,7 @@ import Photo from '../components/Photo.astro';
 import Medal from '../components/Medal.astro';
 import FaceMedia from '../components/FaceMedia.astro';
 import FaceRates from '../components/FaceRates.astro';
-import FaceDetails from '../components/FaceDetails.astro';
-import FaceEchogram from '../components/FaceEchogram.astro';
-import TreatmentDetails from '../components/TreatmentDetails.astro';
+import FaceQuickView from '../components/FaceQuickView.astro';
 import faceCopy from '../i18n/face-care.json';
 import Price from '../components/Price.astro';
 import { imageByName, cardImageByName, socialImageUrl } from '../lib/images';
@@ -245,7 +243,7 @@ const money = (n: number) => `${n}€`;
                     </details>
                   )}
 
-                  {isFace && <TreatmentDetails id="catalogue-face" name={faceCopy.de.name} paragraphs={[faceCopy.de.intro, faceCopy.de.expectations]} href={url('/contact?treatment=gesicht-kopf#enquiry')} locale="de" triggerLabel={faceCopy.de.more}><FaceEchogram slot="media" /><FaceDetails /></TreatmentDetails>}
+                  {isFace && <FaceQuickView id="catalogue-face" />}
 
                   <a
                     class="card__cta gleam"

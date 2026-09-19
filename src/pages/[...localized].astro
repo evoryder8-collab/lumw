@@ -4,8 +4,7 @@ import FaceTreatmentPage from '../components/FaceTreatmentPage.astro';
 import FeaturedTreatments from '../components/FeaturedTreatments.astro';
 import FaceMedia from '../components/FaceMedia.astro';
 import FaceRates from '../components/FaceRates.astro';
-import FaceDetails from '../components/FaceDetails.astro';
-import FaceEchogram from '../components/FaceEchogram.astro';
+import FaceQuickView from '../components/FaceQuickView.astro';
 import faceCopy from '../i18n/face-care.json';
 import HomeHero from '../components/HomeHero.astro';
 import IntroFilm from '../components/IntroFilm.astro';
@@ -86,7 +85,7 @@ const schema = graph([
     const text = t.treatments[item.id as keyof typeof t.treatments];
     return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature']} id={item.id} data-card>
       <div class="card__photo">{item.id === 'gesicht-kopf' ? <FaceMedia {locale} href={url(routePath('face', locale))} /> : <Photo src={cardImageByName(item.image)!} alt={text.name} widths={treatmentWidths} sizes={treatmentSizes} priority={item === treatments[0]} ratio="7 / 6" dissolve={false} />}</div>
-      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{item.id === 'gesicht-kopf' ? <a href={url(routePath('face', locale))}>{text.name}</a> : text.name}</h2><p class="card__lead">{text.description}</p>{item.id === 'gesicht-kopf' ? <FaceRates {locale} /> : <dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl>}<a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} triggerLabel={item.id === 'gesicht-kopf' ? faceCopy[locale].more : undefined}><Fragment slot="media">{item.id === 'gesicht-kopf' && <FaceEchogram {locale} />}</Fragment>{item.id === 'gesicht-kopf' && <FaceDetails {locale} />}</TreatmentDetails></div>
+      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{item.id === 'gesicht-kopf' ? <a href={url(routePath('face', locale))}>{text.name}</a> : text.name}</h2><p class="card__lead">{text.description}</p>{item.id === 'gesicht-kopf' ? <FaceRates {locale} /> : <dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl>}<a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><Fragment>{item.id === 'gesicht-kopf' ? <FaceQuickView id={item.id} {locale} paragraphs={text.details} /> : <TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} />}</Fragment></div>
     </article>;
   })}</div></div></section>}
 

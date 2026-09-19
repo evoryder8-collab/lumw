@@ -40,14 +40,25 @@ function bootProductScroll() {
 
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const inDialog = root.hasAttribute('data-ss-dialog');
+    const stage = q('.ss-stage');
     let target = 0, active = false, raf = 0, alive = true;
-    let clock = 0;
+    let clock = 0, wasOpen = false;
     const sim = { p: 0, v: 0, ph: 0, vh: 0, pp: 0, vp: 0, last: performance.now() };
     const measure = () => {
+      // Treatment panels are moved into native dialogs after enhancement.
+      // Resolve their owner here instead of retaining their original ancestor.
+      const dialog = root.closest('dialog');
       const rect = root.getBoundingClientRect();
-      const stage = root.querySelector('.ss-stage');
+      const top = dialog ? dialog.getBoundingClientRect().top + dialog.clientTop : 0;
+      const bottom = top + (dialog ? dialog.clientHeight : innerHeight);
       const span = root.offsetHeight - stage.offsetHeight;
-      target = span > 0 ? clamp(-rect.top / span, 0, 1) : 0;
+      target = span > 0 ? clamp((top - rect.top) / span, 0, 1) : 0;
+      const modal = document.querySelector('dialog[open]');
+      active = (!inDialog || dialog?.open) && (!modal || modal === dialog)
+        && rect.width > 0 && rect.top < bottom && rect.bottom > top;
+      root.classList.toggle('is-visible', active);
+      if (inDialog && target > .035) root.classList.add('has-scrolled');
     };
     const step = (pos, vel, goal, k, c, dt) => {
       const v2 = vel + ((goal-pos)*k-vel*c)*dt;
@@ -55,7 +66,7 @@ function bootProductScroll() {
     };
     const frame = now => {
       raf = 0;
-      if (!alive || !active || document.hidden || reduced.matches) return;
+      if (!alive || !active || document.hidden || reduced.matches || (inDialog && !root.closest('dialog')?.open)) return;
       const dt = Math.min((now-sim.last)/1000, 1/30);
       sim.last=now;clock+=dt;
       const n=Math.max(1,Math.ceil(dt/(1/120))), h=dt/n;
@@ -68,9 +79,10 @@ function bootProductScroll() {
       raf=requestAnimationFrame(frame);
     };
     const wake = () => {
-      cancelAnimationFrame(raf);raf=0;
-      if(active && !document.hidden && !reduced.matches && alive) { sim.last=performance.now();raf=requestAnimationFrame(frame); }
+      if (!active || document.hidden || reduced.matches || !alive) { cancelAnimationFrame(raf);raf=0;return; }
+      if (!raf) { sim.last=performance.now();raf=requestAnimationFrame(frame); }
     };
+    const sync = () => { measure();wake(); };
     const mode = () => {
       root.classList.toggle('is-active',!reduced.matches);
       if(reduced.matches) {
@@ -78,14 +90,39 @@ function bootProductScroll() {
       } else { measure();sim.p=sim.ph=sim.pp=target;render(target,clock,0,target,target,0,0); }
       wake();
     };
-    const observer=new IntersectionObserver(([entry])=>{active=entry.isIntersecting;measure();wake();});
+    const observer=new IntersectionObserver(sync);
     observer.observe(root);
-    addEventListener('scroll',measure,{passive:true,signal});
-    addEventListener('resize',measure,{passive:true,signal});
+    const resize=new ResizeObserver(sync);
+    resize.observe(stage);
+    addEventListener('scroll',sync,{passive:true,signal});
+    // Scroll does not bubble, so capture the popup's own scroll events.
+    document.addEventListener('scroll',event=>{
+      if(inDialog && event.target===root.closest('dialog')) sync();
+    },{capture:true,passive:true,signal});
+    addEventListener('resize',sync,{passive:true,signal});
     document.addEventListener('visibilitychange',wake,{signal});
+    document.addEventListener('luma:dialog-change',()=>{
+      const open=Boolean(root.closest('dialog')?.open);
+      if(inDialog && open && !wasOpen) {
+        clock=0;Object.assign(sim,{p:0,v:0,ph:0,vh:0,pp:0,vp:0});
+        root.classList.remove('has-scrolled');
+        if(!reduced.matches) render(0,0,0,0,0,0,0);
+      }
+      wasOpen=open;sync();
+    },{signal});
+    // Skip only the choreography, without changing the page URL or its scroll.
+    q('.ss-skip').addEventListener('click',event=>{
+      if(!inDialog) return;
+      const destination=document.getElementById(event.currentTarget.hash.slice(1));
+      const dialog=root.closest('dialog');
+      if(!destination || !dialog?.open) return;
+      event.preventDefault();event.stopPropagation();
+      dialog.scrollTop+=destination.getBoundingClientRect().top-dialog.getBoundingClientRect().top-24;
+      destination.focus({preventScroll:true});
+    },{signal});
     reduced.addEventListener('change',mode,{signal});
     mode();
-    signal.addEventListener('abort',()=>{alive=false;cancelAnimationFrame(raf);observer.disconnect();},{once:true});
+    signal.addEventListener('abort',()=>{alive=false;cancelAnimationFrame(raf);observer.disconnect();resize.disconnect();},{once:true});
     function render(p, t, v, ph, pp, vh, vp) {
       // living ground
       el.blobs.forEach((node, i) => {
@@ -193,10 +230,10 @@ function bootProductScroll() {
 
       // typography
       const fade = (inA, inB, outA, outB) => outQ(seg(p, inA, inB)) * (1 - ease(seg(p, outA, outB)));
-      const o4 = outQ(seg(p, 0, 0.07)) * (1 - ease(seg(p, 0.2, 0.32)));
+      const o4 = (inDialog ? 1 : outQ(seg(p, 0, 0.07))) * (1 - ease(seg(p, 0.2, 0.32)));
       el.headline.style.opacity = r3(o4);
       el.headline.style.transform =
-        `translateY(${r3(lerp(46, 0, outQ(seg(p, 0, 0.09))) - ease(seg(p, 0.2, 0.32)) * 30)}px)`;
+        `translateY(${r3((inDialog ? 0 : lerp(46, 0, outQ(seg(p, 0, 0.09)))) - ease(seg(p, 0.2, 0.32)) * 30)}px)`;
       el.ruleA.style.width = `${r3(lerp(0, 100, ease(seg(p, 0.22, 0.38))) * (1 - ease(seg(p, 0.62, 0.78))))}%`;
       el.ruleB.style.width = `${r3(lerp(0, 100, ease(seg(p, 0.33, 0.5))) * (1 - ease(seg(p, 0.6, 0.76))))}%`;
       const o1 = fade(0.24, 0.36, 0.6, 0.76);

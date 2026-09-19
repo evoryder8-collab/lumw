@@ -1,0 +1,20 @@
+---
+import type { Locale } from '../i18n/locales';
+import { routePath } from '../i18n/locales';
+import { url } from '../lib/site';
+import copy from '../i18n/face-care.json';
+import TreatmentDetails from './TreatmentDetails.astro';
+import FaceEchogram from './FaceEchogram.astro';
+import ScrollSummon from './ScrollSummon.astro';
+import FaceDetails from './FaceDetails.astro';
+const { id, locale = 'de', paragraphs } = Astro.props as { id: string; locale?: Locale; paragraphs?: string[] };
+const c = copy[locale];
+const copyId = `${id}-information`;
+---
+<TreatmentDetails {id} {locale} name={c.name} paragraphs={paragraphs ?? [c.intro, c.expectations]} href={url(`${routePath('contact', locale)}?treatment=gesicht-kopf#enquiry`)} triggerLabel={c.more} {copyId}>
+  <Fragment slot="media">
+    <FaceEchogram {locale} />
+    <ScrollSummon {locale} id={`${id}-tools`} variant="dialog" continueId={copyId} />
+  </Fragment>
+  <FaceDetails {locale} />
+</TreatmentDetails>

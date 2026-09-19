@@ -48,6 +48,13 @@
 .featured-treatments .localized-feature > .feature-price { font-size: .75rem; color: #6a5428; margin-top: 1rem; }
 .featured-treatments .feature-actions { margin-top: auto; padding-top: 1.2rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
 .featured-treatments .feature-actions > a { min-height: 44px; display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
+.featured-treatments .feature-actions > .treatment-details { margin: 0; }
+.featured-treatments .feature-actions .treatment-details__trigger { font-size: .85rem; }
+/* Keep the close control within reach during the longer product exploration. */
+.treatment-dialog:has([data-ss-dialog]) { max-height: min(822px, calc(100dvh - 2rem)); }
+.treatment-dialog:has([data-ss-dialog]) .treatment-details__panel { padding-top: 1rem; }
+.treatment-dialog:has([data-ss-dialog]) .treatment-details__close { position: sticky; top: 1rem; margin: 0 0 1.4rem -.5rem; z-index: 5; }
+.treatment-dialog:has([data-ss-dialog]) .treatment-details__copy { scroll-margin-top: 1.5rem; }
 .featured-treatments > .shell > .eyebrow { margin-bottom: 1.2rem; }
 .card__photo > .face-media { width: 100%; }
 .face-service-details { padding-top: 2rem; }

@@ -9,6 +9,9 @@ export function mountTreatmentDetails(signal: AbortSignal) {
     const title = panel.querySelector<HTMLElement>('[data-treatment-title]')!;
     const dialog = document.createElement('dialog');
     dialog.className = 'treatment-dialog';
+    // Let this native scroll container own wheel/touch input, independently of
+    // the page's smooth-scrolling controller.
+    dialog.setAttribute('data-lenis-prevent', '');
     dialog.id = `${title.id}-dialog`;
     dialog.setAttribute('aria-labelledby', title.id);
     dialog.append(panel);

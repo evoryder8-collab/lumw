@@ -30,14 +30,20 @@ for (const [locale, paths] of Object.entries(routes)) {
     const doc = read(route);
     assert.ok(doc.querySelector('.face-media [data-device-loop] video[muted][playsinline]'), `${route}: demonstration missing`);
     if (route === paths[0]) {
-      assert.equal(doc.querySelectorAll('.featured-treatments [data-price-counter]').length, 3);
-      assert.equal(doc.querySelectorAll('.featured-treatments .face-rates').length, 0);
-      continue;
+      assert.equal(doc.querySelectorAll('.featured-treatments .feature-price [data-price-counter]').length, 3);
+      assert.equal(doc.querySelectorAll('.featured-treatments .face-rates:not([data-treatment-panel] .face-rates)').length, 0);
+      assert.ok(doc.querySelector('[data-featured-treatment="gesicht-kopf"] .feature-actions > [data-treatment-details] > summary'), `${route}: homepage More info should open in place`);
     }
     assert.ok(doc.querySelector('.treatment-details__panel [data-face-echo] .device-loop--echogram video'), `${route}: ultrasound missing`);
     const panel = doc.querySelector('[data-face-details]');
     const siblings = [...panel.parentElement.children];
-    assert.ok(siblings.indexOf(panel.parentElement.querySelector('[data-face-echo]')) < siblings.indexOf(panel.parentElement.querySelector('.treatment-details__copy')), `${route}: popup should lead with the ultrasound`);
+    const echo = panel.parentElement.querySelector('[data-face-echo]');
+    const story = panel.parentElement.querySelector('[data-ss-dialog]');
+    const text = panel.parentElement.querySelector('.treatment-details__copy');
+    assert.equal(siblings.indexOf(story), siblings.indexOf(echo) + 1, `${route}: product animation should follow the echogram immediately`);
+    assert.ok(siblings.indexOf(story) < siblings.indexOf(text), `${route}: animation should precede the description`);
+    assert.ok(story.querySelector('[data-ss-hint]').textContent.includes(copy[locale].story.scrollHint));
+    assert.equal(story.querySelector('.ss-skip').getAttribute('href'), `#${text.id}`);
     assert.equal(panel.querySelectorAll('.face-details__safety li').length, 4);
     assert.ok(panel.textContent.includes('Kosuke Takeuchi') && panel.textContent.includes('ViEW=TECH'));
     assert.deepEqual([...panel.querySelectorAll('.face-rate [data-price-counter]')].map((el) => +el.getAttribute('data-price')), [75,30,50]);
