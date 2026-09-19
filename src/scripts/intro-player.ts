@@ -85,6 +85,10 @@ export function mountIntroPlayer(video: HTMLVideoElement, signal: AbortSignal, c
       hasFrame = video.currentTime > .03 && video.readyState >= 2;
       start(retry, allowMutedFallback);
     },
+    pause() {
+      ++attempt; wantsPlayback = false; pending = false;
+      stopWaiting(); video.pause(); render();
+    },
     dispose() { disposed = true; ++attempt; wantsPlayback = false; stopWaiting(); },
   };
 }

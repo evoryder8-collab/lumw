@@ -26,8 +26,9 @@ body[data-page="linkinbio"] .intro-film { padding: 0; margin: 0; }
 body[data-page="linkinbio"] .intro-film__frame { padding: 7px; border-radius: 23px; background: linear-gradient(130deg, #f8f3db4f, #edf5e21c 45%, #fff8e432); border: 1px solid #f9f6e76b; box-shadow: 0 24px 46px #020c093b, inset 0 1px 0 #ffffef82; }
 body[data-page="linkinbio"] .intro-film__screen { border-radius: 17px; }
 body[data-page="linkinbio"] .intro-film__caption { padding: 0.7rem 0.5rem 0.3rem; color: #e0e8d5; font-size: 0.48rem; }
-body[data-page="linkinbio"] .intro-film__sound { width: auto; min-height: 44px; border-radius: 99px; padding: 0.55rem 0.8rem; font-size: 0.67rem; }
-body[data-page="linkinbio"] .intro-film__sound span { display: inline; }
+body[data-page="linkinbio"] .intro-film__transport { --film-controls-ink: #f4ecd6; --film-controls-track: #b7c4b2; --film-controls-surface: #ffffff1f; }
+body[data-page="linkinbio"] .intro-film__frame:fullscreen .intro-film__transport { --film-controls-ink: #234b3d; --film-controls-track: #849183; }
+body[data-page="linkinbio"] .intro-film__frame:fullscreen .intro-film__caption { color: #4c5a50; }
 .bio-links { display: grid; gap: 1rem; padding-block: 0.35rem; perspective: 1000px; }
 .bio-link {
   --tint: 164 155 117;

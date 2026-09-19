@@ -1,6 +1,7 @@
 import { mountLanguageCountdown } from './language-countdown';
 import { animateCurtain, cancelCurtain } from './curtain-cloth';
 import { mountIntroPlayer } from './intro-player';
+import { mountIntroControls } from './intro-controls';
 /** Welcome choices are session-only. No media plays before an explicit sound choice. */
 const memory = new Map<string, string>();
 const read = (key: string) => { try { return sessionStorage.getItem(key) ?? memory.get(key); } catch { return memory.get(key); } };
@@ -67,6 +68,7 @@ export function mountWelcome(signal: AbortSignal) {
   };
   if (intro) player = mountIntroPlayer(intro, signal, syncPlayer);
   const playIntro = () => player?.play();
+  if (intro) mountIntroControls(intro, signal, playIntro, () => player?.pause());
   const finishCurtain = () => {
     clearTimeout(curtainTimer); cancelAnimationFrame(curtainFrame);
     if (curtain) cancelCurtain(curtain);

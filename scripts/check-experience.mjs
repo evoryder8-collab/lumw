@@ -104,7 +104,8 @@ for (const [route, { document }] of documents) {
   }
   for (const video of document.querySelectorAll('video')) {
     check(video.getAttribute('preload') === 'none' && !video.hasAttribute('autoplay'), `${route}: unexpected eager video`);
-    check(video.hasAttribute('controls') && video.hasAttribute('playsinline'), `${route}: film controls missing`);
+    const introControls = video.hasAttribute('data-intro-film') && document.querySelector('[data-intro-transport] [data-intro-toggle]') && document.querySelector('[data-intro-seek]') && document.querySelector('.intro-film noscript video[controls]');
+    check((video.hasAttribute('controls') || introControls) && video.hasAttribute('playsinline'), `${route}: film controls missing`);
   }
   const record = document.querySelector('.award-record');
   if (record) {
