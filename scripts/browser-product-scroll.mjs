@@ -32,14 +32,34 @@ try {
       const d=p.locator('.treatment-dialog[open]');await d.waitFor();
       await expect.poll(()=>d.locator('[data-face-echo] video').evaluate(v=>!v.paused&&v.muted&&v.currentTime>0)).toBe(true);
       assert.equal(await d.evaluate(el=>el.scrollTop),0);
+      // Products should already be arriving while the panel is entering view,
+      // before the visitor has scrolled far enough to pin its top edge.
+      await d.evaluate(dialog=>{
+        const root=dialog.querySelector('[data-ss]');
+        dialog.scrollTop+=root.getBoundingClientRect().top-dialog.getBoundingClientRect().top-dialog.clientTop-dialog.clientHeight*.5;
+      });
+      await expect(d.locator('[data-ss-hint]')).toHaveCSS('opacity','1');
+      await d.evaluate((dialog,fraction)=>{
+        const root=dialog.querySelector('[data-ss]');
+        dialog.scrollTop+=root.getBoundingClientRect().top-dialog.getBoundingClientRect().top-dialog.clientTop-dialog.clientHeight*fraction;
+      },height<600?.1:.25);
+      await expect.poll(()=>d.locator('[data-player]').evaluate(el=>Number(el.style.opacity)),{message:'Product scene stays empty during its entrance'}).toBeGreaterThan(.99);
+      await expect.poll(()=>d.locator('[data-player] img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+      await expect.poll(()=>d.locator('[data-player]').evaluate(el=>{
+        const r=el.getBoundingClientRect(),clip=el.closest('dialog').getBoundingClientRect();
+        const w=Math.max(0,Math.min(r.right,clip.right)-Math.max(r.left,clip.left));
+        const h=Math.max(0,Math.min(r.bottom,clip.bottom)-Math.max(r.top,clip.top));
+        return w*h/(r.width*r.height);
+      }),{message:'The entering product must be clearly inside the visible popup'}).toBeGreaterThan(.65);
+      await p.screenshot({path:`artifacts/browser/product-entry-${route==='/en'?'home':'menu'}-${width}.png`});
       await scrubPopup(p,0);
-      await expect(d.locator('[data-ss-hint]')).toBeVisible();
       const start=await d.evaluate(el=>el.scrollTop);
       const stage=await d.locator('.ss-stage').boundingBox();
       await p.mouse.move(stage.x+stage.width/2,stage.y+stage.height/2);
       await p.mouse.wheel(0,320);
       await expect.poll(()=>d.evaluate(el=>el.scrollTop)).toBeGreaterThan(start+100);
       await expect(d.locator('[data-ss]')).toHaveClass(/has-scrolled/);
+      await expect(d.locator('[data-ss-hint]')).toHaveCSS('opacity','0');
       assert.equal(p.url(),url,'More info or its scroll changed the page URL');
       assert.ok(Math.abs(await p.evaluate(()=>scrollY)-background)<2,'Popup scrolling moved the underlying page');
       await scrubPopup(p,.48);
@@ -53,7 +73,7 @@ try {
       assert.deepEqual(audit.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[]);
       await scrubPopup(p,.86);
       await expect.poll(()=>d.locator('[data-closing]').evaluate(el=>Number(el.style.opacity))).toBeGreaterThan(.85);
-      await scrubPopup(p,.08);
+      await scrubPopup(p,-.25);
       await expect.poll(()=>d.locator('[data-pointer]').evaluate(el=>Number(el.style.opacity))).toBeLessThan(.05);
       await scrubPopup(p,0);await d.locator('.ss-skip').click();
       assert.equal(p.url(),url,'Skipping the animation should remain inside the popup');
@@ -77,6 +97,8 @@ try {
     await p.locator('#gesicht-kopf .face-media__destination').click();
     await p.waitForURL(/\/en\/ultimate-face-lifting$/);
     await p.locator('[data-ss].is-active').waitFor();
+    await p.locator('[data-ss]').evaluate(root=>scrollTo(0,root.getBoundingClientRect().top+scrollY-innerHeight*.25));
+    await expect.poll(()=>p.locator('[data-player]').evaluate(el=>Number(el.style.opacity)),{message:'Product page stays empty during its entrance'}).toBeGreaterThan(.7);
     await scrub(p,.12);
     const arrival=await p.locator('[data-player]').evaluate(el=>el.style.transform);
     await scrub(p,.48);
@@ -86,7 +108,7 @@ try {
     await p.screenshot({path:`artifacts/browser/product-scroll-${width}.png`});
     await scrub(p,.86);
     await expect.poll(()=>p.locator('[data-closing]').evaluate(el=>Number(el.style.opacity)),{timeout:10000}).toBeGreaterThan(.85);
-    await scrub(p,.12);
+    await scrub(p,-.2);
     await expect.poll(()=>p.locator('[data-pointer]').evaluate(el=>Number(el.style.opacity)),{timeout:10000}).toBeLessThan(.05);
     await scrub(p,.48);
     await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});

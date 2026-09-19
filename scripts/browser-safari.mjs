@@ -69,6 +69,7 @@ try {
           d.scrollTop += scene.getBoundingClientRect().top - d.getBoundingClientRect().top - 160;
         });
         await p.waitForTimeout(300);
+        await expect.poll(() => dialog.locator('[data-player]').evaluate(el => Number(el.style.opacity)), { timeout: 10000, message: 'Products should enter before the green panel reaches the popup top' }).toBeGreaterThan(.7);
         await p.screenshot({ path: `artifacts/browser/safari-scene-${width}.png` });
         await clippedCorners(p, '.treatment-dialog[open] .ss-stage', 3, 'Product scene');
 

@@ -66,12 +66,16 @@ function mountProductScroll(root,signal) {
       const top = dialog ? dialog.getBoundingClientRect().top + dialog.clientTop : 0;
       const bottom = top + (dialog ? dialog.clientHeight : innerHeight);
       const span = root.offsetHeight - stage.offsetHeight;
-      target = span > 0 ? clamp((top - rect.top) / span, 0, 1) : 0;
+      // Play the entrance as the panel comes into view, so visitors do not
+      // scroll through an empty stage before reaching its sticky position.
+      // Include that approach in the span to keep the ending at the same edge.
+      const approach = Math.min(stage.offsetHeight, bottom - top) * .7;
+      target = span > 0 ? clamp((top + approach - rect.top) / (span + approach), 0, 1) : 0;
       const modal = document.querySelector('dialog[open]');
       active = (!inDialog || dialog?.open) && (!modal || modal === dialog)
         && rect.width > 0 && rect.top < bottom && rect.bottom > top;
       root.classList.toggle('is-visible', active);
-      if (inDialog && target > .035) root.classList.add('has-scrolled');
+      if (inDialog && target > .22) root.classList.add('has-scrolled');
     };
     const step = (pos, vel, goal, k, c, dt) => {
       const v2 = vel + ((goal-pos)*k-vel*c)*dt;
@@ -147,7 +151,7 @@ function mountProductScroll(root,signal) {
         node.style.transform = `translate(-50%, -50%) translate(${r3(dx)}px, ${r3(dy)}px) scale(${r3(s)})`;
       });
 
-      const a1 = ease(seg(ph, 0.02, 0.34));
+      const a1 = outQ(seg(ph, 0.02, 0.34));
       const a2 = ease(seg(pp, 0.24, 0.44));
       const spinP = ease(seg(pp, 0.26, 0.46));
       const a3 = ease(seg(p, 0.55, 0.92));

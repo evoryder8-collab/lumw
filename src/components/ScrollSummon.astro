@@ -11,7 +11,7 @@ const headline = c.headline;
 const playerTitle = 'CORE FIT\nFACE PLAYER II';
 const pointerTitle = 'CORE FIT\nFACE POINTER II';
 const closing = c.closing;
-const scrollLength = 360;
+const scrollLength = 300;
 const ground = 'linear-gradient(160deg,#20372a 0%,#13281f 55%,#0c1c16 100%)';
 const accent = '#dfd69a';
 const ink = '#f5f3e8';
@@ -185,7 +185,7 @@ const lines = (s: string) => s.split('\n');
 
   /* The same choreography, sized to the popup's own viewport and scroll area. */
   .ss--dialog { --ss-stage-height: min(820px, calc(100dvh - 2rem - 2px)); container-type: inline-size; margin: 0 0 2rem; border: 1px solid #a4996166; border-radius: 19px; }
-  .ss--dialog.is-active { height: calc(var(--ss-stage-height) * 3.4); }
+  .ss--dialog.is-active { height: calc(var(--ss-stage-height) * 2.2); }
   /* Explicitly clip the composited blur/transform layers in iOS Safari. Keep
      the tall scroll track unclipped so the stage can still stick inside it. */
   .ss--dialog .ss-stage { height: var(--ss-stage-height); min-height: 0; border-radius: 18px; clip-path: inset(0 round 18px); }
