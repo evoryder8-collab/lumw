@@ -20,9 +20,17 @@ const loading = { de: 'Video wird geladen …', en: 'Loading the introduction…
 <section class="intro-film" aria-label={words[3]}>
   <div class="intro-film__frame liquid-glass" tabindex="-1" data-intro-frame>
     <div class="intro-film__screen">
-      <video src={url('/media/june-intro.mp4')} data-mobile-src={url('/media/june-intro-mobile.mp4')} data-intro-film data-bio-film={bio || undefined} data-film controls playsinline muted={bio} preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
+      <video data-intro-src={url('/media/june-intro.mp4')} data-mobile-src={url('/media/june-intro-mobile.mp4')} data-intro-film data-bio-film={bio || undefined} data-film controls playsinline muted={bio} preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
         <a href={url('/media/june-intro.mp4')}>{words[4]}</a>
       </video>
+      <!-- Assign the source only on consent. preload is advisory, and some
+           media engines otherwise probe the file before that choice. -->
+      <noscript>
+        <style is:inline>.intro-film [data-intro-film] { display: none; }</style>
+        <video src={url('/media/june-intro.mp4')} controls playsinline preload="none" poster={poster.src} width="1920" height="1080" aria-label={words[3]}>
+          <a href={url('/media/june-intro.mp4')}>{words[4]}</a>
+        </video>
+      </noscript>
       <img class="intro-film__poster" data-intro-poster src={poster.src} width="1280" height="720" alt="" aria-hidden="true" hidden />
       <span class="intro-film__loading" data-intro-loading role="status" hidden>{loading}</span>
       <button class="intro-film__play" data-intro-play data-label-play={words[4]} data-label-sound={playWithSound} type="button" hidden>

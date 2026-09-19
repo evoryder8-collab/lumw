@@ -76,7 +76,9 @@ try {
           const root = d.querySelector('[data-ss]');
           d.scrollTop += root.getBoundingClientRect().top - d.getBoundingClientRect().top - d.clientTop + (root.offsetHeight - root.querySelector('.ss-stage').offsetHeight) * .48;
         });
-        await expect.poll(() => dialog.locator('[data-pointer]').evaluate(el => Number(el.style.opacity))).toBeGreaterThan(.99);
+        // Software WebKit rendering in CI can advance this spring more slowly.
+        // Keep the visual threshold, allowing it to reach the same settled pose.
+        await expect.poll(() => dialog.locator('[data-pointer]').evaluate(el => Number(el.style.opacity)), { timeout: 15000 }).toBeGreaterThan(.99);
         const stage = await dialog.locator('.ss-stage').boundingBox(), frame = await dialog.boundingBox();
         assert.ok(Math.abs(stage.y - frame.y) < 3, 'Clipping broke sticky product animation');
         await expect(dialog.locator('[data-treatment-close]')).toBeInViewport();
@@ -85,6 +87,18 @@ try {
       } finally { await c.close(); }
     });
   }
+  await run('native intro controls remain available without JavaScript', async () => {
+    const c = await browser.newContext({ viewport: { width: 430, height: 932 }, isMobile: true, hasTouch: true, javaScriptEnabled: false });
+    try {
+      const p = await c.newPage();
+      await p.goto(preview.url('/en'));
+      await expect(p.locator('[data-intro-film]')).toBeHidden();
+      const fallback = p.locator('.intro-film__screen noscript video');
+      await expect(fallback).toBeVisible();
+      assert.equal(await fallback.evaluate(v => v.controls), true);
+      assert.ok((await fallback.getAttribute('src')).endsWith('/media/june-intro.mp4'));
+    } finally { await c.close(); }
+  });
   for (const enabled of [true, false]) {
     await run(`intro starts ${enabled ? 'with sound after changing language' : 'muted'}`, async () => {
       const c = await context();

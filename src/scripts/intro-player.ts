@@ -49,7 +49,7 @@ export function mountIntroPlayer(video: HTMLVideoElement, signal: AbortSignal, c
     stopWaiting(); pending = true; retry = false; wantsPlayback = true;
     // Direct src avoids a failed <source> selection leaving Safari's play()
     // promise pending. Source selection and load stay in the original tap.
-    const source = matchMedia('(max-width: 760px)').matches ? video.dataset.mobileSrc : undefined;
+    const source = (matchMedia('(max-width: 760px)').matches ? video.dataset.mobileSrc : undefined) ?? video.dataset.introSrc;
     if (source && video.getAttribute('src') !== source) { video.src = source; reload = true; }
     video.preload = 'auto';
     if (reload || video.error || video.readyState === 0) video.load();
