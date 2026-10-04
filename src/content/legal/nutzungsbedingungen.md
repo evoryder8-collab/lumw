@@ -12,7 +12,7 @@ Mit dem Zugriff auf https://www.luma-wellness.com, erklären Sie sich mit diesen
 
 LUMA Wellness Buxtehude behält sich das Recht vor, diese Servicebedingungen nach eigenem Ermessen zu überprüfen und zu ändern. Wenn wir dies tun, werden wir diese Seite aktualisieren. Jegliche Änderungen an diesen Nutzungsbedingungen treten sofort ab dem Datum der Veröffentlichung in Kraft.
 
-Diese Nutzungsbedingungen wurden zuletzt am 16. Mai 2025 aktualisiert
+Diese Nutzungsbedingungen wurden zuletzt am 4. Oktober 2026 aktualisiert
 
 ### Anwendungsbeschränkungen
 

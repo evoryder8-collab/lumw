@@ -61,7 +61,13 @@ Vollständige Antworten: ${SITE_URL}/massage-buxtehude-faq
 ## Hinweise
 
 - Stornierungen bitte mindestens 24 Stunden im Voraus. Bei kurzfristiger Absage
-  oder Nichterscheinen werden 50% des Terminpreises berechnet.
+  oder Nichterscheinen werden 100% des vereinbarten Terminpreises berechnet, abzüglich
+  ersparter Aufwendungen und Einnahmen aus einer Ersatzbuchung. Der Nachweis keines
+  oder eines wesentlich geringeren Schadens bleibt möglich. Eine einmalige Kulanz
+  liegt im Ermessen von June und setzt einen aktiven Kontaktversuch spätestens am
+  Vormittag des Termintags voraus. Bei erstmaligem Kontakt weniger als eine Stunde
+  vor dem Termin ist sie ausgeschlossen. Gilt für Buchungen ab 4. Oktober 2026.
+  Details: https://www.luma-wellness.com/nutzungsbedingungen#cancellation-policy
 - Alle Preise in Euro, Stand der Website.
 - Diese Seite dient der maschinellen Zusammenfassung. Verbindlich sind die
   Angaben auf ${SITE_URL}.

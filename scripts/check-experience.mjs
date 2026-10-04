@@ -55,7 +55,7 @@ for (const [route, { document }] of documents) {
     const original = baseline.pages[route];
     check(normalize(document.querySelector('h1').textContent) === (approvedHeadings[route] ?? original.h1), `${route}: German H1 changed`);
     const body = normalize(document.querySelector('main').textContent);
-    if (!revisedPages.has(route) && !route.startsWith('/service-page/')) for (const paragraph of original.paragraphs) check(body.includes(paragraph), `${route}: lost migration paragraph: ${paragraph.slice(0, 85)}`);
+    if (!revisedPages.has(route) && !route.startsWith('/service-page/')) for (const paragraph of original.paragraphs) check(body.includes(route === '/nutzungsbedingungen' ? paragraph.replace('16. Mai 2025', '4. Oktober 2026') : paragraph), `${route}: lost migration paragraph: ${paragraph.slice(0, 85)}`);
   }
   const alternates = [...document.querySelectorAll('link[rel="alternate"][hreflang]')];
   if (alternates.length) {

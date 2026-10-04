@@ -1,5 +1,5 @@
 {
-  "_comment": "Eleven questions and answers reviewed on 18 September 2026 with owner authorization. Rendered answers and FAQPage text share the same content. Commercial terms and legal pages remain unchanged.",
+  "_comment": "Cancellation policy updated with owner authorization on 4 October 2026. Rendered answers and FAQPage text share the same content.",
   "faq": [
     {
       "id": "q1",
@@ -75,8 +75,8 @@
       "id": "q11",
       "order": 11,
       "question": "Was gilt bei einer Absage?",
-      "answerText": "Bitte sagen Sie mindestens 24 Stunden vor Ihrem Termin ab. Bei einer späteren Absage oder Nichterscheinen werden 50 % der Terminkosten berechnet. Wiederholte späte Absagen oder Nichterscheinen können zu einer Buchungssperre von 12 Monaten führen. Die vollständigen Bedingungen finden Sie unter Nutzungsbedingungen.",
-      "answerHtml": "<p>Bitte sagen Sie mindestens 24 Stunden vor Ihrem Termin ab. Bei einer späteren Absage oder Nichterscheinen werden 50 % der Terminkosten berechnet. Wiederholte späte Absagen oder Nichterscheinen können zu einer Buchungssperre von 12 Monaten führen. Die vollständigen Bedingungen finden Sie unter Nutzungsbedingungen.</p>"
+      "answerText": "Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Behandlungspreises berechnet. Beim ersten Mal kann June nach eigenem Ermessen eine Ausnahme machen. Voraussetzung ist, dass Sie aktiv versucht haben, June spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Ein Anspruch auf Kulanz besteht nicht. Erfolgt Ihr erster Kontaktversuch weniger als eine Stunde vor dem Termin, ist eine einmalige Kulanzausnahme ausgeschlossen. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.",
+      "answerHtml": "<p>Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Behandlungspreises berechnet. Beim ersten Mal kann June nach eigenem Ermessen eine Ausnahme machen. Voraussetzung ist, dass Sie aktiv versucht haben, June spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Ein Anspruch auf Kulanz besteht nicht. Erfolgt Ihr erster Kontaktversuch weniger als eine Stunde vor dem Termin, ist eine einmalige Kulanzausnahme ausgeschlossen. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.</p>"
     }
   ]
 }

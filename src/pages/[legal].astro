@@ -11,6 +11,7 @@
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import CancellationPolicy from '../components/CancellationPolicy.astro';
 import {
   graph, businessNode, personNode, websiteNode, webPageNode, breadcrumbNode,
 } from '../lib/schema';
@@ -49,6 +50,8 @@ const schema = graph([
       <h1 class="legal__h1">{heading}</h1>
     </div>
   </section>
+
+  {path === '/nutzungsbedingungen' && <div class="shell shell--narrow section--tight"><CancellationPolicy showTermsLink={false} /></div>}
 
   <section class="section--tight">
     <div class="shell shell--narrow">

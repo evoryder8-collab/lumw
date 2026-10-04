@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CancellationPolicy from '../components/CancellationPolicy.astro';
 import FaceTreatmentPage from '../components/FaceTreatmentPage.astro';
 import FeaturedTreatments from '../components/FeaturedTreatments.astro';
 import FaceMedia from '../components/FaceMedia.astro';
@@ -90,6 +91,8 @@ const schema = graph([
   })}</div></div></section>}
 
   {pageKey === 'faq' && <section class="section--tight"><div class="shell shell--mid"><ol class="faq localized-faq">{t.faq.map(([question, answer], i) => <li class="faq__item"><details class="faq__details"><summary class="faq__summary"><span class="faq__num">{String(i+1).padStart(2,'0')}</span><h2 class="faq__q">{question}</h2><span class="faq__chev" aria-hidden="true"></span></summary><div class="faq__a prose"><p>{answer}</p></div></details></li>)}</ol></div></section>}
+
+  {pageKey === 'contact' && <div class="shell section--tight"><CancellationPolicy {locale} /></div>}
 
   {pageKey === 'contact' && <section class="section--tight"><div class="shell localized-contact"><div><h2>{u.studio}</h2><address class="localized-address">LUMA Wellness by June Saurin<br />{BUSINESS.street}<br />{BUSINESS.postalCode} {BUSINESS.city}<br />HAUTNAH</address><div class="localized-channels"><a href={`tel:${BUSINESS.phoneE164}`}>{u.phone}<span>{BUSINESS.phone}</span><Icon /></a><a href={whatsappUrl(u.greeting)}>WhatsApp<span>{BUSINESS.whatsapp}</span><Icon /></a><a href={`mailto:${BUSINESS.email}`}>{u.email}<span>{BUSINESS.email}</span><Icon /></a><a href={BUSINESS.mapUrl} target="_blank" rel="noopener noreferrer">{u.directions}<Icon /></a></div></div><EnquiryForm {locale} /></div></section>}
   {pageKey === 'contact' && <div class="shell section--tight"><LocationMap {locale} /></div>}

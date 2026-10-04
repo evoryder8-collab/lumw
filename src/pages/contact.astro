@@ -10,6 +10,7 @@
  */
 import { socialImageUrl } from '../lib/images';
 import Layout from '../layouts/Layout.astro';
+import CancellationPolicy from '../components/CancellationPolicy.astro';
 import Photo from '../components/Photo.astro';
 import LocationMap from '../components/LocationMap.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
@@ -71,6 +72,8 @@ const waLink = whatsappUrl();
       </figure>
     </div>
   </section>
+
+  <div class="shell section--tight"><CancellationPolicy /></div>
 
   <div class="shell">
     <LocationMap />

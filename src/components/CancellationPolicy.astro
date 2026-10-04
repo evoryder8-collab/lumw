@@ -1,0 +1,42 @@
+---
+import copy from '../i18n/cancellation.json';
+import type { Locale } from '../i18n/locales';
+import { url } from '../lib/site';
+const { locale = 'de', showTermsLink = true } = Astro.props as { locale?: Locale; showTermsLink?: boolean };
+const c = copy[locale];
+---
+<section class="cancellation" id="cancellation-policy" aria-labelledby="cancellation-title">
+  <p class="cancellation__label">{c.label}</p>
+  <h2 id="cancellation-title">{c.title}</h2>
+  <div class="cancellation__rule cancellation__rule--primary">
+    <h3>{c.feeTitle}</h3>
+    <p>{c.fee}</p>
+  </div>
+  <div class="cancellation__rule">
+    <h3>{c.goodTitle}</h3>
+    <p>{c.good}</p>
+  </div>
+  <div class="cancellation__rule">
+    <h3>{c.lateTitle}</h3>
+    <p>{c.late}</p>
+  </div>
+  <p class="cancellation__safeguard">{c.safeguard}</p>
+  <footer class="cancellation__footer">
+    <span><strong>LUMA Wellness · June Saurin</strong><br />{c.date}</span>
+    {showTermsLink && <a href={url('/nutzungsbedingungen#cancellation-policy')}>{c.terms} ↗</a>}
+  </footer>
+</section>
+<style>
+  .cancellation { scroll-margin-top: 7rem; padding: clamp(1.3rem, 4vw, 2.5rem); border: 1px solid #d5a3a4; border-left: 5px solid #942e3d; border-radius: 1.5rem; background: linear-gradient(125deg, #fff7f4, #f8e8e6); color: #592730; box-shadow: 0 14px 42px #6023310a; }
+  .cancellation__label { margin: 0 0 .7rem; color: #842a39; font-size: .76rem; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+  .cancellation h2 { margin: 0 0 1.5rem; color: #712736; font-size: clamp(1.8rem, 3.5vw, 2.5rem); line-height: 1.12; }
+  .cancellation__rule { margin-top: 1.2rem; }
+  .cancellation h3 { margin: 0 0 .4rem; font-family: inherit; font-size: 1.05rem; line-height: 1.4; font-weight: 650; color: #712736; }
+  .cancellation__rule--primary { padding: 1rem 1.15rem; background: #922f3d0d; border: 1px solid #b35b6540; border-radius: .8rem; }
+  .cancellation__rule p { margin: 0; font-size: 1rem; line-height: 1.65; max-width: 90ch; }
+  .cancellation__safeguard { margin: 1.5rem 0 0; padding-top: 1.1rem; border-top: 1px solid #b35b6540; font-size: .88rem; line-height: 1.65; max-width: 105ch; }
+  .cancellation__footer { display: flex; flex-wrap: wrap; gap: .8rem 2rem; justify-content: space-between; align-items: end; margin-top: 1.3rem; font-size: .78rem; line-height: 1.6; }
+  .cancellation__footer strong { font-weight: 600; }
+  .cancellation__footer a { color: #712736; text-decoration: underline; text-underline-offset: 3px; }
+  @media print { .cancellation { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; box-shadow: none; } }
+</style>
