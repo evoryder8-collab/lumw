@@ -64,7 +64,7 @@ Vollständige Antworten: ${SITE_URL}/massage-buxtehude-faq
   oder Nichterscheinen werden 100% des vereinbarten Terminpreises berechnet, abzüglich
   ersparter Aufwendungen und Einnahmen aus einer Ersatzbuchung. Der Nachweis keines
   oder eines wesentlich geringeren Schadens bleibt möglich. Eine einmalige Kulanz
-  liegt im Ermessen von June und setzt einen aktiven Kontaktversuch spätestens am
+  liegt im Ermessen der Massageanbieterin und setzt einen aktiven Kontaktversuch spätestens am
   Vormittag des Termintags voraus. Bei erstmaligem Kontakt weniger als eine Stunde
   vor dem Termin ist sie ausgeschlossen. Gilt für Buchungen ab 4. Oktober 2026.
   Details: https://www.luma-wellness.com/nutzungsbedingungen#cancellation-policy

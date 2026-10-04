@@ -73,13 +73,12 @@ const waLink = whatsappUrl();
     </div>
   </section>
 
-  <div class="shell section--tight"><CancellationPolicy /></div>
-
   <div class="shell">
     <LocationMap />
   </div>
 
   <section class="section" data-sunbeam>
+    <div class="shell cancellation-placement"><CancellationPolicy /></div>
     <div class="shell form__wrap">
       <div class="form__intro">
         <p class="eyebrow" data-fade>Ihre Anfrage</p>
@@ -162,6 +161,7 @@ const waLink = whatsappUrl();
 </Layout>
 
 <style>
+  .cancellation-placement { margin-bottom: clamp(2rem, 4vw, 3rem); }
   .hero { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 2.5vw, 2rem); }
 
   .hero__inner {

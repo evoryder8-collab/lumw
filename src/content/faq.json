@@ -5,8 +5,8 @@
       "id": "q1",
       "order": 1,
       "question": "Was zeichnet LUMA Wellness aus?",
-      "answerText": "June verbindet thailändische Massagetraditionen mit zeitgenössischen Techniken und Erfahrung aus internationalen Wettbewerben. In ihrem Studio in Buxtehude stimmt sie jede Behandlung im Gespräch mit Ihnen ab.",
-      "answerHtml": "<p>June verbindet thailändische Massagetraditionen mit zeitgenössischen Techniken und Erfahrung aus internationalen Wettbewerben. In ihrem Studio in Buxtehude stimmt sie jede Behandlung im Gespräch mit Ihnen ab.</p>"
+      "answerText": "June verbindet thailändische Massagetraditionen mit zeitgenössischen Techniken und Erfahrung aus internationalen Wettbewerben. In ihrem Studio in Buxtehude stimmt sie jede Massage im Gespräch mit Ihnen ab.",
+      "answerHtml": "<p>June verbindet thailändische Massagetraditionen mit zeitgenössischen Techniken und Erfahrung aus internationalen Wettbewerben. In ihrem Studio in Buxtehude stimmt sie jede Massage im Gespräch mit Ihnen ab.</p>"
     },
     {
       "id": "q2",
@@ -19,8 +19,8 @@
       "id": "q3",
       "order": 3,
       "question": "Was ist die Thai Solution Massage?",
-      "answerText": "Die Thai Solution Massage nach Nuad Benja Phaki arbeitet ohne Öl. Sie verbindet thailändische Dehnungen mit gezieltem Druck. June bietet leichte, mittlere oder intensivere Anwendungen an und passt die Behandlung an Ihre Rückmeldung an.",
-      "answerHtml": "<p>Die Thai Solution Massage nach Nuad Benja Phaki arbeitet ohne Öl. Sie verbindet thailändische Dehnungen mit gezieltem Druck. June bietet leichte, mittlere oder intensivere Anwendungen an und passt die Behandlung an Ihre Rückmeldung an.</p>"
+      "answerText": "Die Thai Solution Massage nach Nuad Benja Phaki arbeitet ohne Öl. Sie verbindet thailändische Dehnungen mit gezieltem Druck. June bietet leichte, mittlere oder intensivere Anwendungen an und passt die Massage an Ihre Rückmeldung an.",
+      "answerHtml": "<p>Die Thai Solution Massage nach Nuad Benja Phaki arbeitet ohne Öl. Sie verbindet thailändische Dehnungen mit gezieltem Druck. June bietet leichte, mittlere oder intensivere Anwendungen an und passt die Massage an Ihre Rückmeldung an.</p>"
     },
     {
       "id": "q4",
@@ -40,8 +40,8 @@
       "id": "q6",
       "order": 6,
       "question": "Wie unterscheiden sich Aroma-Luxus und Gold Medalie?",
-      "answerText": "Aroma-Luxus konzentriert sich auf klassische Massage mit Bio-Jojoba-Aromaölen. Die Gold Medalie Signature verbindet Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens für diese Massage komponierte Klangbegleitung ergänzt die Signature-Behandlung.",
-      "answerHtml": "<p>Aroma-Luxus konzentriert sich auf klassische Massage mit Bio-Jojoba-Aromaölen. Die Gold Medalie Signature verbindet Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens für diese Massage komponierte Klangbegleitung ergänzt die Signature-Behandlung.</p>"
+      "answerText": "Aroma-Luxus konzentriert sich auf klassische Massage mit Bio-Jojoba-Aromaölen. Die Gold Medalie Signature verbindet Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens für diese Massage komponierte Klangbegleitung ergänzt die Signature-Massage.",
+      "answerHtml": "<p>Aroma-Luxus konzentriert sich auf klassische Massage mit Bio-Jojoba-Aromaölen. Die Gold Medalie Signature verbindet Balance Stones, klassische Massage, Schröpfen und Aromatherapie. Eine eigens für diese Massage komponierte Klangbegleitung ergänzt die Signature-Massage.</p>"
     },
     {
       "id": "q7",
@@ -75,8 +75,8 @@
       "id": "q11",
       "order": 11,
       "question": "Was gilt bei einer Absage?",
-      "answerText": "Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Behandlungspreises berechnet. Beim ersten Mal kann June nach eigenem Ermessen eine Ausnahme machen. Voraussetzung ist, dass Sie aktiv versucht haben, June spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Ein Anspruch auf Kulanz besteht nicht. Erfolgt Ihr erster Kontaktversuch weniger als eine Stunde vor dem Termin, ist eine einmalige Kulanzausnahme ausgeschlossen. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.",
-      "answerHtml": "<p>Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Behandlungspreises berechnet. Beim ersten Mal kann June nach eigenem Ermessen eine Ausnahme machen. Voraussetzung ist, dass Sie aktiv versucht haben, June spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Ein Anspruch auf Kulanz besteht nicht. Erfolgt Ihr erster Kontaktversuch weniger als eine Stunde vor dem Termin, ist eine einmalige Kulanzausnahme ausgeschlossen. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.</p>"
+      "answerText": "Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Massagepreises berechnet. Beim ersten Mal ist aus Kulanz eine Ausnahme möglich. Dafür müssen Sie aktiv versucht haben, die Massageanbieterin spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Die Anbieterin entscheidet, ob sie die Ausnahme gewährt. Sie ist nicht garantiert. Versuchen Sie erst weniger als eine Stunde vor Ihrem Termin, die Massageanbieterin zu informieren, ist keine Kulanzausnahme möglich. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.",
+      "answerHtml": "<p>Bei einer Absage weniger als 24 Stunden vor dem vereinbarten Termin oder bei Nichterscheinen werden 100 % des vereinbarten Massagepreises berechnet. Beim ersten Mal ist aus Kulanz eine Ausnahme möglich. Dafür müssen Sie aktiv versucht haben, die Massageanbieterin spätestens am Vormittag des Termintags per Telefon, WhatsApp oder E-Mail zu informieren. Die Anbieterin entscheidet, ob sie die Ausnahme gewährt. Sie ist nicht garantiert. Versuchen Sie erst weniger als eine Stunde vor Ihrem Termin, die Massageanbieterin zu informieren, ist keine Kulanzausnahme möglich. Ersparte Aufwendungen und Einnahmen aus einer anderweitigen Vergabe des Termins werden angerechnet. Sie können nachweisen, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Gesetzliche Rechte bleiben unberührt.</p>"
     }
   ]
 }

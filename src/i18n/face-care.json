@@ -69,7 +69,7 @@
     "name": "Ultimate Face Lifting",
     "eyebrow": "Japanische Gesichtspflege",
     "description": "Japanische Akupressur mit dem CORE FIT Face Pointer, sanfte Muskelstimulation mit dem Face Player II und im Ultimate Mix zusätzlich Junes Gesichtsmassage. Wählen Sie die passende Anwendung.",
-    "intro": "Eine gezielte Gesichtsbehandlung mit zwei japanischen Werkzeugen, die sich ergänzen. Der Pointer arbeitet mit manuellem Druck, der Player mit elektrischer Muskelstimulation (EMS). June stimmt die Anwendung auf Ihr Empfinden ab.",
+    "intro": "Eine gezielte Gesichtsmassage mit zwei japanischen Werkzeugen, die sich ergänzen. Der Pointer arbeitet mit manuellem Druck, der Player mit elektrischer Muskelstimulation (EMS). June stimmt die Anwendung auf Ihr Empfinden ab.",
     "expectations": "Gezielte Gesichtspflege für einen frischen, natürlich gestrafften Look. Die kurze Anwendung mit dem Face Pointer dauert nur 5 Minuten. Ideal zur Vorbereitung auf eine Hochzeit, Geburtstagsfeier, Heiligabend, Silvester, ein Firmenevent oder ein Porträtshooting. Beim Ultimate Mix kombiniert June beide japanischen Geräte mit einer Gesichtsmassage von Hand.",
     "variants": {
       "ultimate": "Ultimate Mix",
@@ -94,7 +94,7 @@
     "safetyTitle": "Vor Ihrem Termin",
     "safety": [
       "EMS ist bei Herzschrittmachern, anderen implantierten elektronischen Geräten, lebenserhaltenden oder am Körper getragenen medizinischen Elektrogeräten sowie bei Herzerkrankungen nicht geeignet.",
-      "Holen Sie zuerst ärztlichen Rat ein, wenn Sie schwanger sind, Epilepsie, Gefühlsstörungen im Gesicht oder eine schwere Erkrankung haben oder in ärztlicher bzw. zahnärztlicher Behandlung sind. Informieren Sie June über kürzliche Operationen, kosmetische Eingriffe und Implantate im Gesicht.",
+      "Holen Sie zuerst ärztlichen Rat ein, wenn Sie schwanger sind, Epilepsie, Gefühlsstörungen im Gesicht oder eine schwere Erkrankung haben oder ärztlich bzw. zahnärztlich betreut werden. Informieren Sie June über kürzliche Operationen, kosmetische Eingriffe und Implantate im Gesicht.",
       "Verletzte, infizierte oder entzündete Haut wird nicht behandelt. Sprechen Sie empfindliche Haut, Allergien und Reaktionen auf haftende Gelpads an. Elektroden gehören nicht auf Augen, Ohren oder den Hals vorne am Kehlkopf.",
       "Neue Gesichtsschwäche, Taubheit oder ungeklärte Schmerzen müssen vor einer kosmetischen Anwendung ärztlich abgeklärt werden. June bespricht die Eignung mit Ihnen und beachtet die Geräteanleitung."
     ],
@@ -126,7 +126,7 @@
       "eyebrow": "Gesichtspflege im Detail",
       "scienceTitle": "Ein Blick unter die Haut.",
       "scienceIntro": "Die Ultraschallaufnahme zeigt Gewebebewegungen bei der Stimulation mit dem Face Player II. Hier erfahren Sie, was dahintersteckt.",
-      "options": "Ihre Gesichtsbehandlung",
+      "options": "Ihre Gesichtsmassage",
       "back": "Zurück zu den Massagen",
       "scrollHint": "Scrollen und die Tools entdecken"
     }

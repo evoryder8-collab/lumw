@@ -21,11 +21,12 @@ const approvedHeadings = { '/': 'International ausgezeichnete Massage', '/about'
 // Keep the migration archive and metadata tests intact; freeze commercial facts
 // separately so polishing prose cannot silently change a price or service URL.
 const revisedPages = new Set(['/', '/about', '/contact', '/meineangebote-preise', '/massage-buxtehude-faq']);
+const approvedSeo = JSON.parse(fs.readFileSync('src/data/approved-seo-updates.json', 'utf8'));
 const facts = JSON.parse(fs.readFileSync('src/data/editorial-facts-baseline.json', 'utf8'));
 const treatments = JSON.parse(fs.readFileSync('src/content/treatments.json', 'utf8')).treatments;
 const services = JSON.parse(fs.readFileSync('src/content/services.json', 'utf8')).services;
 assert.deepEqual(treatments.map(({id,name,priceLine,prices}) => ({id,name,priceLine,prices})), facts.treatments, 'Treatment prices/names changed during editorial revision');
-assert.deepEqual(services.map(({id,slug,name,durationMin,priceEur,seoTitle,seoDescription}) => ({id,slug,name,durationMin,priceEur,seoTitle,seoDescription})), facts.services, 'Service facts changed during editorial revision');
+assert.deepEqual(services.map(({id,slug,name,durationMin,priceEur,seoTitle,seoDescription}) => ({id,slug,name,durationMin,priceEur,seoTitle,seoDescription})), facts.services.map((service) => ({ ...service, seoDescription: approvedSeo[`/service-page/${service.slug}`]?.description ?? service.seoDescription })), 'Service facts changed during editorial revision');
 
 for (const file of files.filter((file) => file.endsWith('.html'))) {
   const { document } = parseHTML(fs.readFileSync(file, 'utf8'));

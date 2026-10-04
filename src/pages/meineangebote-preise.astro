@@ -27,13 +27,10 @@ import {
 
 const title =
   'Massageangebote & Preise in Buxtehude – LUMA Wellness by June Saurin | Ganzheitliche Therapien';
-// Verbatim from the live site, and checked by scripts/check-titles.mjs.
-// "Wellnessbehandlungen" stays even though the word was removed from the
-// visible copy: section 7 keeps titles and descriptions identical at cutover,
-// and this string is part of what Google uses to identify the page. Change it
-// in a deliberate release after rankings settle, updating content-source/ too.
+// Non-medical wording approved by the owner on 4 October 2026.
+// The SEO checker records this exception while preserving the original archive.
 const description =
-  'Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19. ✓ International ausgezeichnete Massage-Expertin ✓ Wellnessbehandlungen ✓ Persönliche Beratung. Jetzt Wunschtermin sichern!';
+  'Professionelle Massagen im Herzen von Buxtehude, Hauptstraße 19. ✓ International ausgezeichnete Massage-Expertin ✓ Wellnessmassagen ✓ Persönliche Beratung. Jetzt Wunschtermin sichern!';
 const path = '/meineangebote-preise';
 
 const treatments = (await getCollection('treatments')).sort((a, b) => a.data.order - b.data.order);
