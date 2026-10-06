@@ -215,10 +215,12 @@ try {
   await page.mouse.click(contactLink.x + contactLink.width / 2, contactLink.y + contactLink.height / 2);
   await page.waitForURL(preview.url('/contact'));
   await page.locator('[data-page-curtain].is-opening').waitFor({ state: 'visible' });
-  await page.waitForFunction(() => [...document.querySelectorAll('[data-page-curtain] [data-cloth-edge]')].every(edge => {
-    const length = edge.getTotalLength(), top = edge.getPointAtLength(0), middle = edge.getPointAtLength(length / 2), bottom = edge.getPointAtLength(length);
-    return top.x - bottom.x > 100 && middle.x - (top.x + bottom.x) / 2 > 25;
-  }), null, { timeout: 2000 });
+  // The velvet opens hem first: mid-reveal the top of each panel still
+  // covers more of the screen than its lifted hem.
+  await page.waitForFunction(() => {
+    const state = document.querySelector('[data-page-curtain]').curtainState;
+    return state?.phase === 'opening' && [0, 1].every((side) => state.cover(0, side) - state.cover(1, side) > 0.15);
+  }, null, { timeout: 2500 });
   await page.screenshot({ path: path.join(artifacts, 'page-curtain.png') });
   await page.locator('[data-page-curtain]').waitFor({ state: 'hidden' });
   await page.locator('[data-enquiry]').waitFor({ state: 'visible' });

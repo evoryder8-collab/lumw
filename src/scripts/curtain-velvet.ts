@@ -501,6 +501,7 @@ function fallback(root: HTMLElement, opening: boolean, duration: number) {
     runs.set(root, { stop });
     const tick = (now: number) => {
       const t = (now - start) / 1000;
+      (root as HTMLElement & { curtainState?: unknown }).curtainState = { phase: opening ? 'opening' : 'closing', cover: (v: number, side = 0) => edgeAt(opening, duration, Math.min(t, duration / 1000), v, side) };
       panels.forEach((el, side) => {
         const cover = edgeAt(opening, duration, Math.min(t, duration / 1000), 0.5, side);
         el.style.transform = `translate3d(${side ? '' : '-'}${((1 - cover) * 100).toFixed(2)}%,0,0)`;
