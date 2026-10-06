@@ -1,6 +1,6 @@
 import type { TransitionBeforePreparationEvent, TransitionBeforeSwapEvent } from 'astro:transitions/client';
 import { routeKeyForPath } from '../i18n/locales';
-import { animateCurtain, cancelCurtain } from './curtain-cloth';
+import { animateCurtain, cancelCurtain, prepareCurtain } from './curtain-cloth';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active: { curtain: HTMLElement; signal: AbortSignal } | undefined;
@@ -27,7 +27,7 @@ document.addEventListener('astro:before-preparation', (raw) => {
   // Fetch the destination while the fabric closes. Only the short visual cover
   // delays the swap; no extra network round trip is introduced.
   const loader = event.loader;
-  const covered = animateCurtain(curtain, false, 600);
+  const covered = animateCurtain(curtain, false, 640);
   event.loader = async () => {
     try { await Promise.all([loader(), covered]); }
     catch (error) { if (active?.signal === event.signal) finish(); throw error; }
@@ -51,10 +51,18 @@ document.addEventListener('astro:after-swap', () => {
     frame = requestAnimationFrame(() => {
       if (active !== current) return;
       current.curtain.classList.add('is-opening');
-      void animateCurtain(current.curtain, true, 1600).then(() => { if (active === current) finish(); });
-      clearTimeout(timer); timer = setTimeout(finish, 2000);
+      void animateCurtain(current.curtain, true, 1700).then(() => { if (active === current) finish(); });
+      clearTimeout(timer); timer = setTimeout(finish, 2300);
     });
   });
 });
 reduced.addEventListener('change', () => { if (reduced.matches) finish(); });
+// The first honest signal that a visitor may move to another page: a pointer
+// over a link, a touch, or keyboard focus. Only then is the velvet compiled.
+const intent = (event: Event) => {
+  if (reduced.matches || !(event.target as Element | null)?.closest?.('a[href]')) return;
+  void prepareCurtain();
+  ['pointerover', 'touchstart', 'focusin'].forEach((type) => document.removeEventListener(type, intent));
+};
+['pointerover', 'touchstart', 'focusin'].forEach((type) => document.addEventListener(type, intent, { passive: true }));
 window.addEventListener('pagehide', finish);

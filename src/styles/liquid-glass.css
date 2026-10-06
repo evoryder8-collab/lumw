@@ -132,6 +132,41 @@ main .close { position: relative; background: var(--forest); color: #f0e8d7; pad
 main .close h2, main .close .eyebrow, main .close p { color: #f0e8d7; }
 main .close .pill { background: #ece2c9; color: var(--forest); }
 main .close::before { content: ''; position: absolute; inset: -70% -20%; pointer-events: none; border: 1px solid rgb(239 225 190 / 0.13); border-radius: 50%; transform: rotate(-15deg); }
+/* The finale. Light gathers behind the last invitation: pools of gold and
+   leaf green drifting, and slow rays fanning from above the headline. */
+main .close { isolation: isolate; }
+main .close > .shell { position: relative; z-index: 2; }
+main .close::after {
+  content: ''; position: absolute; inset: -35%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(34% 30% at 50% 40%, rgb(236 210 148 / 0.3), transparent 72%),
+    radial-gradient(30% 34% at 20% 74%, rgb(92 158 122 / 0.3), transparent 72%),
+    radial-gradient(26% 30% at 82% 66%, rgb(201 169 98 / 0.22), transparent 72%),
+    repeating-conic-gradient(from 0deg at 50% 30%, rgb(255 238 196 / 0.075) 0deg 3deg, transparent 3deg 14deg);
+  -webkit-mask: radial-gradient(closest-side at 50% 38%, #000 25%, transparent 100%);
+  mask: radial-gradient(closest-side at 50% 38%, #000 25%, transparent 100%);
+}
+main .close h2 { text-shadow: 0 0 42px rgb(236 210 148 / 0.32); }
+main .close .pill { box-shadow: 0 0 0 1px rgb(255 246 220 / 0.5), 0 14px 40px rgb(10 30 22 / 0.45), 0 0 46px rgb(236 210 148 / 0.35); }
+.petal-drift { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+/* A gleam of light crosses the headline. It is drawn on a copy of the words,
+   so the real text keeps its solid colour for every reader and audit. */
+[data-gleam] { position: relative; }
+[data-gleam]::after {
+  content: attr(data-gleam); position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0 38%, rgb(255 248 222 / 0.95) 46%, #f0d18a 50%, rgb(255 248 222 / 0.95) 54%, transparent 62% 100%);
+  background-size: 280% 100%; background-position: 140% 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: none;
+}
+.footer__wordmark[data-gleam]::after { background-image: linear-gradient(105deg, transparent 0 40%, #b8934e 46%, #f6e2a8 50%, #b8934e 54%, transparent 60% 100%); }
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready main .close::after { animation: finale-light 26s ease-in-out infinite alternate; }
+  .motion-ready [data-gleam]::after { animation: gleam-text 9s cubic-bezier(0.45, 0, 0.2, 1) 2.6s infinite; }
+}
+@keyframes finale-light { from { transform: rotate(-5deg) scale(1); } to { transform: rotate(6deg) scale(1.1); } }
+@keyframes gleam-text { 0%, 58% { background-position: 140% 0; } 100% { background-position: -40% 0; } }
+:root body[data-ambient-sleep] main .close::after, :root body[data-ambient-sleep] [data-gleam]::after { animation-play-state: paused; }
 
 /* Shared inner-page composition. */
 body[data-page]:not([data-page='home']) main > .hero,

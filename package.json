@@ -14,6 +14,7 @@
     "verify": "npm run build && npm run check:titles && npm run check:jsonld && npm run check:contrast && npm run check:experience && npm run check:locales && npm run check:face-care",
     "assets": "node scripts/prepare-assets.mjs",
     "map": "node scripts/fetch-map.mjs",
+    "map:3d": "node scripts/fetch-map-3d.mjs",
     "cards": "node scripts/normalize-cards.mjs",
     "aliases": "node scripts/trailing-slash-aliases.mjs",
     "check:titles": "node scripts/check-titles.mjs",

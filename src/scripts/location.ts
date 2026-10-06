@@ -22,4 +22,20 @@ export function mountLocation(signal: AbortSignal) {
   signal.addEventListener('abort', () => {
     if (choice.open) { choice.close(); document.body.style.overflow = previousOverflow; }
   }, { once: true });
+
+  // The 3D model is an enhancement over the drawn map: loaded as the section
+  // approaches, never on data saver, and only where WebGL runs on a real GPU.
+  const plate = document.querySelector<HTMLElement>('[data-map3d]')?.closest<HTMLElement>('.loc__plate');
+  const saver = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (!plate || saver || !('IntersectionObserver' in window)) return;
+  let dispose: (() => void) | undefined;
+  const near = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    near.disconnect();
+    void import('./map-3d').then(({ mountMap3d }) => mountMap3d(plate, signal, () => drive.click())).then((stop) => {
+      if (signal.aborted) stop(); else dispose = stop;
+    }).catch(() => { /* The drawn map remains. */ });
+  }, { rootMargin: '320px 0px' });
+  near.observe(plate);
+  signal.addEventListener('abort', () => { near.disconnect(); dispose?.(); }, { once: true });
 }

@@ -1,6 +1,14 @@
 /** A bounded, optional portrait detail. No sensor readings are stored or sent. */
-type Petal = { x: number; y: number; vx: number; vy: number; rotation: number; spin: number; size: number; phase: number; settled: boolean; age: number; burst: boolean; bounces: number };
+import { AIR, createPetal, easeOrientation, restingQuaternion, step, type Air, type Petal } from './petal-physics';
+import { drawPetal, pickKind } from './petal-render';
+
+type GardenPetal = Petal & { settled: boolean; burst: boolean; bounces: number; rest?: [number, number, number, number] };
 type MotionPermission = typeof DeviceMotionEvent & { requestPermission?: () => Promise<string> };
+
+// Slower air than the curtain shower: these petals are watched, not glimpsed.
+const AIR_GARDEN: Air = { ...AIR, gravity: 300, gust: 16, breeze: 0 };
+// The rim's three gold lotus reliefs, in degrees around the portrait.
+const BLOSSOMS = [-90, 42, 138];
 
 export function mountLotus(garden: HTMLElement) {
   const portrait = garden.querySelector<HTMLElement>('.hero-winner');
@@ -18,21 +26,8 @@ export function mountLotus(garden: HTMLElement) {
   if (!ctx) return () => {};
   garden.append(canvas);
 
-  // Draw one pearlescent petal once, then reuse it at different angles.
-  const sprite = document.createElement('canvas');
-  sprite.width = sprite.height = 64;
-  const ink = sprite.getContext('2d')!;
-  const wash = ink.createLinearGradient(12, 50, 46, 8);
-  wash.addColorStop(0, '#b89657'); wash.addColorStop(.4, '#e9c7a9');
-  wash.addColorStop(.68, '#fff4db'); wash.addColorStop(1, '#e5cf91');
-  ink.fillStyle = wash; ink.strokeStyle = '#e4ca8b'; ink.lineWidth = 1.1;
-  ink.beginPath(); ink.moveTo(12, 51); ink.bezierCurveTo(7, 26, 24, 8, 51, 9);
-  ink.bezierCurveTo(51, 32, 38, 56, 12, 51); ink.fill(); ink.stroke();
-  ink.beginPath(); ink.moveTo(14, 49); ink.quadraticCurveTo(31, 30, 46, 14);
-  ink.strokeStyle = '#fff6e1aa'; ink.lineWidth = .8; ink.stroke();
-
-  const petals: Petal[] = [];
-  let width = 1, height = 1, left = 0, top = 0, floor = 1, ledgeLeft = 0, ledgeWidth = 1;
+  const petals: GardenPetal[] = [];
+  let width = 1, height = 1, left = 0, top = 0, floor = 1, ledgeLeft = 0, ledgeWidth = 1, dpr = 1;
   let visible = false, frame = 0, last = 0, elapsed = 0, nextPetal = .3, scatterUntil = 0, disposed = false;
   let motionEnabled = false, permissionAsked = false;
   let lastPeak = 0, lastSign = 0, cooldown = 0;
@@ -45,38 +40,47 @@ export function mountLotus(garden: HTMLElement) {
 
   function measure() {
     const g = garden.getBoundingClientRect(), p = portrait!.getBoundingClientRect(), b = ledge!.getBoundingClientRect();
-    left = Math.max(0, Math.min(p.left, b.left) - g.left - 30);
-    top = Math.max(0, p.top - g.top - 24);
-    width = Math.min(g.width - left, Math.max(p.right, b.right) - g.left - left + 30);
+    // Room around the portrait for petals that swing wide of the rim.
+    left = Math.max(0, Math.min(p.left, b.left) - g.left - 60);
+    top = Math.max(0, p.top - g.top - 40);
+    width = Math.min(g.width - left, Math.max(p.right, b.right) - g.left - left + 60);
     height = Math.min(g.height - top, b.bottom - g.top - top + 48);
-    floor = b.top - g.top - top - 3;
+    floor = b.top - g.top - top - 2;
     ledgeLeft = b.left - g.left - left; ledgeWidth = b.width;
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
     Object.assign(canvas.style, { left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` });
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     petals.length = 0; nextPetal = elapsed + .3;
   }
 
   function release() {
     const g = garden.getBoundingClientRect(), p = portrait!.getBoundingClientRect();
-    // Release along the upper arc, so the petals travel over the photograph.
-    const angle = -Math.PI * (.18 + Math.random() * .64);
-    const x = p.left - g.left - left + p.width / 2 + Math.cos(angle) * p.width * .5;
-    const y = p.top - g.top - top + p.height / 2 + Math.sin(angle) * p.height * .5;
-    const target = ledgeLeft + ledgeWidth * (.1 + Math.random() * .8);
-    const fallTime = Math.max(1, Math.sqrt(Math.max(1, floor - y) / 12));
-    petals.push({ x, y: Math.min(y, floor - 20), vx: (target - x) / fallTime, vy: 5, rotation: Math.random() * 6.28, spin: (Math.random() - .5) * 1.5, size: 19 + Math.random() * 10, phase: Math.random() * 6.28, settled: false, age: 0, burst: false, bounces: 0 });
+    const cx = p.left - g.left - left + p.width / 2, cy = p.top - g.top - top + p.height / 2, r = p.width / 2;
+    // Most petals come loose from the gold lotus at the crown of the rim; the
+    // rest from along its upper arc, so the fall frames the photograph.
+    const crown = Math.random() < 0.55;
+    const angle = (crown ? BLOSSOMS[0] + (Math.random() - .5) * 26 : -170 + Math.random() * 160) * Math.PI / 180;
+    const x = cx + Math.cos(angle) * r * 1.04, y = Math.min(cy + Math.sin(angle) * r * 1.04, floor - 40);
+    const petal = createPetal(x, y, (Math.random() - .5) * 120, 15 + Math.random() * 10, pickKind(.16)) as GardenPetal;
+    // Steer gently toward the glass ledge; the air still decides the path.
+    const target = ledgeLeft + ledgeWidth * (.08 + Math.random() * .84);
+    const fallTime = Math.max(2, (floor - y) / 95);
+    petal.drift = (target - x) / fallTime;
+    petal.vx = Math.cos(angle) * 18; petal.vy = 6;
+    Object.assign(petal, { settled: false, burst: false, bounces: 0 });
+    petals.push(petal);
     if (petals.length > 48) petals.shift();
   }
 
   function scatter() {
     if (disposed || reduced.matches || !visible || document.hidden || document.querySelector('dialog[open]') || elapsed < scatterUntil) return;
-    if (petals.length < 8) for (let i = 0; i < 8; i++) release();
+    if (petals.length < 10) for (let i = 0; i < 10; i++) release();
     for (const petal of petals) {
-      const angle = Math.random() * Math.PI * 2, speed = 65 + Math.random() * 90;
-      petal.vx = Math.cos(angle) * speed; petal.vy = Math.sin(angle) * speed - 35;
-      petal.settled = false; petal.burst = true; petal.age = 0; petal.spin *= 3;
+      // An outward breath from the ledge, strongest upward, then the air takes over.
+      const angle = -Math.PI / 2 + (Math.random() - .5) * 2.4, speed = 160 + Math.random() * 220;
+      petal.vx = Math.cos(angle) * speed; petal.vy = Math.sin(angle) * speed; petal.vz = (Math.random() - .5) * 160;
+      petal.wx = (Math.random() - .5) * 14; petal.wy = (Math.random() - .5) * 14; petal.wz = (Math.random() - .5) * 8;
+      petal.settled = false; petal.burst = true; petal.age = 0; petal.drift = 0; petal.rest = undefined;
     }
     scatterUntil = elapsed + 3; nextPetal = scatterUntil + .2;
     garden.dataset.petalState = 'scattering';
@@ -122,40 +126,43 @@ export function mountLotus(garden: HTMLElement) {
   }, { signal });
   if (Motion && !Motion.requestPermission) enableMotion();
 
+  function land(p: GardenPetal) {
+    // A soft first contact can bounce once or twice before the petal lies down.
+    if (p.bounces < 2 && p.vy > 70) {
+      p.y = floor; p.vy *= -.22; p.vx *= .5; p.wx *= .4; p.wy *= .4; p.wz *= .4; p.bounces++;
+      return;
+    }
+    p.settled = true; p.y = floor - Math.random() * 5; p.age = 0;
+    p.vx *= .25; p.vy = 0; p.vz = 0; p.wx = p.wy = p.wz = 0;
+    p.rest = restingQuaternion(Math.random() * Math.PI * 2);
+  }
+
   function tick(now: number) {
     frame = 0;
     if (!visible || document.hidden || reduced.matches || disposed) return;
-    if (now - last < 32) { frame = requestAnimationFrame(tick); return; }
-    const dt = Math.min((now - last) / 1000 || .033, .06); last = now;
+    const dt = Math.min((now - last) / 1000 || .016, .05); last = now;
     if (!document.querySelector('dialog[open]')) {
       elapsed += dt;
       if (elapsed >= scatterUntil && garden.dataset.petalState === 'scattering') garden.dataset.petalState = 'falling';
-      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .38 + Math.random() * .28; }
-      ctx!.clearRect(0, 0, width, height);
+      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .42 + Math.random() * .32; }
+      ctx!.setTransform(1, 0, 0, 1, 0, 0);
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = petals.length - 1; i >= 0; i--) {
-        const p = petals[i]; p.age += dt;
-        if (!p.settled) {
-          p.vy += (p.burst ? 40 : 24) * dt;
-          p.x += (p.vx + (p.burst ? 0 : Math.sin(elapsed * 1.7 + p.phase) * 12)) * dt;
-          p.y += p.vy * dt; p.rotation += p.spin * dt;
-          if (!p.burst && p.y >= floor && p.vy > 0 && p.x > ledgeLeft + 10 && p.x < ledgeLeft + ledgeWidth - 10) {
-            if (p.bounces < 2 && p.vy > 14) {
-              p.y = floor; p.vy *= -.2; p.vx *= .4; p.spin *= .5; p.bounces++;
-            } else {
-              p.settled = true; p.y = floor - Math.random() * 7; p.rotation = -.4 + Math.random() * .8; p.age = 0;
-            }
-          }
+        const p = petals[i];
+        if (p.settled) {
+          // Slide to rest and lie down on the glass.
+          p.x += p.vx * dt; p.vx *= Math.exp(-dt * 6); p.z *= Math.exp(-dt * 6);
+          if (p.rest) easeOrientation(p, p.rest, 1 - Math.exp(-dt * 9));
+          p.age += dt;
+        } else {
+          step(p, dt, elapsed, AIR_GARDEN);
+          if (!p.burst && p.y >= floor && p.vy > 0 && p.x > ledgeLeft + 10 && p.x < ledgeLeft + ledgeWidth - 10) land(p);
         }
-        if (p.y > height + 30 || p.x < -30 || p.x > width + 30 || (p.burst && p.age > 2.8)) { petals.splice(petals.indexOf(p), 1); continue; }
-        ctx!.save(); ctx!.translate(p.x, p.y); ctx!.rotate(p.rotation);
-        ctx!.scale(p.settled ? 1 : .45 + Math.abs(Math.cos(p.age * 1.4 + p.phase)) * .55, 1);
-        ctx!.globalAlpha = p.burst ? Math.max(0, 1 - p.age / 2.8) : Math.min(1, p.age * 3 + .4);
-        ctx!.drawImage(sprite, -p.size / 2, -p.size / 2, p.size, p.size);
-        // A small travelling highlight, not a flashing whole-screen effect.
-        const glint = Math.max(0, Math.sin(elapsed * 1.5 + p.phase) - .93) * 10;
-        if (glint > 0) { ctx!.globalAlpha *= glint; ctx!.fillStyle = '#fff4cb'; ctx!.fillRect(-3, -.45, 6, .9); ctx!.fillRect(-.45, -3, .9, 6); }
-        ctx!.restore();
+        if (p.y > height + 30 || p.x < -40 || p.x > width + 40 || (p.burst && p.age > 2.8)) { petals.splice(i, 1); continue; }
+        p.alpha = p.burst ? Math.max(0, 1 - p.age / 2.8) : Math.min(1, p.age * 2.5 + (p.settled ? 1 : .15));
+        drawPetal(ctx!, p, dpr);
       }
+      ctx!.globalAlpha = 1;
       // Trim the pile after traversal so removing an older petal cannot shift
       // the current index and update another petal twice in one frame.
       const pile = petals.filter((p) => p.settled);

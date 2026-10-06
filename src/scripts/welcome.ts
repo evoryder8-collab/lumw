@@ -1,5 +1,5 @@
 import { mountLanguageCountdown } from './language-countdown';
-import { animateCurtain, cancelCurtain } from './curtain-cloth';
+import { animateCurtain, cancelCurtain, prepareCurtain } from './curtain-cloth';
 import { mountIntroPlayer } from './intro-player';
 import { mountIntroControls } from './intro-controls';
 /** Welcome choices are session-only. No media plays before an explicit sound choice. */
@@ -83,15 +83,11 @@ export function mountWelcome(signal: AbortSignal) {
   const openCurtain = () => {
     if (!curtain || matchMedia('(prefers-reduced-motion: reduce)').matches) { finishCurtain(); return; }
     curtain.showModal();
-    // Paint the closed fabric before opening its separate folds onto the film.
-    curtainFrame = requestAnimationFrame(() => {
-      curtainFrame = requestAnimationFrame(() => {
-        curtain.classList.add('is-opening');
-        void animateCurtain(curtain, true, 1850).then(() => { if (!disposed && curtain.open) finishCurtain(); });
-      });
-    });
+    // The velvet draws its closed first frame synchronously, so it can open at once.
+    curtain.classList.add('is-opening');
+    void animateCurtain(curtain, true, 2100).then(() => { if (!disposed && curtain.open) finishCurtain(); });
     // A cancelled animation must never leave the entrance blocking the page.
-    curtainTimer = setTimeout(finishCurtain, 2150);
+    curtainTimer = setTimeout(finishCurtain, 2900);
   };
   const finish = (enabled: boolean) => {
     write('luma-welcome-done', 'yes');
@@ -108,6 +104,8 @@ export function mountWelcome(signal: AbortSignal) {
     if (!sound || sound.open || disposed) return;
     lock();
     sound.showModal();
+    // The visitor is reading the question: compile the curtain meanwhile.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) void prepareCurtain();
   };
   curtain?.addEventListener('cancel', (event) => { event.preventDefault(); finishCurtain(); }, { signal });
   const showLanguage = (firstVisit = false) => {

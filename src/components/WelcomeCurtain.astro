@@ -4,46 +4,37 @@ const { locale = 'de', mode = 'welcome' } = Astro.props as { locale?: Locale; mo
 const pageTransition = mode === 'page';
 const Tag = pageTransition ? 'div' : 'dialog';
 const label = { de: 'Willkommen bei LUMA', en: 'Welcome to LUMA', es: 'Bienvenido a LUMA', pt: 'Bem-vindo à LUMA', it: 'Benvenuto da LUMA', fr: 'Bienvenue chez LUMA' }[locale];
-const folds = Array.from({ length: 10 }, (_, i) => i);
-const flowers = [.1, .26, .43, .61, .78, .94];
 ---
-<Tag class:list={['welcome-curtain', pageTransition && 'page-curtain']} data-welcome-curtain={pageTransition ? undefined : ''} data-page-curtain={pageTransition ? '' : undefined} aria-label={pageTransition ? undefined : label} aria-hidden={pageTransition ? 'true' : undefined} hidden={pageTransition} transition:persist={pageTransition ? 'luma-page-curtain' : undefined}>
-  <div class="welcome-curtain__panels" aria-hidden="true">
-    {[0, 1].map((side) => <svg class:list={['welcome-curtain__panel', side ? 'welcome-curtain__panel--right' : 'welcome-curtain__panel--left']} data-cloth-panel viewBox="0 0 600 1000" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id={`cloth-fold-${mode}-${side}`}>
-          <stop stop-color="#0a201a"/><stop offset=".18" stop-color="#193d30"/><stop offset=".48" stop-color="#45624b"/><stop offset=".61" stop-color="#70806a"/><stop offset=".76" stop-color="#294c3b"/><stop offset="1" stop-color="#102c23"/>
-        </linearGradient>
-        <linearGradient id={`cloth-light-${mode}-${side}`} x1="0" y1="0" x2=".55" y2="1">
-          <stop stop-color="#c9c29b" stop-opacity=".12"/><stop offset=".36" stop-color="#f7ecc8" stop-opacity=".025"/><stop offset="1" stop-color="#00130c" stop-opacity=".38"/>
-        </linearGradient>
-        <linearGradient id={`cloth-thread-${mode}-${side}`}><stop stop-color="#9c834e"/><stop offset=".48" stop-color="#f2dfb1"/><stop offset="1" stop-color="#b79c61"/></linearGradient>
-        <pattern id={`cloth-weave-${mode}-${side}`} width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 1H4M1 0V4" stroke="#e5e4cc" stroke-opacity=".035" stroke-width=".5"/></pattern>
-      </defs>
-      <path data-cloth-surface class="welcome-curtain__cloth" d="M-72 0H606V1000H-72Z" fill="#19372b"/>
-      {folds.map(i => <path data-cloth-fold={i} d={`M${-72+i*67.8} 0h67.8v1000h-67.8Z`} fill={`url(#cloth-fold-${mode}-${side})`}/>)}
-      <path data-cloth-surface d="M-72 0H606V1000H-72Z" fill={`url(#cloth-light-${mode}-${side})`}/>
-      <path data-cloth-surface d="M-72 0H606V1000H-72Z" fill={`url(#cloth-weave-${mode}-${side})`}/>
-      <path data-cloth-vine d="M490 0V1000" fill="none" stroke={`url(#cloth-thread-${mode}-${side})`} stroke-width="1.2" opacity=".65"/>
-      {flowers.map((position, i) => <g data-cloth-flower={position} transform={`translate(505 ${position*1000}) rotate(${i%2?22:-20})`} fill="#dfcca927" stroke={`url(#cloth-thread-${mode}-${side})`} stroke-width="1.1" opacity=".78">
-        <path d="M0 25C-29 6-23-26 0-47C23-26 29 6 0 25Z"/><path d="M0 25C-35 29-51 4-49-24C-19-22-4 0 0 25ZM0 25C35 29 51 4 49-24C19-22 4 0 0 25Z"/><path d="M0 22V-30M-5 19L-38-14M5 19L38-14" fill="none" stroke-width=".7"/>
-      </g>)}
-      <path data-cloth-edge d="M606 0V1000" fill="none" stroke={`url(#cloth-thread-${mode}-${side})`} stroke-width="2"/>
-    </svg>)}
-    <div class="welcome-curtain__petals">{Array.from({length: 28}, () => <i data-cloth-petal></i>)}</div>
-  </div>
-</Tag>
+<!-- The velvet itself is drawn by a lazily loaded shader (curtain-velvet.ts).
+     Until its first frame, the host shows a closed curtain in plain CSS. -->
+<Tag class:list={['welcome-curtain', pageTransition && 'page-curtain']} data-welcome-curtain={pageTransition ? undefined : ''} data-page-curtain={pageTransition ? '' : undefined} data-petals={pageTransition ? 14 : 34} aria-label={pageTransition ? undefined : label} aria-hidden={pageTransition ? 'true' : undefined} hidden={pageTransition} transition:persist={pageTransition ? 'luma-page-curtain' : undefined}></Tag>
 <style>
-  .welcome-curtain { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; padding: 0; border: 0; background: transparent; overflow: hidden; }
+  .welcome-curtain {
+    position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none;
+    padding: 0; border: 0; overflow: hidden; background: transparent;
+  }
+  /* The welcome starts closed, so until the shader's first frame it shows a
+     closed curtain in plain CSS: folds and a seam of light. Page transitions
+     start open and need no stand-in. */
+  .welcome-curtain:not(.page-curtain) {
+    background:
+      radial-gradient(ellipse 9% 70% at 50% 46%, rgb(255 236 190 / 0.18), transparent 70%),
+      linear-gradient(90deg, transparent calc(50% - 9px), #b8934e calc(50% - 9px), #e9d29c calc(50% - 3px), #6f5424 50%, #e9d29c calc(50% + 3px), #b8934e calc(50% + 9px), transparent calc(50% + 9px)),
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgb(110 150 120 / 0.28), transparent 70%),
+      repeating-linear-gradient(90deg, #0b241c 0, #1d4636 3.2vw, #12352a 5.4vw, #0b241c 7.1vw),
+      #10302a;
+  }
   .welcome-curtain::backdrop { background: transparent; }
+  .welcome-curtain.is-velvet, .welcome-curtain.is-flat { background: transparent; }
   .page-curtain { z-index: 10000; pointer-events: none; }
   .page-curtain[hidden] { display: none; }
-  .welcome-curtain__panels { position: absolute; inset: 0; overflow: hidden; }
-  .welcome-curtain__panel { position: absolute; top: -2%; height: 104%; width: calc(50% + 1px); overflow: visible; }
-  .welcome-curtain__panel--left { left: 0; }
-  .welcome-curtain__panel--right { right: 0; transform: scaleX(-1); }
-  .welcome-curtain__cloth { filter: drop-shadow(9px 3px 12px #00160a66); }
-  .welcome-curtain__petals { position: absolute; inset: 0; pointer-events: none; }
-  .welcome-curtain__petals i { position: absolute; left: 0; top: 0; width: 12px; height: 19px; opacity: 0; border-radius: 90% 8% 85% 12%; background: linear-gradient(125deg, #f5e7bf, #e2bd8c 40%, #fff3d1 48%, #b99b63); border: .5px solid #eadba998; box-shadow: 0 1px 4px #04221933; will-change: transform; }
+  .welcome-curtain :global(.velvet) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .welcome-curtain :global(.velvet-flat) {
+    position: absolute; top: 0; bottom: 0; width: 50.5%; will-change: transform;
+    background: repeating-linear-gradient(90deg, #0b241c 0, #1d4636 3.2vw, #12352a 5.4vw, #0b241c 7.1vw);
+    box-shadow: 0 0 40px rgb(255 236 190 / 0.25);
+  }
+  .welcome-curtain :global(.velvet-flat--left) { left: 0; border-right: 6px solid #c9a962; }
+  .welcome-curtain :global(.velvet-flat--right) { right: 0; border-left: 6px solid #c9a962; }
   @media (prefers-reduced-motion: reduce) { .welcome-curtain { display: none; } }
 </style>

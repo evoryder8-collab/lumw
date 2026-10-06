@@ -687,6 +687,27 @@ a { color: inherit; text-decoration: none; }
   z-index: 0;
 }
 
+/* --- Lists that land ----------------------------------------------------- */
+/* Each row drops into place, touches down a hair past its mark and settles,
+   like a card laid on a table. Visible by default; hidden only once the
+   motion layer has marked the row and is waiting for it to arrive. */
+
+.motion-ready [data-row]:not([data-state='in']) { opacity: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready [data-row][data-state='in'] {
+    animation: row-land 820ms backwards;
+    animation-delay: calc(var(--i, 0) * 72ms);
+  }
+}
+
+@keyframes row-land {
+  0%   { opacity: 0; transform: translate3d(0, -18px, 0) scale(0.97); filter: blur(4px); animation-timing-function: cubic-bezier(0.4, 0, 0.7, 0.4); }
+  46%  { opacity: 1; transform: translate3d(0, 3px, 0) scale(1.004, 0.992); filter: blur(0); animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1); }
+  72%  { transform: translate3d(0, -1.2px, 0) scale(1); animation-timing-function: ease-in-out; }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
 /* --- Line reveals -------------------------------------------------------- */
 /* SplitText writes the mask wrappers; these are the resting states so nothing
    flashes before the island runs, and the final state if it never does. */

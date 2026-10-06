@@ -221,7 +221,7 @@ const schema = graph([
     <section class="section close">
       <div class="shell shell--narrow close__inner">
         <p class="eyebrow">Termine nur nach vorheriger Absprache</p>
-        <h2 class="close__title" data-reveal>{service.familyName} buchen</h2>
+        <h2 class="close__title" data-reveal data-gleam={`${service.familyName} buchen`}>{service.familyName} buchen</h2>
         <a href={url(`/contact?treatment=${service.family === 'thai' ? 'thai-solution' : service.family}#enquiry`)} class="pill sheen" data-magnetic>
           <span data-magnetic-label>Termin anfragen</span>
         </a>

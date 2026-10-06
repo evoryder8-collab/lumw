@@ -98,6 +98,6 @@ const schema = graph([
   {pageKey === 'contact' && <div class="shell section--tight"><LocationMap {locale} /></div>}
 
   {pageKey === 'home' && <section class="section--tight"><div class="shell visit-journey"><p class="eyebrow">{u.journey}</p><ol>{t.journey.map(([heading, body], i) => <li><span>0{i+1}</span><h3>{heading}</h3><p>{body}</p></li>)}</ol></div></section>}
-  {pageKey !== 'contact' && <section class="section close"><div class="shell localized-close"><p class="eyebrow">LUMA WELLNESS</p><h2>{t.closing}</h2><p>{u.appointment}</p><a class="pill sheen" href={url(routePath('contact', locale))}>{u.book}<Icon size={20} /></a></div></section>}
+  {pageKey !== 'contact' && <section class="section close"><div class="shell localized-close"><p class="eyebrow">LUMA WELLNESS</p><h2 data-gleam={t.closing}>{t.closing}</h2><p>{u.appointment}</p><a class="pill sheen halo" href={url(routePath('contact', locale))}>{u.book}<Icon size={20} /></a></div></section>}
 </>}
 </Layout>

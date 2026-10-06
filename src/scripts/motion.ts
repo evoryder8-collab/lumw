@@ -721,6 +721,37 @@ function initStateReveals() {
   onCleanup(() => io.disconnect());
 }
 
+/* ------------------------------------------------------- lists that land */
+
+/**
+ * Price rows, questions, awards and link lists build themselves: each row is
+ * watched on its own, and rows arriving in the same moment land one after
+ * another. A long list therefore keeps building as it scrolls into view,
+ * instead of finishing off screen. The stylesheet owns the motion.
+ */
+const LISTS = '.rates, .localized-rates, .face-rates, .faq, .visit-journey ol, .award-record, .footer__col ul, .footer-languages, .treatment-index, .localized-channels, .face-details__safety ul';
+
+function initRows() {
+  const rows = [...document.querySelectorAll<HTMLElement>(LISTS)]
+    .flatMap((list) => [...list.children] as HTMLElement[])
+    .filter((row) => !row.matches('[data-reveal2], [data-fade]'));
+  if (!rows.length) return;
+  rows.forEach((row) => { row.dataset.row = ''; if (REDUCED) row.dataset.state = 'in'; });
+  if (REDUCED) return;
+  const io = new IntersectionObserver((entries) => {
+    let k = 0;
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const row = e.target as HTMLElement;
+      row.style.setProperty('--i', String(Math.min(k++, 8)));
+      row.dataset.state = 'in';
+      io.unobserve(row);
+    }
+  }, { rootMargin: '0px 0px -4% 0px', threshold: 0.2 });
+  rows.forEach((row) => io.observe(row));
+  onCleanup(() => io.disconnect());
+}
+
 /* ------------------------------------------------------------- progress */
 
 /**
@@ -803,7 +834,7 @@ function installRevealFailsafe() {
       gsap.set(el, { yPercent: 0 });
     });
     document
-      .querySelectorAll<HTMLElement>('[data-reveal2]:not([data-state])')
+      .querySelectorAll<HTMLElement>('[data-reveal2]:not([data-state]), [data-row]:not([data-state])')
       .forEach((el) => (el.dataset.state = 'in'));
   };
 
@@ -844,6 +875,20 @@ function boot() {
     onCleanup(() => { active = false; observer.disconnect(); disposeLotus?.(); });
   }
 
+  // The finale's petals: a handful in the air, only while it is on screen.
+  const finale = document.querySelector<HTMLElement>('main .close');
+  if (finale && !REDUCED) {
+    let active = true;
+    let disposeDrift: (() => void) | undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      void import('./petal-field').then(({ mountPetalDrift }) => { if (active && finale.isConnected) disposeDrift = mountPetalDrift(finale); }).catch(() => {});
+    }, { rootMargin: '200px 0px' });
+    observer.observe(finale);
+    onCleanup(() => { active = false; observer.disconnect(); disposeDrift?.(); });
+  }
+
   initScroll();
   initScrollVelocity(); // after initScroll: it needs the Lenis instance
   initReveals();
@@ -858,6 +903,7 @@ function boot() {
   initScrollDrift();
   initSpotlight();
   initStateReveals();
+  initRows();
   initProgress();
   initChapterCounter();
   installRevealFailsafe();
