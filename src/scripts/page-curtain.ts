@@ -58,11 +58,14 @@ document.addEventListener('astro:after-swap', () => {
 });
 reduced.addEventListener('change', () => { if (reduced.matches) finish(); });
 // The first honest signal that a visitor may move to another page: a pointer
-// over a link, a touch, or keyboard focus. Only then is the velvet compiled.
+// over a link, a touch, or a key press. Only then is the velvet compiled.
+// Focus alone is not intent: a modal (the language portal) moves focus onto
+// a link by itself during the first page load.
+const INTENT = ['pointerover', 'touchstart', 'keydown'];
 const intent = (event: Event) => {
-  if (reduced.matches || !(event.target as Element | null)?.closest?.('a[href]')) return;
+  if (reduced.matches || (event.type === 'pointerover' && !(event.target as Element | null)?.closest?.('a[href]'))) return;
   void prepareCurtain();
-  ['pointerover', 'touchstart', 'focusin'].forEach((type) => document.removeEventListener(type, intent));
+  INTENT.forEach((type) => document.removeEventListener(type, intent));
 };
-['pointerover', 'touchstart', 'focusin'].forEach((type) => document.addEventListener(type, intent, { passive: true }));
+INTENT.forEach((type) => document.addEventListener(type, intent, { passive: true }));
 window.addEventListener('pagehide', finish);
