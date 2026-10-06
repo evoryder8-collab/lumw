@@ -6,7 +6,7 @@ type GardenPetal = Petal & { settled: boolean; burst: boolean; bounces: number; 
 type MotionPermission = typeof DeviceMotionEvent & { requestPermission?: () => Promise<string> };
 
 // Slower air than the curtain shower: these petals are watched, not glimpsed.
-const AIR_GARDEN: Air = { ...AIR, gravity: 300, gust: 16, breeze: 0 };
+const AIR_GARDEN: Air = { ...AIR, gravity: 430, gust: 18, breeze: 0 };
 // The rim's three gold lotus reliefs, in degrees around the portrait.
 const BLOSSOMS = [-90, 42, 138];
 
@@ -61,10 +61,11 @@ export function mountLotus(garden: HTMLElement) {
     const crown = Math.random() < 0.55;
     const angle = (crown ? BLOSSOMS[0] + (Math.random() - .5) * 26 : -170 + Math.random() * 160) * Math.PI / 180;
     const x = cx + Math.cos(angle) * r * 1.04, y = Math.min(cy + Math.sin(angle) * r * 1.04, floor - 40);
-    const petal = createPetal(x, y, (Math.random() - .5) * 120, 15 + Math.random() * 10, pickKind(.16)) as GardenPetal;
+    // Sized to the portrait, so a phone and a desktop show the same blossom.
+    const petal = createPetal(x, y, (Math.random() - .5) * 120, Math.max(17, r * (.085 + Math.random() * .05)), pickKind(.16)) as GardenPetal;
     // Steer gently toward the glass ledge; the air still decides the path.
     const target = ledgeLeft + ledgeWidth * (.08 + Math.random() * .84);
-    const fallTime = Math.max(2, (floor - y) / 95);
+    const fallTime = Math.max(2, (floor - y) / 120);
     petal.drift = (target - x) / fallTime;
     petal.vx = Math.cos(angle) * 18; petal.vy = 6;
     Object.assign(petal, { settled: false, burst: false, bounces: 0 });
@@ -74,7 +75,7 @@ export function mountLotus(garden: HTMLElement) {
 
   function scatter() {
     if (disposed || reduced.matches || !visible || document.hidden || document.querySelector('dialog[open]') || elapsed < scatterUntil) return;
-    if (petals.length < 10) for (let i = 0; i < 10; i++) release();
+    if (petals.length < 16) for (let i = 0; i < 16; i++) release();
     for (const petal of petals) {
       // An outward breath from the ledge, strongest upward, then the air takes over.
       const angle = -Math.PI / 2 + (Math.random() - .5) * 2.4, speed = 160 + Math.random() * 220;
@@ -144,7 +145,7 @@ export function mountLotus(garden: HTMLElement) {
     if (!document.querySelector('dialog[open]')) {
       elapsed += dt;
       if (elapsed >= scatterUntil && garden.dataset.petalState === 'scattering') garden.dataset.petalState = 'falling';
-      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .42 + Math.random() * .32; }
+      if (elapsed > nextPetal) { release(); nextPetal = elapsed + .3 + Math.random() * .24; }
       ctx!.setTransform(1, 0, 0, 1, 0, 0);
       ctx!.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = petals.length - 1; i >= 0; i--) {

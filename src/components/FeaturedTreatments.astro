@@ -26,7 +26,9 @@ const sportsNames = {
     const baseText = locale === 'de' ? { name: treatmentName(item.name), description: item.body.find((b) => b.type === 'p')?.text } : translations[locale].treatments[id as keyof typeof translations.en.treatments];
     const text = { ...baseText, name: id === 'stark-ball' ? sportsNames[locale] : baseText.name };
     const isFace = id === 'gesicht-kopf';
-    const href = url(`${routePath('services', locale)}#${id}`);
+    // The facial treatment has its own page in every language; the massages
+    // open at their place in the price list.
+    const href = url(isFace ? routePath('face', locale) : `${routePath('services', locale)}#${id}`);
     return <article class="localized-feature" data-featured-treatment={id}>
       {isFace ? <FaceMedia {locale} {href} newTreatment /> : <a href={href} aria-label={text.name}><Photo src={cardImageByName(item.image)!} alt={text.name} widths={[420,640,860]} sizes="(max-width:760px) 92vw, 31vw" ratio="7 / 6" dissolve={false} /></a>}
       <span class="feature-price">{`${u.from} `}<Price amount={Math.min(...item.prices.map((p) => p.priceEur))} /> €</span>

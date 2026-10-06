@@ -695,7 +695,7 @@ a { color: inherit; text-decoration: none; }
 .motion-ready [data-row]:not([data-state='in']) { opacity: 0; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .motion-ready [data-row][data-state='in'] {
+  .motion-ready [data-row][data-state='in']:not([data-row-settled]) {
     animation: row-land 820ms backwards;
     animation-delay: calc(var(--i, 0) * 72ms);
   }

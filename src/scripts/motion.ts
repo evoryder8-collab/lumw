@@ -736,8 +736,18 @@ function initRows() {
     .flatMap((list) => [...list.children] as HTMLElement[])
     .filter((row) => !row.matches('[data-reveal2], [data-fade]'));
   if (!rows.length) return;
-  rows.forEach((row) => { row.dataset.row = ''; if (REDUCED) row.dataset.state = 'in'; });
-  if (REDUCED) return;
+  // Rows a visitor can already see stay still when the layer wakes, rather
+  // than blinking out to land again; behind a closing curtain they land as it opens.
+  const covered = !!document.querySelector('[data-page-curtain]:not([hidden])');
+  const waiting = rows.filter((row) => {
+    row.dataset.row = '';
+    if (REDUCED || (!covered && row.getBoundingClientRect().top < innerHeight)) {
+      row.dataset.state = 'in'; row.dataset.rowSettled = '';
+      return false;
+    }
+    return true;
+  });
+  if (!waiting.length) return;
   const io = new IntersectionObserver((entries) => {
     let k = 0;
     for (const e of entries) {
@@ -748,7 +758,7 @@ function initRows() {
       io.unobserve(row);
     }
   }, { rootMargin: '0px 0px -4% 0px', threshold: 0.2 });
-  rows.forEach((row) => io.observe(row));
+  waiting.forEach((row) => io.observe(row));
   onCleanup(() => io.disconnect());
 }
 

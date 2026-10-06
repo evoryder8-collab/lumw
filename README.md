@@ -64,6 +64,14 @@ part of the initial page-loading budget.
   rating is a dated, manually verified snapshot, not an automatic live feed.
 - Their horizontal cards make a small, once-only preview movement on entry.
   Touch or keyboard input cancels it, and reduced motion disables it.
+- The welcome and main-page navigation use a WebGL velvet curtain that opens
+  hem first, with petals shed into the light. It compiles only after a
+  sign of intent (the sound question, a link hover, touch or focus), so page
+  loads never pay for it. Without WebGL, flat panels keep the same timing.
+- The Contact map becomes a translucent 3D model when the section approaches:
+  fly-in, slow orbit, drag to rotate, sun shadows and the route along
+  Hauptstraße. All data is served from this site; the drawn SVG map remains
+  for reduced data, software rendering and no JavaScript.
 - June's portrait greeting appears after 20 seconds of visible homepage time
   after the welcome choices. It offers the translated enquiry link, never
   takes focus, and can be dismissed for the session.
@@ -97,6 +105,11 @@ Google Maps / Apple Maps chooser and no-JavaScript directions links.
 | `src/scripts/experience.ts` | Interaction setup and navigation cleanup |
 | `src/scripts/welcome.ts` | Language, sound consent and playback |
 | `src/scripts/prices.ts` | Scroll-triggered price animation |
+| `src/scripts/curtain-velvet.ts` | WebGL velvet curtain for the welcome and page transitions, loaded on visitor intent only |
+| `src/scripts/petal-physics.ts`, `petal-render.ts`, `petal-field.ts` | Petal aerodynamics, pre-shaded sprites, curtain shower and closing drift |
+| `src/scripts/map-3d.ts` | 3D location model over the self-hosted city data |
+| `public/map/studio-3d.json` | OpenStreetMap buildings, heights and streets around the studio (`npm run map:3d`) |
+| `src/components/ContactPage.astro` | Contact body shared by all six languages |
 | `docs/media-sources.md` | Photo, video, flag and review provenance |
 
 German service details and legal pages remain in German. All five core pages

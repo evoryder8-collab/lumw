@@ -57,6 +57,8 @@ for (const [locale, paths] of Object.entries(routes)) {
   assert.equal(detail.querySelectorAll('#face-options .face-rate').length, 3);
   assert.equal(detail.querySelectorAll('link[rel="alternate"][hreflang]').length, 7);
   assert.ok(read(paths[1]).querySelector('#gesicht-kopf .face-media__destination').getAttribute('href').endsWith(detailPath));
+  // The homepage listing leads to the same dedicated page in every language.
+  assert.ok(read(paths[0]).querySelector('[data-featured-treatment="gesicht-kopf"] .face-media__destination').getAttribute('href').endsWith(detailPath), `${locale}: homepage facial listing must open its own page`);
   const contact = read(paths[2]);
   assert.deepEqual([...contact.querySelectorAll('select[name="variant"] option')].map((el) => el.getAttribute('value')), ['','ultimate','pointer','duo']);
   const data = JSON.parse(read(paths[1]).querySelector('script[type="application/ld+json"]').textContent);
