@@ -13,10 +13,10 @@ const SUN: Vec = [-0.5, -0.56, 0.66]; // from the south-west, afternoon
 const SHADOW = [SUN[0] / SUN[2], SUN[1] / SUN[2]];
 const ALPHA = 0.9;
 
-const VS = `attribute vec3 aPos; attribute vec4 aColor; attribute vec2 aUV;
+const VS = /* glsl */ `attribute vec3 aPos; attribute vec4 aColor; attribute vec2 aUV;
 uniform mat4 uMVP; varying vec4 vColor; varying vec2 vXY, vUV; varying float vDepth;
 void main() { vColor = aColor; vXY = aPos.xy; vUV = aUV; gl_Position = uMVP * vec4(aPos, 1.0); vDepth = gl_Position.w; }`;
-const FS = `precision mediump float;
+const FS = /* glsl */ `precision mediump float;
 varying vec4 vColor; varying vec2 vXY, vUV; varying float vDepth;
 uniform float uR, uAlpha, uMode, uTime; uniform vec2 uHaze;
 void main() {

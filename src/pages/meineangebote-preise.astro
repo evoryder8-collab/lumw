@@ -141,7 +141,7 @@ const money = (n: number) => `${n}€`;
             const [first, ...rest] = t.data.body;
             return (
               <li
-                class:list={['card', 'spot', 'rim', isSignature && 'card--signature']}
+                class:list={['card', 'spot', 'rim', isSignature && 'card--signature', isFace && 'card--face']}
                 id={t.data.id}
                 data-card
                 data-tier={isSignature ? 'signature' : 'standard'}
@@ -179,11 +179,16 @@ const money = (n: number) => `${n}€`;
                 {isSignature && <span class="signature-seal" aria-hidden="true"><Medal metal="gold" size={48} /></span>}
 
                 <div class="card__content">
+                  {/* A glass tag and a price pill float where the photograph
+                      meets the card. The pill repeats the lowest price below. */}
                   <header class="card__head">
-                    <span class="card__index" aria-hidden="true">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <p class="card__eyebrow">{isSignature ? 'Signature' : 'Massage'}</p>
+                    <div class="card__tag">
+                      <span class="card__index" aria-hidden="true">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <p class="card__eyebrow">{isSignature ? 'Signature' : 'Massage'}</p>
+                    </div>
+                    <span class="card__from" aria-hidden="true">ab <b>{Math.min(...t.data.prices.map((pr) => pr.priceEur))}</b> €</span>
                   </header>
 
                   <h2 class:list={['card__name', isSignature && 'gilt gilt-live']} transition:name={target ? `title-${target.family}` : undefined}>

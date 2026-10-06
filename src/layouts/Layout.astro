@@ -143,6 +143,9 @@ const fontBase = import.meta.env.BASE_URL.replace(/\/$/, '');
       <span class="aurora__blob aurora__blob--d"></span>
       <div class="aurora__conic"></div>
     </div>
+    <!-- The living silk field (aura.ts). Persisted, so it flows on unbroken
+         across page transitions; it starts on the visitor's first movement. -->
+    <div class="aura-host" aria-hidden="true" transition:persist="luma-aura"></div>
     <div class="grain" aria-hidden="true"></div>
 
     {!compact && <><LanguagePortal {path} {locale} /><WelcomeCurtain {locale} /></>}

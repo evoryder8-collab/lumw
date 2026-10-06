@@ -45,6 +45,7 @@ const title = page.title;
 const description = page.description;
 const treatments = data.treatments;
 const ogImage = await socialImageUrl(pageKey === 'home' ? winner : portrait, Astro.site);
+const massageWord = { en: 'Massage', fr: 'Massage', es: 'Masaje', pt: 'Massagem', it: 'Massaggio' }[locale as TranslatedLocale];
 const treatmentWidths = [420,640,860];
 const treatmentSizes = '(max-width:760px) 92vw, (max-width:1000px) 46vw, 31vw';
 const firstTreatmentImage = cardImageByName(treatments[0]?.image);
@@ -81,11 +82,11 @@ const schema = graph([
 
   {pageKey === 'about' && <><section class="section--tight"><div class="shell"><PenzbergPhoto {locale} /></div></section><PhotoAward {locale} /><FilmSection {locale} featured /><PhotoGallery {locale} /></>}
 
-  {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item) => {
+  {pageKey === 'services' && <section class="section--tight"><div class="shell"><nav class="treatment-index" aria-label={page.eyebrow}>{treatments.map((item) => <a href={`#${item.id}`}>{t.treatments[item.id as keyof typeof t.treatments].name}</a>)}</nav><div class="localized-treatments">{treatments.map((item, i) => {
     const text = t.treatments[item.id as keyof typeof t.treatments];
-    return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature']} id={item.id} data-card>
+    return <article class:list={['localized-treatment','card',item.id === 'gold-medalie' && 'card--signature', item.id === 'gesicht-kopf' && 'card--face']} id={item.id} data-card data-reveal2 style={`--reveal-delay:${(i % 3) * 70}ms`}>
       <div class="card__photo">{item.id === 'gesicht-kopf' ? <FaceMedia {locale} href={url(routePath('face', locale))} /> : <Photo src={cardImageByName(item.image)!} alt={text.name} widths={treatmentWidths} sizes={treatmentSizes} priority={item === treatments[0]} ratio="7 / 6" dissolve={false} />}</div>
-      <div class="card__content"><p class="eyebrow">{item.id === 'gold-medalie' ? 'Signature' : 'LUMA Wellness'}</p><h2 class="card__name">{item.id === 'gesicht-kopf' ? <a href={url(routePath('face', locale))}>{text.name}</a> : text.name}</h2><p class="card__lead">{text.description}</p>{item.id === 'gesicht-kopf' ? <FaceRates {locale} /> : <dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl>}<a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><Fragment>{item.id === 'gesicht-kopf' ? <FaceQuickView id={item.id} {locale} paragraphs={text.details} /> : <TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} />}</Fragment></div>
+      <div class="card__content"><header class="card__head"><div class="card__tag"><span class="card__index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><p class="card__eyebrow">{item.id === 'gold-medalie' ? 'Signature' : massageWord}</p></div><span class="card__from" aria-hidden="true">{u.from} <b>{Math.min(...item.prices.map((p) => p.priceEur))}</b> €</span></header><h2 class="card__name">{item.id === 'gesicht-kopf' ? <a href={url(routePath('face', locale))}>{text.name}</a> : text.name}</h2><p class="card__lead">{text.description}</p>{item.id === 'gesicht-kopf' ? <FaceRates {locale} /> : <dl class="localized-rates">{item.prices.map((p) => <div><dt>{p.durationMin} {u.minutes}</dt><dd><Price amount={p.priceEur} /> €</dd></div>)}</dl>}<a class="pill" href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)}>{u.book}<Icon size={18} /></a><Fragment>{item.id === 'gesicht-kopf' ? <FaceQuickView id={item.id} {locale} paragraphs={text.details} /> : <TreatmentDetails id={item.id} name={text.name} paragraphs={text.details} href={url(`${routePath('contact', locale)}?treatment=${item.id}#enquiry`)} {locale} />}</Fragment></div>
     </article>;
   })}</div></div></section>}
 

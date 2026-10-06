@@ -15,10 +15,10 @@ import { AIR } from './petal-physics';
 const ROWS = 64;
 const OFF = 0.14; // how far past the screen edge a fully open panel travels
 
-const VERTEX = `attribute vec2 aPos; uniform vec2 uRes; varying vec2 vPx;
+const VERTEX = /* glsl */ `attribute vec2 aPos; uniform vec2 uRes; varying vec2 vPx;
 void main() { vPx = vec2((aPos.x * 0.5 + 0.5) * uRes.x, (0.5 - aPos.y * 0.5) * uRes.y); gl_Position = vec4(aPos, 0.0, 1.0); }`;
 
-const FRAGMENT = `#extension GL_OES_standard_derivatives : enable
+const FRAGMENT = /* glsl */ `#extension GL_OES_standard_derivatives : enable
 precision highp float;
 varying vec2 vPx;
 uniform vec2 uRes;

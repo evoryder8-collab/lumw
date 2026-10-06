@@ -885,6 +885,17 @@ function boot() {
     onCleanup(() => { active = false; observer.disconnect(); disposeLotus?.(); });
   }
 
+  // The living background starts with the visitor's first movement and then
+  // persists across pages, so it is only ever mounted once.
+  const auraHost = document.querySelector<HTMLElement>('.aura-host');
+  const saver = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (auraHost && !REDUCED && !saver && !auraHost.childElementCount) {
+    const wake = new AbortController();
+    const start = () => { wake.abort(); void import('./aura').then(({ mountAura }) => mountAura(auraHost)).catch(() => {}); };
+    ['pointermove', 'scroll', 'touchstart', 'keydown', 'wheel'].forEach((type) => addEventListener(type, start, { once: true, passive: true, signal: wake.signal }));
+    onCleanup(() => wake.abort());
+  }
+
   // The finale's petals: a handful in the air, only while it is on screen.
   const finale = document.querySelector<HTMLElement>('main .close');
   if (finale && !REDUCED) {

@@ -19,7 +19,19 @@
 
 html { scroll-padding-top: 120px; }
 body { background: var(--porcelain); }
-.aurora { opacity: 0.42; }
+/* The wash: blush and sage pools drifting over porcelain. The live silk
+   field (aura.ts) fades in over it once a visitor moves. */
+.aurora { opacity: 1; }
+.aurora__blob--a { background: radial-gradient(circle, rgb(243 208 212 / 0.95) 0%, rgb(243 208 212 / 0) 68%); opacity: 0.75; }
+.aurora__blob--b { background: radial-gradient(circle, rgb(208 229 214 / 0.95) 0%, rgb(208 229 214 / 0) 68%); opacity: 0.8; }
+.aurora__blob--c { background: radial-gradient(circle, rgb(236 199 205 / 0.9) 0%, rgb(236 199 205 / 0) 66%); opacity: 0.6; }
+.aurora__blob--d { background: radial-gradient(circle, rgb(188 216 197 / 0.9) 0%, rgb(188 216 197 / 0) 66%); opacity: 0.66; }
+.aura-host { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
+.aura-host canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 2.6s var(--ease); }
+.aura-host.is-live canvas { opacity: 1; }
+/* Once the field is live the CSS pools underneath are hidden, freeing the GPU. */
+body:has(.aura-host.is-live) :is(.aurora__blob, .aurora__conic) { display: none; }
+@media print { .aura-host { display: none; } }
 .grain { opacity: 0.012; }
 :root body[data-page] .notice { background: var(--forest); color: #f3eee1; border: 0; padding-block: 0.6rem; letter-spacing: 0.2em; }
 :root body[data-page] .notice__dot { background: #d7c495; }
@@ -81,6 +93,28 @@ main .hero.hero--immersive {
 .hero-winner::before { content: ''; position: absolute; inset: -16%; z-index: -1; border-radius: 50%; background: conic-gradient(from 20deg, #69ae8840, transparent 25%, #e0bd7847 43%, transparent 68%, #55b79835); filter: blur(32px); pointer-events: none; }
 
 .hero-veil { position: absolute; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(ellipse at 82% 32%, #31695380, transparent 56%), radial-gradient(ellipse at 32% 90%, #aa8e4530, transparent 58%), linear-gradient(115deg, #102c24, #17392f); }
+/* The forest panels breathe too: rose and leaf light drifting through the
+   green, transform-only so it never repaints. */
+.hero-veil::after,
+body[data-page='services'] main > .hero::after {
+  content: ''; position: absolute; inset: -12%; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(34% 40% at 24% 74%, rgb(222 156 170 / 0.24), transparent 70%),
+    radial-gradient(30% 36% at 78% 22%, rgb(104 178 138 / 0.28), transparent 70%),
+    radial-gradient(26% 30% at 62% 84%, rgb(230 198 140 / 0.14), transparent 70%);
+}
+body[data-page='services'] main > .hero { position: relative; isolation: isolate; overflow: hidden; }
+body[data-page='services'] main > .hero > .shell { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready .hero-veil::after,
+  .motion-ready body[data-page='services'] main > .hero::after { animation: forest-breath 28s ease-in-out infinite alternate; }
+}
+@keyframes forest-breath {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 0.85; }
+  50% { transform: translate3d(6%, -5%, 0) rotate(7deg) scale(1.08); opacity: 1; }
+  100% { transform: translate3d(-5%, 4%, 0) rotate(-6deg) scale(1.04); opacity: 0.8; }
+}
+:root body[data-ambient-sleep] :is(.hero-veil, main > .hero)::after { animation-play-state: paused; }
 .hero-orbit { position: absolute; left: -24%; bottom: -53%; width: 77%; aspect-ratio: 1; border: 1px solid rgb(225 208 166 / 0.16); border-radius: 50%; z-index: -1; pointer-events: none; box-shadow: 0 0 0 70px rgb(235 220 175 / 0.025), 0 0 0 140px rgb(235 220 175 / 0.02); }
 .hero-editorial { position: relative; z-index: 1; width: 55%; height: 100%; padding: clamp(2rem, 4vw, 4.5rem); display: flex; flex-direction: column; align-items: flex-start; }
 .hero-edition { display: flex; align-items: center; gap: 1rem; font-size: 0.58rem; letter-spacing: 0.22em; width: 100%; color: #e3d9c3; }
@@ -141,6 +175,7 @@ main .close::after {
   background:
     radial-gradient(34% 30% at 50% 40%, rgb(236 210 148 / 0.3), transparent 72%),
     radial-gradient(30% 34% at 20% 74%, rgb(92 158 122 / 0.3), transparent 72%),
+    radial-gradient(28% 32% at 78% 30%, rgb(222 156 170 / 0.22), transparent 72%),
     radial-gradient(26% 30% at 82% 66%, rgb(201 169 98 / 0.22), transparent 72%),
     repeating-conic-gradient(from 0deg at 50% 30%, transparent 0deg, rgb(255 238 196 / 0.06) 3.5deg, transparent 7deg 15deg);
   -webkit-mask: radial-gradient(closest-side at 50% 38%, #000 25%, transparent 100%);
@@ -776,3 +811,202 @@ html { scroll-behavior: auto; }
 
 @media (max-width: 760px) { .language-dialog .language-choice > svg { display: none; } .language-dialog .language-choice__flag img { width: 24px; height: 18px; } }
 .hero-winner:has(.hero-winner__touch:is(:hover, :focus-visible)) { animation-play-state: paused; }
+
+/* ==========================================================================
+   Treatment cards, one atelier design for all six languages.
+   A photograph that settles into frosted porcelain, a glass tag and a forest
+   price pill floating on the seam, editorial type, prices as glass tiles and
+   a full-width booking pill. The card never sets its own transition, so the
+   scroll reveal keeps control of opacity and position.
+   ========================================================================== */
+:root body[data-page] :is(.cards > .card, .localized-treatment) {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; min-width: 0;
+  border-radius: 30px;
+  border: 1px solid rgb(255 255 255 / 0.95);
+  background:
+    radial-gradient(120% 55% at 100% 100%, rgb(242 212 216 / 0.55), transparent 62%),
+    radial-gradient(110% 50% at 0% 100%, rgb(208 228 214 / 0.6), transparent 60%),
+    linear-gradient(172deg, rgb(255 255 255 / 0.95), rgb(251 249 244 / 0.86));
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgb(25 57 47 / 0.05), 0 30px 70px -34px rgb(25 57 47 / 0.36);
+}
+/* A hairline of light runs around the rim. */
+:root body[data-page] :is(.cards > .card, .localized-treatment)::before {
+  content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: inherit; padding: 1px;
+  background: linear-gradient(150deg, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.1) 38%, rgb(201 169 98 / 0.35) 72%, rgb(255 255 255 / 0.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.card__linework, .brackets, .card__rule, .rate__leader) { display: none; }
+
+/* --- Photograph ---------------------------------------------------------- */
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__photo {
+  position: relative; display: block; margin: 0; overflow: hidden; z-index: 0;
+  border-radius: 29px 29px 0 0;
+  -webkit-mask-image: linear-gradient(#000 74%, rgb(0 0 0 / 0.55) 90%, transparent);
+  mask-image: linear-gradient(#000 74%, rgb(0 0 0 / 0.55) 90%, transparent);
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__photo .media { border-radius: 0; box-shadow: none; background: none; }
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__photo img { transition: transform 1.4s var(--ease), filter 1.4s var(--ease); filter: saturate(1.02) brightness(1.02); }
+:root body[data-page] :is(.cards > .card, .localized-treatment):not(.card--face) .card__photo::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(25 57 47 / 0.06), transparent 30%, transparent 62%, rgb(250 248 243 / 0.5) 88%, rgb(250 248 243 / 0.9));
+}
+/* The photograph settles from a slight zoom as the card arrives. */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready :is(.cards > .card, .localized-treatment)[data-reveal2]:not([data-state='in']) .card__photo img { transform: scale(1.1); }
+}
+@media (hover: hover) and (pointer: fine) {
+  :root body[data-page] :is(.cards > .card, .localized-treatment):hover .card__photo img { transform: scale(1.06); filter: saturate(1.06) brightness(1.04); }
+}
+
+/* --- The seam: glass tag and price pill ---------------------------------- */
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__content {
+  position: relative; z-index: 3; display: flex; flex-direction: column; flex: 1;
+  margin: 0; padding: 0 clamp(1.25rem, 2vw, 1.6rem) clamp(1.3rem, 2vw, 1.6rem);
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  margin: -1.4rem 0 1.05rem;
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--face .card__head { margin-top: 1.1rem; }
+:root body[data-page] .card__tag {
+  display: inline-flex; align-items: center; gap: 0.6rem; min-width: 0;
+  padding: 0.3rem 0.95rem 0.3rem 0.3rem; border-radius: 999px;
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.7));
+  border: 1px solid #fff;
+  box-shadow: 0 10px 26px -12px rgb(25 57 47 / 0.4), inset 0 1px 0 #fff;
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+}
+:root body[data-page] .card__tag .card__index {
+  display: grid; place-items: center; flex: none; width: 2rem; height: 2rem; border-radius: 50%;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 400; line-height: 1; letter-spacing: 0;
+  color: var(--gold-text); -webkit-text-stroke: 0;
+  background: radial-gradient(circle at 34% 28%, #fff 0%, #f6eedc 70%, #ecdfc0 100%);
+  box-shadow: inset 0 0 0 1px rgb(184 147 78 / 0.5), 0 2px 6px rgb(184 147 78 / 0.2);
+}
+:root body[data-page] .card__tag .card__eyebrow { margin: 0; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+:root body[data-page] .card__from {
+  flex: none; display: inline-flex; align-items: baseline; gap: 0.3rem;
+  padding: 0.55rem 1rem 0.5rem; border-radius: 999px;
+  background: linear-gradient(180deg, #24493c, var(--forest));
+  color: #f3ead6; font-size: 0.66rem; letter-spacing: 0.08em; white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 12px 26px -12px rgb(25 57 47 / 0.75);
+}
+:root body[data-page] .card__from b { font-family: var(--font-display); font-weight: 400; font-size: 1.12rem; letter-spacing: 0; color: #fff8e8; }
+
+/* --- Type ------------------------------------------------------------------ */
+:root body[data-page] .localized-treatment .card__name {
+  margin: 0 0 0.6rem; font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(1.55rem, 2.3vw, 1.95rem); line-height: 1.06; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance;
+}
+/* The German originals are set in capitals; they read better smaller and open. */
+:root body[data-page] .cards > .card .card__name { font-size: clamp(1.18rem, 1.75vw, 1.42rem); line-height: 1.16; letter-spacing: 0.012em; margin-bottom: 0.45rem; }
+:root body[data-page] .localized-treatment .card__lead { margin: 0; font-size: 0.93rem; line-height: 1.62; color: var(--ink-soft); }
+
+/* --- Prices as glass tiles ------------------------------------------------- */
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rates, .localized-rates, .face-rates) {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(5.4rem, 1fr)); gap: 0.5rem;
+  margin: 1.3rem 0 1.2rem; padding: 0; border: 0;
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate) {
+  position: relative; overflow: hidden; min-width: 0;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 0.5rem;
+  margin: 0; padding: 0.8rem 0.85rem 0.75rem; border: 0; border-radius: 17px;
+  background: linear-gradient(165deg, rgb(255 255 255 / 0.96), rgb(255 255 255 / 0.62));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.95), inset 0 -1px 0 rgb(201 169 98 / 0.18), 0 10px 22px -16px rgb(25 57 47 / 0.45);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate) dt {
+  margin: 0; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); line-height: 1.35;
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) .face-rate dt span { display: block; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: none; color: var(--ink); font-weight: 600; }
+:root body[data-page] :is(.cards > .card, .localized-treatment) .face-rate dt small { display: block; margin-top: 0.15rem; font-size: 0.56rem; }
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate) dd {
+  margin: 0; display: inline-flex; align-items: baseline; gap: 0.25rem; white-space: nowrap;
+  font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: var(--ink);
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate__num, .rate__amount) { font-size: inherit; color: inherit; }
+:root body[data-page] :is(.cards > .card, .localized-treatment) .rate__cur { order: 2; font-family: var(--font-body); font-size: 0.55rem; letter-spacing: 0.16em; color: var(--gold-text); }
+:root body[data-page] :is(.cards > .card, .localized-treatment) .face-rate--ultimate { box-shadow: inset 0 0 0 1px rgb(201 169 98 / 0.7), 0 12px 26px -16px rgb(184 147 78 / 0.6); }
+/* A sheen crosses each tile once it lands. */
+:root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate)::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 250 232 / 0.85) 48%, transparent 64%);
+  transform: translateX(-120%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate)[data-state='in']::after {
+    animation: tile-sheen 1.5s var(--ease) calc(var(--i, 0) * 72ms + 420ms) 1 both;
+  }
+}
+@keyframes tile-sheen { to { transform: translateX(120%); } }
+@media (hover: hover) and (pointer: fine) {
+  :root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate):hover {
+    transform: translateY(-3px);
+    box-shadow: inset 0 0 0 1px rgb(201 169 98 / 0.55), 0 16px 30px -16px rgb(25 57 47 / 0.5);
+  }
+}
+
+/* --- Booking ---------------------------------------------------------------- */
+:root body[data-page] :is(.cards > .card .card__cta, .localized-treatment .card__content > .pill) {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+  width: 100%; min-height: 52px; margin-top: auto; padding: 0.85rem 1.1rem 0.85rem 1.4rem;
+  border-radius: 999px; border: 0;
+  background: linear-gradient(180deg, #2a5243, var(--forest));
+  color: #f6efdf; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 16px 32px -16px rgb(25 57 47 / 0.75);
+}
+:root body[data-page] :is(.cards > .card .card__cta, .localized-treatment .card__content > .pill) :is(svg, .card__arrow) { color: #e2c88f; }
+:root body[data-page] .localized-treatment .card__lead + :is(.localized-rates, .face-rates) { margin-top: auto; padding-top: 1.3rem; }
+
+/* --- Signature: forest velvet and gold ------------------------------------- */
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature {
+  border-color: rgb(225 202 150 / 0.55);
+  background:
+    radial-gradient(110% 55% at 100% 100%, rgb(214 150 162 / 0.2), transparent 62%),
+    radial-gradient(110% 55% at 0% 100%, rgb(201 169 98 / 0.22), transparent 62%),
+    linear-gradient(172deg, #224a3c, var(--forest) 60%, #133126);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 34px 74px -32px rgb(25 57 47 / 0.7);
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature::before { background: linear-gradient(150deg, rgb(240 221 176 / 0.9), rgb(240 221 176 / 0.08) 40%, rgb(201 169 98 / 0.7) 75%, rgb(240 221 176 / 0.5)); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__photo::after { background: linear-gradient(to bottom, transparent 55%, rgb(25 57 47 / 0.55) 85%, var(--forest)); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__tag { background: rgb(255 255 255 / 0.1); border-color: rgb(240 225 190 / 0.35); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__tag .card__eyebrow { color: #efe3c4; }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__from { background: linear-gradient(180deg, #f6eedb, #e6d6b0); color: var(--forest); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__from b { color: var(--forest); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.card__name, .card__lead) { color: #f6efdf; }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.rate, .localized-rates > div, .face-rate) { background: linear-gradient(165deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.04)); box-shadow: inset 0 0 0 1px rgb(240 225 190 / 0.25), 0 12px 24px -16px rgb(0 0 0 / 0.5); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.rate, .localized-rates > div, .face-rate) dt { color: #d9cfb6; }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.rate, .localized-rates > div, .face-rate) dd { color: #fff8e8; }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.card__cta, .card__content > .pill) { background: linear-gradient(180deg, #f6eedb, #e3d1a6); color: var(--forest); }
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature :is(.card__cta, .card__content > .pill) :is(svg, .card__arrow) { color: var(--forest); }
+
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .card__tag .card__index { color: var(--gold-text); }
+/* --- Phones: a composition of its own --------------------------------------- */
+@media (max-width: 640px) {
+  :root body[data-page] :is(.cards > .card, .localized-treatment) { border-radius: 26px; }
+  :root body[data-page] :is(.cards > .card, .localized-treatment) .card__photo { border-radius: 25px 25px 0 0; }
+  /* Less tall: the photograph sets the mood, the card stays scannable. */
+  :root body[data-page] :is(.cards > .card, .localized-treatment):not(.card--face) .card__photo .media { aspect-ratio: 4 / 3 !important; }
+  :root body[data-page] :is(.cards > .card, .localized-treatment):not(.card--face) .card__photo img { object-fit: cover; height: 100%; }
+  :root body[data-page] :is(.cards > .card, .localized-treatment) .card__content { padding: 0 1.15rem 1.2rem; }
+  :root body[data-page] .localized-treatment .card__name { font-size: 1.6rem; }
+  :root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rates, .localized-rates, .face-rates) { grid-template-columns: repeat(auto-fit, minmax(4.9rem, 1fr)); gap: 0.45rem; }
+  :root body[data-page] :is(.cards > .card, .localized-treatment) :is(.rate, .localized-rates > div, .face-rate) dd { font-size: 1.42rem; }
+}
+
+/* The treatment index: glass chips that fade at the scroll edges on phones. */
+:root body[data-page] .treatment-index a {
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.6));
+  border: 1px solid #fff; box-shadow: 0 8px 20px -14px rgb(25 57 47 / 0.45), inset 0 1px 0 #fff;
+}
+@media (max-width: 760px) {
+  :root body[data-page] .treatment-index {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 0.9rem, #000 calc(100% - 2.6rem), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 0.9rem, #000 calc(100% - 2.6rem), transparent);
+  }
+}
+:root body[data-page] :is(.cards > .card, .localized-treatment).card--signature .rate__cur { color: #dcc38d; }
+/* Long "from" labels (à partir de) wrap below the tag on the narrowest phones. */
+:root body[data-page] :is(.cards > .card, .localized-treatment) .card__head { flex-wrap: wrap; row-gap: 0.5rem; }

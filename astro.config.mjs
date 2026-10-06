@@ -14,6 +14,29 @@ const SITE = 'https://www.luma-wellness.com';
  */
 const BASE = process.env.PUBLIC_BASE || '/';
 
+/**
+ * Shader sources are written readably, with comments, inside template strings
+ * marked with a glsl comment tag. Comments and indentation would otherwise ship to every
+ * visitor and count against the 100 KB JavaScript budget, so they are
+ * stripped at build time. Preprocessor lines keep their own line.
+ */
+const minifyGlsl = () => ({
+  name: 'luma-minify-glsl',
+  enforce: 'pre',
+  transform(code, id) {
+    if (!/\.(ts|js)$/.test(id) || !code.includes('/* glsl */')) return null;
+    return code.replace(/\/\* glsl \*\/ `([^`]*)`/g, (_, source) => '`' + source
+      .split('\n')
+      .map((line) => line.replace(/\/\/.*$/, '').trim())
+      .filter(Boolean)
+      .map((line) => (line.startsWith('#') ? `\n${line}\n` : line))
+      .join(' ')
+      .replace(/[ \t]*([{}()[\];,=+\-*\/<>?:!&|])[ \t]*/g, '$1')
+      .replace(/\n+/g, '\n')
+      .trim() + '`');
+  },
+});
+
 export default defineConfig({
   site: SITE,
   base: BASE,
@@ -53,7 +76,7 @@ export default defineConfig({
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
 
   compressHTML: true,
-  vite: { plugins: [tailwindcss()] },
+  vite: { plugins: [minifyGlsl(), tailwindcss()] },
 
   image: {
     // AVIF first with WebP fallback, per the performance budget.
