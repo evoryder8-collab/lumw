@@ -1,7 +1,8 @@
 /**
  * The velvet curtain. One full-screen shader draws both panels: folds lit by a
  * stage light, velvet sheen where the pile turns away from the eye, a lotus
- * damask woven into the ground, gold braid, fringe and an embroidered crest
+ * damask woven into the ground, gold braid and fringe. While it is closed a
+ * lotus blooms at its centre and June's logo rises from it (lotus-bloom.ts);
  * split down the seam. Edge motion is a set of row springs computed here and
  * streamed to the GPU as a 64-texel strip, so tests and petals read the same
  * geometry the viewer sees.
@@ -11,6 +12,7 @@
  */
 import { createPetalLayer, type PetalLayer } from './petal-field';
 import { AIR } from './petal-physics';
+import { createBloom, type Bloom } from './lotus-bloom';
 
 const ROWS = 64;
 const OFF = 0.14; // how far past the screen edge a fully open panel travels
@@ -23,8 +25,8 @@ precision highp float;
 varying vec2 vPx;
 uniform vec2 uRes;
 uniform float uDpr, uTime, uLight, uFlash, uFolds, uScale, uSway;
-uniform vec2 uLift, uCrestSize;
-uniform sampler2D uEdges, uCrest;
+uniform vec2 uLift;
+uniform sampler2D uEdges;
 const float TAU = 6.2831853;
 
 float decode(vec2 c) { return (c.x * 65280.0 + c.y * 255.0) / 65535.0 * 2.0 - 0.5; }
@@ -135,7 +137,7 @@ void main() {
   col *= 0.955 + 0.07 * hash(floor(gl_FragCoord.xy));
 
   // --- Gold cord on the leading edge, braid and fringe on the hem ----------
-  // The edges stay fine so the embroidered crest reads across the seam.
+  // The edges stay fine, so the seam reads as one line of gold.
   vec2 trim = vec2(dE, dH);
   for (int k = 0; k < 2; k++) {
     float t = k == 0 ? trim.x : trim.y;
@@ -156,21 +158,6 @@ void main() {
     }
   }
 
-  // --- Embroidered crest across the seam ------------------------------------
-  float X = side < 0.5 ? min(u, 1.0) * centre : uRes.x - min(u, 1.0) * centre;
-  vec2 cuv = vec2((X - centre) / uCrestSize.x + 0.5, (px.y - uRes.y * 0.44) / uCrestSize.y + 0.5);
-  if (cuv.x > 0.0 && cuv.x < 1.0 && cuv.y > 0.0 && cuv.y < 1.0) {
-    float a = texture2D(uCrest, cuv).a;
-    float shade = texture2D(uCrest, cuv - vec2(2.0, 2.6) * s / uCrestSize).a;
-    col *= 1.0 - 0.42 * shade * (1.0 - a);
-    vec2 st = cuv * uCrestSize;
-    float stitch = 0.7 + 0.3 * sin((st.x * 0.85 + st.y * 1.35) * 1.7 / s);
-    vec3 en = normalize(n + vec3(0.0, 0.0, 0.6));
-    float ed = max(dot(en, L), 0.0), es = pow(max(dot(en, H), 0.0), 20.0);
-    vec3 thread = mix(vec3(0.42, 0.31, 0.13), vec3(0.94, 0.8, 0.48), ed) * stitch + vec3(1.0, 0.93, 0.74) * es * 0.85;
-    col = mix(col, thread * (0.82 + 0.3 * stage), a);
-  }
-
   // A line of light runs down the seam the moment the panels meet.
   col += vec3(1.0, 0.86, 0.55) * uFlash * exp(-abs(px.x - centre) / (9.0 * s)) * 0.9;
 
@@ -179,7 +166,7 @@ void main() {
 }`;
 
 type GL = WebGLRenderingContext;
-type Uniforms = Record<'uRes' | 'uDpr' | 'uTime' | 'uLight' | 'uFlash' | 'uFolds' | 'uScale' | 'uSway' | 'uLift' | 'uCrestSize' | 'uEdges' | 'uCrest', WebGLUniformLocation | null>;
+type Uniforms = Record<'uRes' | 'uDpr' | 'uTime' | 'uLight' | 'uFlash' | 'uFolds' | 'uScale' | 'uSway' | 'uLift' | 'uEdges', WebGLUniformLocation | null>;
 type Run = { stop: (adopt?: boolean) => void };
 
 let canvas: HTMLCanvasElement | undefined;
@@ -187,8 +174,11 @@ let gl: GL | null = null;
 let program: WebGLProgram | null = null;
 let uniforms: Uniforms | undefined;
 let edgeTexture: WebGLTexture | null = null;
-let crestTexture: WebGLTexture | null = null;
-let crestAspect = 1.2;
+let quad: WebGLBuffer | null = null;
+let position = 0;
+let bloom: Bloom | undefined;
+/** When the lotus began to bloom; it outlives the closing run into the opening. */
+let bloomAt: number | undefined;
 let software = false;
 let linked = false;
 let failed = false;
@@ -229,47 +219,6 @@ function compile(context: GL, type: number, source: string) {
   return shader;
 }
 
-function paintCrest() {
-  // Embroidery is drawn as a white mask; the shader supplies the gold thread.
-  const c = document.createElement('canvas');
-  c.width = 512; c.height = 600;
-  const x = c.getContext('2d')!;
-  x.fillStyle = '#fff'; x.strokeStyle = '#fff'; x.lineCap = 'round'; x.lineJoin = 'round';
-  const drop = (scale: number, dx: number) => {
-    const p = new Path2D();
-    p.moveTo(256 + dx, 40 + (1 - scale) * 120);
-    p.bezierCurveTo(256 + dx + 30 * scale, 120, 256 + dx + 118 * scale, 186, 256 + dx + 118 * scale, 262);
-    p.bezierCurveTo(256 + dx + 118 * scale, 336, 256 + dx + 62 * scale, 384, 256 + dx, 384 - (1 - scale) * 30);
-    p.bezierCurveTo(256 + dx - 62 * scale, 384, 256 + dx - 118 * scale, 336, 256 + dx - 118 * scale, 262);
-    p.bezierCurveTo(256 + dx - 118 * scale, 186, 256 + dx - 30 * scale, 120, 256 + dx, 40 + (1 - scale) * 120);
-    return p;
-  };
-  // The LUMA drop: a crescent, heavier on the left as in the mark.
-  const outer = drop(1, 0), inner = drop(0.88, 9);
-  x.save(); x.fill(outer); x.globalCompositeOperation = 'destination-out'; x.fill(inner); x.restore();
-  // A lotus in the heart of the drop.
-  x.lineWidth = 5.5;
-  const leaf = (angle: number, length: number, width: number) => {
-    x.save(); x.translate(256, 330); x.rotate(angle);
-    x.beginPath(); x.moveTo(0, 0); x.bezierCurveTo(width, -length * 0.35, width * 0.7, -length * 0.8, 0, -length);
-    x.bezierCurveTo(-width * 0.7, -length * 0.8, -width, -length * 0.35, 0, 0); x.stroke(); x.restore();
-  };
-  leaf(0, 120, 40); leaf(-0.62, 96, 30); leaf(0.62, 96, 30); leaf(-1.15, 70, 22); leaf(1.15, 70, 22);
-  x.beginPath(); x.moveTo(176, 340); x.quadraticCurveTo(256, 362, 336, 340); x.stroke();
-  const spaced = (text: string, font: string, y: number, tracking: number) => {
-    x.font = font;
-    const widths = [...text].map((ch) => x.measureText(ch).width);
-    let cursor = 256 - (widths.reduce((a, b) => a + b, 0) + tracking * (text.length - 1)) / 2;
-    [...text].forEach((ch, i) => { x.fillText(ch, cursor, y); cursor += widths[i] + tracking; });
-  };
-  x.textBaseline = 'alphabetic';
-  spaced('LUMA', '400 92px "Hanken Grotesk", "Helvetica Neue", sans-serif', 500, 22);
-  spaced('WELLNESS', '500 25px "Hanken Grotesk", "Helvetica Neue", sans-serif', 552, 13);
-  x.fillRect(150, 574, 212, 2.5);
-  crestAspect = c.height / c.width;
-  return c;
-}
-
 function texture(context: GL) {
   const t = context.createTexture();
   context.bindTexture(context.TEXTURE_2D, t);
@@ -286,7 +235,7 @@ export function warm(): Promise<boolean> {
     canvas.className = 'velvet';
     canvas.setAttribute('aria-hidden', 'true');
     canvas.width = canvas.height = 1;
-    const context = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false, powerPreference: 'default' }) as GL | null;
+    const context = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: true, stencil: false, preserveDrawingBuffer: false, powerPreference: 'default' }) as GL | null;
     if (!context || !context.getExtension('OES_standard_derivatives')) { failed = true; return false; }
     gl = context;
     canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); linked = false; failed = true; });
@@ -306,28 +255,29 @@ export function warm(): Promise<boolean> {
     if (!context.getProgramParameter(p, context.LINK_STATUS)) { failed = true; return false; }
     program = p;
     context.useProgram(p);
-    const buffer = context.createBuffer();
-    context.bindBuffer(context.ARRAY_BUFFER, buffer);
+    quad = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, quad);
     context.bufferData(context.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), context.STATIC_DRAW);
-    const position = context.getAttribLocation(p, 'aPos');
-    context.enableVertexAttribArray(position);
-    context.vertexAttribPointer(position, 2, context.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['uRes', 'uDpr', 'uTime', 'uLight', 'uFlash', 'uFolds', 'uScale', 'uSway', 'uLift', 'uCrestSize', 'uEdges', 'uCrest'].map((name) => [name, context.getUniformLocation(p, name)])) as Uniforms;
+    position = context.getAttribLocation(p, 'aPos');
+    uniforms = Object.fromEntries(['uRes', 'uDpr', 'uTime', 'uLight', 'uFlash', 'uFolds', 'uScale', 'uSway', 'uLift', 'uEdges'].map((name) => [name, context.getUniformLocation(p, name)])) as Uniforms;
     edgeTexture = texture(context);
     context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.NEAREST);
     context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
     context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, ROWS, 1, 0, context.RGBA, context.UNSIGNED_BYTE, edgeBytes);
-    // The crest uses the site's own interface face once it is available.
-    await Promise.race([document.fonts.load('400 92px "Hanken Grotesk"'), new Promise((r) => setTimeout(r, 400))]).catch(() => {});
-    crestTexture = texture(context);
-    context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.LINEAR);
-    context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.LINEAR);
-    context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, paintCrest());
     context.uniform1i(uniforms.uEdges, 0);
-    context.uniform1i(uniforms.uCrest, 1);
+    // June's own logo rises from the lotus. A missing image only drops the logo.
+    const source = document.querySelector<HTMLElement>('[data-logo]')?.dataset.logo;
+    const logo = source ? new Image() : undefined;
+    if (logo && source) {
+      logo.src = source;
+      await Promise.race([logo.decode(), new Promise((_, reject) => setTimeout(reject, 2500))]).catch(() => {});
+    }
+    bloom = createBloom(context, logo?.complete && logo.naturalWidth ? logo : undefined);
     // Some drivers finish compiling on first use. Pay that now, off-screen.
+    bindVelvet(context);
     context.uniform2f(uniforms.uRes, 1, 1); context.uniform1f(uniforms.uScale, 1); context.uniform1f(uniforms.uFolds, 4);
     context.viewport(0, 0, 1, 1); context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
+    bloom?.draw(1, -1, 1, 1);
     linked = true;
     return true;
   })().catch(() => { failed = true; return false; });
@@ -335,6 +285,15 @@ export function warm(): Promise<boolean> {
 }
 
 export const ready = () => linked && !failed;
+
+/** The lotus pass changes programs and buffers; restore the velvet's own. */
+function bindVelvet(context: GL) {
+  context.useProgram(program);
+  context.disable(context.BLEND); context.disable(context.DEPTH_TEST);
+  context.bindBuffer(context.ARRAY_BUFFER, quad);
+  context.enableVertexAttribArray(position);
+  context.vertexAttribPointer(position, 2, context.FLOAT, false, 0, 0);
+}
 
 function size(root: HTMLElement) {
   const { width, height } = root.getBoundingClientRect();
@@ -371,10 +330,15 @@ export function animate(root: HTMLElement, opening: boolean, duration: number): 
   addEventListener('resize', resize);
   const scale = Math.max(0.6, Math.min(1, Math.min(w, h * 1.25) / 1100));
   const folds = Math.max(4, Math.min(11, w / 2 / 64));
-  const crestWidth = Math.min(300, w * 0.46) * (w < 700 ? 1 : 1.05);
   const D = duration / 1000;
   const start = performance.now();
-  let frame = 0, last = start, petals: PetalLayer | undefined, released = 0, flashAt = -1, settled = false;
+  // The bloom: a welcome starts it now; a page transition started it when the
+  // cloth closed, during the load. The cloth parts once the logo has risen.
+  const welcome = root.dataset.curtain === 'welcome';
+  if (!opening) bloomAt = undefined;
+  if (opening && bloom && (welcome || bloomAt === undefined || start - bloomAt > 12000)) bloomAt = start;
+  const lead = opening && bloom && bloomAt !== undefined ? Math.max(0, (welcome ? 1.9 : 1.05) - (start - bloomAt) / 1000) : 0;
+  let frame = 0, last = start, petals: PetalLayer | undefined, released = 0, flashAt = -1, settled = false, lotus: { x: number; y: number; radius: number } | null = null, letGo = false;
   const budget = opening ? Math.round(Number(root.dataset.petals || 16) * Math.max(0.45, Math.min(1, w / 1200))) : 0;
   const state = root as HTMLElement & { curtainState?: unknown };
   root.dataset.curtainPhase = opening ? 'opening' : 'closing';
@@ -385,7 +349,9 @@ export function animate(root: HTMLElement, opening: boolean, duration: number): 
     root.append(petals.canvas);
   }
 
-  const draw = (t: number) => {
+  const draw = (now: number) => {
+    const t = Math.max(0, now - lead);
+    bindVelvet(context);
     upload(opening, duration, Math.min(t, D));
     let mean = 0;
     for (let i = 0; i <= 8; i++) mean += 1 - edgeAt(opening, duration, Math.min(t, D), i / 8, 0);
@@ -410,9 +376,8 @@ export function animate(root: HTMLElement, opening: boolean, duration: number): 
     context.uniform1f(u.uScale, scale);
     context.uniform1f(u.uSway, opening ? 0.35 * Math.sin(t * 6) * lift * 4 : 0);
     context.uniform2f(u.uLift, lift, lift * 0.94);
-    context.uniform2f(u.uCrestSize, crestWidth, crestWidth * crestAspect);
-    context.activeTexture(context.TEXTURE1); context.bindTexture(context.TEXTURE_2D, crestTexture);
     context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
+    if (bloom && bloomAt !== undefined) lotus = bloom.draw((start - bloomAt) / 1000 + now, opening ? now - lead : -1, w, h) ?? lotus;
     state.curtainState = { phase: root.dataset.curtainPhase, cover: (v: number, side = 0) => edgeAt(opening, duration, Math.min(t, D), v, side) };
   };
 
@@ -459,21 +424,31 @@ export function animate(root: HTMLElement, opening: boolean, duration: number): 
       resolve();
     };
     runs.set(root, { stop });
-    const tick = (now: number) => {
-      const t = (now - start) / 1000, dt = (now - last) / 1000; last = now;
-      if (opening) shed(t, dt);
+    const tick = (stamp: number) => {
+      const elapsed = (stamp - start) / 1000, t = elapsed - lead, dt = (stamp - last) / 1000; last = stamp;
+      if (opening && t >= 0) shed(t, dt);
+      // As the cloth begins to part, the lotus lets its petals go into the light.
+      if (opening && t >= 0 && !letGo && lotus && petals) {
+        letGo = true;
+        for (let i = 0; i < 12; i++) {
+          const a = (i / 12) * Math.PI * 2;
+          petals.release(lotus.x + Math.cos(a) * lotus.radius * 0.55, lotus.y + Math.sin(a) * lotus.radius * 0.2, Math.cos(a) * (60 + Math.random() * 90), -70 - Math.random() * 110, 18 + Math.random() * 12);
+        }
+      }
       // The opening is over once the last of the cloth has cleared the screen.
       const cleared = opening && t > 0.5 * D && edgeAt(true, duration, t, 0, 0) < -0.06 && edgeAt(true, duration, t, 0, 1) < -0.06;
       if (!settled && (t >= D || cleared)) {
-        if (opening) { draw(t); stop(true); return; }
+        if (opening) { draw(elapsed); bloomAt = undefined; stop(true); return; }
         // Closed: hand control back, but keep the cloth breathing while the
         // next page loads. The next animate() call takes over seamlessly.
         settled = true;
         root.dataset.curtainPhase = 'closed';
+        // The lotus begins to bloom while the next page loads.
+        bloomAt = performance.now() - (elapsed - D) * 1000;
         runs.set(root, { stop: (adopt) => { settled = false; stop(adopt); } });
         resolve();
       }
-      draw(t);
+      draw(elapsed);
       frame = requestAnimationFrame(tick);
     };
     draw(0);

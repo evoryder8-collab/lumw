@@ -87,7 +87,8 @@ export function mountWelcome(signal: AbortSignal) {
     curtain.classList.add('is-opening');
     void animateCurtain(curtain, true, 2100).then(() => { if (!disposed && curtain.open) finishCurtain(); });
     // A cancelled animation must never leave the entrance blocking the page.
-    curtainTimer = setTimeout(finishCurtain, 2900);
+    // The lotus blooms first (1.9 s), then the cloth parts.
+    curtainTimer = setTimeout(finishCurtain, 5400);
   };
   const finish = (enabled: boolean) => {
     write('luma-welcome-done', 'yes');

@@ -16,10 +16,47 @@
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Split a plain-text heading into masked lines. Every reveal heading is plain
+ * text, so measuring words is enough, and it saves the 3.5 KB SplitText cost
+ * for the curtain's lotus. Reverting restores the original text exactly.
+ */
+function splitLines(el: HTMLElement) {
+  const text = el.textContent ?? '';
+  const words = text.trim().split(/\s+/);
+  el.textContent = '';
+  const spans = words.map((word, i) => {
+    if (i) el.append(' ');
+    const span = document.createElement('span');
+    span.textContent = word;
+    el.append(span);
+    return span;
+  });
+  const rows: string[][] = [];
+  let top = NaN;
+  for (const span of spans) {
+    if (span.offsetTop !== top) { rows.push([]); top = span.offsetTop; }
+    rows[rows.length - 1].push(span.textContent!);
+  }
+  el.textContent = '';
+  const lines = rows.map((row) => {
+    const mask = document.createElement('span');
+    mask.className = 'line-inner-mask';
+    mask.style.cssText = 'display:block;overflow:clip';
+    const line = document.createElement('span');
+    line.className = 'line-inner';
+    line.style.display = 'block';
+    line.textContent = row.join(' ');
+    mask.append(line);
+    el.append(mask);
+    return line;
+  });
+  return { lines, revert: () => { el.textContent = text; } };
+}
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE_POINTER = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -129,12 +166,7 @@ function initReveals() {
       return;
     }
 
-    const split = new SplitText(el, {
-      type: 'lines',
-      linesClass: 'line-inner',
-      // SplitText's own mask wrapper gives us the overflow:hidden line box.
-      mask: 'lines',
-    });
+    const split = splitLines(el);
 
     gsap.set(split.lines, { yPercent: 110 });
 

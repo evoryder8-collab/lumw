@@ -52,7 +52,7 @@ document.addEventListener('astro:after-swap', () => {
       if (active !== current) return;
       current.curtain.classList.add('is-opening');
       void animateCurtain(current.curtain, true, 1700).then(() => { if (active === current) finish(); });
-      clearTimeout(timer); timer = setTimeout(finish, 2300);
+      clearTimeout(timer); timer = setTimeout(finish, 3900);
     });
   });
 });

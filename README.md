@@ -64,8 +64,11 @@ part of the initial page-loading budget.
   rating is a dated, manually verified snapshot, not an automatic live feed.
 - Their horizontal cards make a small, once-only preview movement on entry.
   Touch or keyboard input cancels it, and reduced motion disables it.
-- The welcome and main-page navigation use a WebGL velvet curtain that opens
-  hem first, with petals shed into the light. It compiles only after a
+- The welcome and main-page navigation use a WebGL velvet curtain. While it
+  is closed a 3D lotus blooms at its centre and June's official logo rises
+  from the flower (lotus-bloom.ts); then the cloth opens hem first and the
+  lotus releases its petals into the light. On navigation the bloom plays
+  while the next page loads. It compiles only after a
   sign of intent (the sound question, a link hover, touch or focus), so page
   loads never pay for it. Without WebGL, flat panels keep the same timing.
 - The Contact map becomes a translucent 3D model when the section approaches:
@@ -105,7 +108,8 @@ Google Maps / Apple Maps chooser and no-JavaScript directions links.
 | `src/scripts/experience.ts` | Interaction setup and navigation cleanup |
 | `src/scripts/welcome.ts` | Language, sound consent and playback |
 | `src/scripts/prices.ts` | Scroll-triggered price animation |
-| `src/scripts/curtain-velvet.ts` | WebGL velvet curtain for the welcome and page transitions, loaded on visitor intent only |
+| `src/scripts/curtain-velvet.ts`, `lotus-bloom.ts` | WebGL velvet curtain and the lotus bloom with June's logo, loaded on visitor intent only |
+| `src/scripts/aura.ts` | The living blush-and-sage background field, started on first visitor input |
 | `src/scripts/petal-physics.ts`, `petal-render.ts`, `petal-field.ts` | Petal aerodynamics, pre-shaded sprites, curtain shower and closing drift |
 | `src/scripts/map-3d.ts` | 3D location model over the self-hosted city data |
 | `public/map/studio-3d.json` | OpenStreetMap buildings, heights and streets around the studio (`npm run map:3d`) |
